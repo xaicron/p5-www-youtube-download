@@ -16,6 +16,7 @@ use LWP::UserAgent ();
 use Any::Moose;
 has 'quality',    is => 'rw', isa => 'Str';
 has 'filename',   is => 'rw', isa => 'Str';
+has 'verbose',    is => 'rw', isa => 'Int';
 has 'encode',     is => 'rw', isa => 'Str',            default => 'utf8';
 has 'user_agent', is => 'rw', isa => 'LWP::UserAgent', default => sub { LWP::UserAgent->new() };
 has 'scraper',    is => 'ro', isa => 'Web::Scraper',   default => sub {
@@ -44,14 +45,17 @@ sub download {
 		$cb = sub {
 			my ($chunk, $res, $proto) = @_;
 			print $wfh $chunk;
-			my $size = tell $wfh;
 			
-			if (my $total = $res->header('Content-Length')) {
-				printf "%d/%d (%f%%)\r", $size, $total, $size / $total * 100;
-			}
-			
-			else {
-				printf "%d/Unknown bytes\r", $size;
+			if ($self->verbose) {
+				my $size = tell $wfh;
+				
+				if (my $total = $res->header('Content-Length')) {
+					printf "%d/%d (%f%%)\r", $size, $total, $size / $total * 100;
+				}
+				
+				else {
+					printf "%d/Unknown bytes\r", $size;
+				}
 			}
 		};
 	}
@@ -163,6 +167,7 @@ WWW::YouTube::Download is a YouTube video download interface.
 =item B<download()>
 
   $client->download($video_id);
+  $client->download($video_id, \&callback);
 
 =item B<get_video_url()>
 
