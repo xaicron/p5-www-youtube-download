@@ -135,15 +135,40 @@ __END__
 
 =head1 NAME
 
-WWW::YouTube::Download -
+WWW::YouTube::Download is a YouTube video download interface.
 
 =head1 SYNOPSIS
 
   use WWW::YouTube::Download;
+  
+  my $client = WWW::YouTube::Download->new();
+  $client->download($video_id);
 
 =head1 DESCRIPTION
 
-WWW::YouTube::Download is
+WWW::YouTube::Download is a YouTube video download interface.
+
+=head1 METHODS
+
+=over
+
+=item B<new()>
+
+  $client = WWW::YouTube::Download->new(
+      encode   => $enc,      # default utf8
+      filename => $filename, # default video title
+      quality  => 'low',    # default high
+  );
+
+=item B<download()>
+
+  $client->download($video_id);
+
+=item B<get_video_url()>
+
+  my $url = $client->get_video_url();
+
+=back
 
 =head1 AUTHOR
 
