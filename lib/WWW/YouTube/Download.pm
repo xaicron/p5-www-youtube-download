@@ -69,7 +69,7 @@ sub get_video_url {
 	my $self = shift;
 	my $video_id = shift || Carp::croak "Usage $self->get_video_id('[video_id|video_url]')";
 	
-	if ($video_id =~ /watch\?v=([^?]+)/) {
+	if ($video_id =~ /watch\?v=([^&]+)/) {
 		$video_id = $1;
 	}
 	
