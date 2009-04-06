@@ -131,7 +131,7 @@ sub _get_filename {
 	
 	my $suffix = $fmt =~ /18|22/ ? '.mp4' : '.flv';
 	
-	return Encode::encode($self->{encode}, $title, sub {"U+%04X", shift}) . $suffix;
+	return Encode::encode($self->encode, $title, sub {"U+%04X", shift}) . $suffix;
 }
 
 1;
