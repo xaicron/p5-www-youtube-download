@@ -27,9 +27,9 @@ has 'scraper',    is => 'ro', isa => 'Web::Scraper',   default => sub {
 };
 
 my %quality = (
-	high   => '35',
-	low    => '8',
-	normal => '18',
+	high    => '35',
+	low     => '6',
+	normal  => '18',
 );
 
 sub download {
@@ -108,7 +108,7 @@ sub _get_fmt {
 	
 	if ($self->quality) {
 		$fmt = $self->qualiry =~ /^[0-9]+$/ ? $self->quality : $quality{$self->quality};
-		Carp::croak 'unknown quality (', $self->quality, '). you must be [normal|high|low] or any numbers';
+		Carp::croak 'unknown quality (', $self->quality, '). you must be [normal|high|low] or any numbers' unless $fmt;
 	}
 	
 	else {
@@ -129,7 +129,9 @@ sub _get_filename {
 	my $title = shift;
 	my $fmt = shift;
 	
-	my $suffix = $fmt =~ /18|22/ ? '.mp4' : '.flv';
+	my $suffix = $fmt =~ /18|22/ ? '.mp4'
+	           : $fmt =~ /13|17/ ? '.3gp'
+	           :                   '.flv';
 	
 	return Encode::encode($self->encode, $title, sub {"U+%04X", shift}) . $suffix;
 }
@@ -160,8 +162,8 @@ WWW::YouTube::Download is a YouTube video download interface.
 
   $client = WWW::YouTube::Download->new(
       encode   => $enc,      # default utf8
-      filename => $filename, # default video title
-      quality  => 'low',    # default high
+      filename => $filename, # default video title + suffix
+      quality  => 'low',     # default auto
   );
 
 =item B<download()>
