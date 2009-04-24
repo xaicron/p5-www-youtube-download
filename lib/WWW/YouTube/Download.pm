@@ -17,6 +17,7 @@ use Any::Moose;
 has 'quality',    is => 'rw', isa => 'Str';
 has 'filename',   is => 'rw', isa => 'Str';
 has 'verbose',    is => 'rw', isa => 'Int';
+has 'video_url',  is => 'rw', isa => 'Str';
 has 'encode',     is => 'rw', isa => 'Str',            default => 'utf8';
 has 'user_agent', is => 'rw', isa => 'LWP::UserAgent', default => sub { LWP::UserAgent->new() };
 has 'scraper',    is => 'ro', isa => 'Web::Scraper',   default => sub {
@@ -37,7 +38,7 @@ sub download {
 	my $video_id = shift || Carp::croak "Usage $self->download('[video_id|video_url]')";
 	my $cb = shift;
 	
-	my $url = $self->get_video_url($video_id);
+	$self->video_url( $self->get_video_url($video_id) );
 	
 	unless ($cb) {
 		open my $wfh, '>', $self->filename or die $self->filename, " $!";
@@ -60,7 +61,7 @@ sub download {
 		};
 	}
 	
-	my $res = $self->user_agent->get($url, ':content_cb' => $cb);
+	my $res = $self->user_agent->get($self->video_url, ':content_cb' => $cb);
 	
 	Carp::croak 'Download failed: ', $res->status_line if $res->is_error;
 }
