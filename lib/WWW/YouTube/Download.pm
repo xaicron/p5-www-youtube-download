@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Encode ();
 use JSON ();
@@ -18,6 +18,7 @@ has 'quality',    is => 'rw', isa => 'Str';
 has 'filename',   is => 'rw', isa => 'Str';
 has 'verbose',    is => 'rw', isa => 'Int';
 has 'video_url',  is => 'rw', isa => 'Str';
+has 'fmt',        is => 'rw', isa => 'Int';
 has 'encode',     is => 'rw', isa => 'Str',            default => 'utf8';
 has 'user_agent', is => 'rw', isa => 'LWP::UserAgent', default => sub { LWP::UserAgent->new() };
 has 'scraper',    is => 'ro', isa => 'Web::Scraper',   default => sub {
@@ -78,13 +79,13 @@ sub get_video_url {
 	
 	my $result   = $self->scraper->scrape($uri) or die "failed scraping $uri";
 	my $swfArgs  = $self->_get_swfArgs($result);
-	my $fmt      = $self->_get_fmt($swfArgs);
+	$self->fmt( $self->_get_fmt($swfArgs) );
 	
 	unless ($self->filename) {
-		$self->filename( $self->_get_filename($result->{title}, $fmt) );
+		$self->filename( $self->_get_filename($result->{title}) );
 	}
 	
-	return sprintf "http://www.youtube.com/get_video?video_id=%s&t=%s&fmt=%s", $swfArgs->{video_id}, $swfArgs->{t}, $fmt;
+	return sprintf "http://www.youtube.com/get_video?video_id=%s&t=%s&fmt=%s", $swfArgs->{video_id}, $swfArgs->{t}, $self->fmt;
 }
 
 sub _get_swfArgs {
@@ -128,10 +129,9 @@ sub _get_fmt {
 sub _get_filename {
 	my $self = shift;
 	my $title = shift;
-	my $fmt = shift;
 	
-	my $suffix = $fmt =~ /18|22/ ? '.mp4'
-	           : $fmt =~ /13|17/ ? '.3gp'
+	my $suffix = $self->fmt =~ /18|22/ ? '.mp4'
+	           : $self->fmt =~ /13|17/ ? '.3gp'
 	           :                   '.flv';
 	
 	return Encode::encode($self->encode, $title, sub {"U+%04X", shift}) . $suffix;
