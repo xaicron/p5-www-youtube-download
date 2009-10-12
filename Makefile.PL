@@ -5,6 +5,7 @@ all_from 'lib/WWW/YouTube/Download.pm';
 requires 'JSON';
 requires 'Web::Scraper';
 requires 'Any::Moose';
+requires 'URI::Escape';
 
 tests 't/*.t';
 author_tests 'xt';
