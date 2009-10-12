@@ -23,7 +23,7 @@ has 'video_url',  is => 'rw', isa => 'Str';
 has 'fmt',        is => 'rw', isa => 'Int';
 has 'encode',     is => 'rw', isa => 'Str',            default => 'utf8';
 has 'user_agent', is => 'rw', isa => 'LWP::UserAgent', default => sub { LWP::UserAgent->new() };
-has 'wscraper',    is => 'ro', isa => 'Web::Scraper',   default => sub {
+has 'wscraper',   is => 'ro', isa => 'Web::Scraper',   default => sub {
 	scraper {
 		process '/html/head/script', 'scripts[]' => 'html';
 		process '//*[@id="watch-vid-title"]/h1', title => 'TEXT';
@@ -87,6 +87,16 @@ sub get_video_url {
 	$video_url = sprintf "http://www.youtube.com/get_video?video_id=%s&t=%s", $swfArgs->{video_id}, uri_unescape($swfArgs->{t});
 	
 	$self->fmt( $self->_get_fmt($swfArgs) );
+	unless ($self->fmt) {
+		for my $fmt ( sort { $b->[1] <=> $a->[1] } map { m{^(\d+)/(\d+)/}; [$1, $2] } split /,/ => uri_unescape($swfArgs->{fmt_map}) ) {
+#			printf "debug: %d / %d\n", $fmt->[0], $fmt->[1];
+			if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt->[0])) {
+				$self->fmt( $fmt->[0] );
+				last;
+			}
+		}
+	}
+	
 	unless ($self->fmt) {
 		for my $fmt (@fmt_list) {
 			if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt)) {
