@@ -89,7 +89,6 @@ sub get_video_url {
 	$self->fmt( $self->_get_fmt($swfArgs) );
 	unless ($self->fmt) {
 		for my $fmt (@fmt_list) {
-			warn sprintf "$video_url&fmt=%d", $fmt;
 			if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt)) {
 				$self->fmt( $fmt );
 				last;
