@@ -4,14 +4,16 @@ use strict;
 use warnings;
 use 5.008001;
 
-our $VERSION = '0.02';
+our $VERSION = '0.05';
 
 use Encode ();
 use JSON ();
 use Carp ();
 use URI ();
-use Web::Scraper ();
-use LWP::UserAgent ();
+use Web::Scraper;
+use LWP::Simple ();
+use LWP::UserAgent;
+use URI::Escape qw/uri_unescape/;
 
 use Any::Moose;
 has 'quality',    is => 'rw', isa => 'Str';
@@ -21,12 +23,14 @@ has 'video_url',  is => 'rw', isa => 'Str';
 has 'fmt',        is => 'rw', isa => 'Int';
 has 'encode',     is => 'rw', isa => 'Str',            default => 'utf8';
 has 'user_agent', is => 'rw', isa => 'LWP::UserAgent', default => sub { LWP::UserAgent->new() };
-has 'scraper',    is => 'ro', isa => 'Web::Scraper',   default => sub {
-	Web::Scraper::scraper {
-		Web::Scraper::process '/html/head/script', 'scripts[]' => 'html';
-		Web::Scraper::process '//*[@id="watch-vid-title"]/h1', title => 'TEXT';
+has 'wscraper',    is => 'ro', isa => 'Web::Scraper',   default => sub {
+	scraper {
+		process '/html/head/script', 'scripts[]' => 'html';
+		process '//*[@id="watch-vid-title"]/h1', title => 'TEXT';
 	};
 };
+
+my @fmt_list = qw(35 34 22 18 17 13 6 5);
 
 my %quality = (
 	high    => '35',
@@ -70,6 +74,7 @@ sub download {
 sub get_video_url {
 	my $self = shift;
 	my $video_id = shift || Carp::croak "Usage $self->get_video_id('[video_id|video_url]')";
+	my $video_url;
 	
 	if ($video_id =~ /watch\?v=([^&]+)/) {
 		$video_id = $1;
@@ -77,15 +82,26 @@ sub get_video_url {
 	
 	my $uri = URI->new("http://www.youtube.com/watch?v=$video_id") or die "$video_id error";
 	
-	my $result   = $self->scraper->scrape($uri) or die "failed scraping $uri";
-	my $swfArgs  = $self->_get_swfArgs($result);
+	my $result = $self->wscraper->scrape($uri) or die "failed scraping $uri";
+	my $swfArgs = $self->_get_swfArgs($result);
+	$video_url = sprintf "http://www.youtube.com/get_video?video_id=%s&t=%s", $swfArgs->{video_id}, uri_unescape($swfArgs->{t});
+	
 	$self->fmt( $self->_get_fmt($swfArgs) );
+	unless ($self->fmt) {
+		for my $fmt (@fmt_list) {
+			warn sprintf "$video_url&fmt=%d", $fmt;
+			if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt)) {
+				$self->fmt( $fmt );
+				last;
+			}
+		}
+	}
 	
 	unless ($self->filename) {
 		$self->filename( $self->_get_filename($result->{title}) );
 	}
 	
-	return sprintf "http://www.youtube.com/get_video?video_id=%s&t=%s&fmt=%s", $swfArgs->{video_id}, $swfArgs->{t}, $self->fmt;
+	return sprintf "$video_url&fmt=%s", $self->fmt;
 }
 
 sub _get_swfArgs {
@@ -106,21 +122,11 @@ sub _get_swfArgs {
 sub _get_fmt {
 	my $self = shift;
 	my $swfArgs = shift;
-	my $fmt;
+	my $fmt = 0;
 	
 	if ($self->quality) {
 		$fmt = $self->qualiry =~ /^[0-9]+$/ ? $self->quality : $quality{$self->quality};
 		Carp::croak 'unknown quality (', $self->quality, '). you must be [normal|high|low] or any numbers' unless $fmt;
-	}
-	
-	else {
-		for my $map (split /,/, $swfArgs->{fmt_map}) {
-			next if $map =~ m|^(\d+)/(\d+)| and $2 eq '0';
-			$fmt = $1;
-			last;
-		}
-		
-		$fmt = $quality{normal} unless $fmt;
 	}
 	
 	return $fmt;
@@ -132,7 +138,7 @@ sub _get_filename {
 	
 	my $suffix = $self->fmt =~ /18|22/ ? '.mp4'
 	           : $self->fmt =~ /13|17/ ? '.3gp'
-	           :                   '.flv';
+	           :                         '.flv';
 	
 	return Encode::encode($self->encode, $title, sub {"U+%04X", shift}) . $suffix;
 }
