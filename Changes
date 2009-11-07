@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.06    Sun Nov  8 00:46:55 2009
+        - Youtube respond to changes in
+        
 0.05    Mon Oct 12 14:58:23 2009
         - Youtube respond to changes in
 
