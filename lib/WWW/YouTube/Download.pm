@@ -84,11 +84,11 @@ sub get_video_url {
 	
 	my $result = $self->wscraper->scrape($uri) or die "failed scraping $uri";
 	my $swfArgs = $self->_get_swfArgs($result);
-	$video_url = sprintf "http://www.youtube.com/get_video?video_id=%s&t=%s", $swfArgs->{video_id}, uri_unescape($swfArgs->{t});
+	$video_url = sprintf "http://www.youtube.com/get_video?video_id=%s&t=%s", $swfArgs->{video_id}, $swfArgs->{t};
 	
 	$self->fmt( $self->_get_fmt($swfArgs) );
 	unless ($self->fmt) {
-		for my $fmt ( sort { $b->[1] <=> $a->[1] } map { m{^(\d+)/(\d+)/}; [$1, $2] } split /,/ => uri_unescape($swfArgs->{fmt_map}) ) {
+		for my $fmt ( sort { $b->[1] <=> $a->[1] } map { m{^(\d+)/(\d+)/}; [$1, $2] } split /,/ => $swfArgs->{fmt_map} ) {
 #			printf "debug: %d / %d\n", $fmt->[0], $fmt->[1];
 			if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt->[0])) {
 				$self->fmt( $fmt->[0] );
@@ -119,8 +119,11 @@ sub _get_swfArgs {
 	
 	my $json;
 	for my $line (split qq{\n}, join q{}, @{$result->{scripts}}) {
-		if ($line =~ /^\s*var\s*swfArgs\s*=\s*({.*});/) {
-			$json = HTML::Entities::decode_entities($1);
+		# 2009/11初頭ぐらいからHTMLが変わったっぽい
+		#if ($line =~ /^\s*var\s*swfArgs\s*=\s*({.*});/) {
+		$line =~ s/&#39;/'/g;
+		if ($line =~ /'SWF_ARGS'\s*:\s*({.*})/) {
+			$json = uri_unescape HTML::Entities::decode_entities($1);
 			last;
 		}
 	}
