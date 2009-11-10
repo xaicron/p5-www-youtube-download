@@ -123,12 +123,18 @@ sub _get_swfArgs {
 		#if ($line =~ /^\s*var\s*swfArgs\s*=\s*({.*});/) {
 		$line =~ s/&#39;/'/g;
 		if ($line =~ /'SWF_ARGS'\s*:\s*({.*})/) {
-			$json = uri_unescape HTML::Entities::decode_entities($1);
+			$json = HTML::Entities::decode_entities($1);
 			last;
 		}
 	}
 	
-	return JSON::from_json $json or die 'JSON parse error';
+	my $data = JSON::from_json $json or die 'JSON parse error';
+	
+	for my $key (keys %$data) {
+		$data->{$key} = uri_unescape $data->{$key};
+	}
+	
+	return $data;
 }
 
 sub _get_fmt {
