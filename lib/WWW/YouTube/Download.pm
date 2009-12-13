@@ -30,6 +30,8 @@ has 'wscraper',   is => 'ro', isa => 'Web::Scraper',   default => sub {
 	};
 };
 
+no Any::Moose;
+
 my @fmt_list = qw(35 34 22 18 17 13 6 5);
 
 my %quality = (
