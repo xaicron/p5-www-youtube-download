@@ -165,7 +165,7 @@ __END__
 
 =head1 NAME
 
-WWW::YouTube::Download is a YouTube video download interface.
+WWW::YouTube::Download - Verry simpliy YouTube video download interface.
 
 =head1 SYNOPSIS
 
