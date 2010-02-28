@@ -124,14 +124,17 @@ sub _get_swfArgs {
     for my $line (split qq{\n}, join q{}, @{$result->{scripts}}) {
         $line =~ s/&#39;/'/g;
         if ($line =~ /'SWF_ARGS'\s*:\s*({.*})/) {
-            $json = uri_unescape HTML::Entities::decode_entities($1);
+            $json = HTML::Entities::decode_entities($1);
             last;
         }
     }
-    
     Carp::croak 'json part not found' unless $json;
     
     my $data = JSON::from_json $json or die 'JSON parse error';
+    
+    for my $key (keys %$data) {
+        $data->{$key} = uri_unescape $data->{$key};
+    }
     
     return $data;
 }
