@@ -24,10 +24,10 @@ has 'fmt',        is => 'rw', isa => 'Int';
 has 'encode',     is => 'rw', isa => 'Str',            default => 'utf8';
 has 'user_agent', is => 'rw', isa => 'LWP::UserAgent', default => sub { LWP::UserAgent->new() };
 has 'wscraper',   is => 'ro', isa => 'Web::Scraper',   default => sub {
-	scraper {
-		process '/html/head/script', 'scripts[]' => 'html';
-		process '//*[@id="watch-vid-title"]/h1', title => 'TEXT';
-	};
+    scraper {
+        process '/html/head/script', 'scripts[]' => 'html';
+        process '//*[@id="watch-vid-title"]/h1', title => 'TEXT';
+    };
 };
 
 no Any::Moose;
@@ -35,132 +35,132 @@ no Any::Moose;
 my @fmt_list = qw(35 34 22 18 17 13 6 5);
 
 my %quality = (
-	high    => '35',
-	low     => '6',
-	normal  => '18',
+    high    => '35',
+    low     => '6',
+    normal  => '18',
 );
 
 sub download {
-	my $self = shift;
-	my $video_id = shift || Carp::croak "Usage $self->download('[video_id|video_url]')";
-	my $cb = shift;
-	
-	$self->video_url( $self->get_video_url($video_id) );
-	
-	unless ($cb) {
-		open my $wfh, '>', $self->filename or die $self->filename, " $!";
-		binmode $wfh;
-		$cb = sub {
-			my ($chunk, $res, $proto) = @_;
-			print $wfh $chunk;
-			
-			if ($self->verbose) {
-				my $size = tell $wfh;
-				
-				if (my $total = $res->header('Content-Length')) {
-					printf "%d/%d (%f%%)\r", $size, $total, $size / $total * 100;
-				}
-				
-				else {
-					printf "%d/Unknown bytes\r", $size;
-				}
-			}
-		};
-	}
-	
-	my $res = $self->user_agent->get($self->video_url, ':content_cb' => $cb);
-	
-	Carp::croak 'Download failed: ', $res->status_line if $res->is_error;
+    my $self = shift;
+    my $video_id = shift || Carp::croak "Usage $self->download('[video_id|video_url]')";
+    my $cb = shift;
+    
+    $self->video_url( $self->get_video_url($video_id) );
+    
+    unless ($cb) {
+        open my $wfh, '>', $self->filename or die $self->filename, " $!";
+        binmode $wfh;
+        $cb = sub {
+            my ($chunk, $res, $proto) = @_;
+            print $wfh $chunk;
+            
+            if ($self->verbose) {
+                my $size = tell $wfh;
+                
+                if (my $total = $res->header('Content-Length')) {
+                    printf "%d/%d (%f%%)\r", $size, $total, $size / $total * 100;
+                }
+                
+                else {
+                    printf "%d/Unknown bytes\r", $size;
+                }
+            }
+        };
+    }
+    
+    my $res = $self->user_agent->get($self->video_url, ':content_cb' => $cb);
+    
+    Carp::croak 'Download failed: ', $res->status_line if $res->is_error;
 }
 
 sub get_video_url {
-	my $self = shift;
-	my $video_id = shift || Carp::croak "Usage $self->get_video_id('[video_id|video_url]')";
-	my $video_url;
-	
-	if ($video_id =~ /watch\?v=([^&]+)/) {
-		$video_id = $1;
-	}
-	
-	my $uri = URI->new("http://www.youtube.com/watch?v=$video_id") or die "$video_id error";
-	
-	my $result = $self->wscraper->scrape($uri) or die "failed scraping $uri";
-	my $swfArgs = $self->_get_swfArgs($result);
-	$video_url = sprintf "http://www.youtube.com/get_video?video_id=%s&t=%s", $swfArgs->{video_id}, $swfArgs->{t};
-	
-	$self->fmt( $self->_get_fmt($swfArgs) );
-	unless ($self->fmt) {
-		for my $fmt ( sort { $b->[1] <=> $a->[1] } map { m{^(\d+)/(\d+)/}; [$1, $2] } split /,/ => $swfArgs->{fmt_map} ) {
-#			printf "debug: %d / %d\n", $fmt->[0], $fmt->[1];
-			if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt->[0])) {
-				$self->fmt( $fmt->[0] );
-				last;
-			}
-		}
-	}
-	
-	unless ($self->fmt) {
-		for my $fmt (@fmt_list) {
-			if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt)) {
-				$self->fmt( $fmt );
-				last;
-			}
-		}
-	}
-	
-	unless ($self->filename) {
-		$self->filename( $self->_get_filename($result->{title}) );
-	}
-	
-	return sprintf "$video_url&fmt=%s", $self->fmt;
+    my $self = shift;
+    my $video_id = shift || Carp::croak "Usage $self->get_video_id('[video_id|video_url]')";
+    my $video_url;
+    
+    if ($video_id =~ /watch\?v=([^&]+)/) {
+        $video_id = $1;
+    }
+    
+    my $uri = URI->new("http://www.youtube.com/watch?v=$video_id") or die "$video_id error";
+    
+    my $result = $self->wscraper->scrape($uri) or die "failed scraping $uri";
+    my $swfArgs = $self->_get_swfArgs($result);
+    $video_url = sprintf "http://www.youtube.com/get_video?video_id=%s&t=%s", $swfArgs->{video_id}, $swfArgs->{t};
+    
+    $self->fmt( $self->_get_fmt($swfArgs) );
+    unless ($self->fmt) {
+        for my $fmt ( sort { $b->[1] <=> $a->[1] } map { m{^(\d+)/(\d+)/}; [$1, $2] } split /,/ => $swfArgs->{fmt_map} ) {
+#            printf "debug: %d / %d\n", $fmt->[0], $fmt->[1];
+            if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt->[0])) {
+                $self->fmt( $fmt->[0] );
+                last;
+            }
+        }
+    }
+    
+    unless ($self->fmt) {
+        for my $fmt (@fmt_list) {
+            if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt)) {
+                $self->fmt( $fmt );
+                last;
+            }
+        }
+    }
+    
+    unless ($self->filename) {
+        $self->filename( $self->_get_filename($result->{title}) );
+    }
+    
+    return sprintf "$video_url&fmt=%s", $self->fmt;
 }
 
 sub _get_swfArgs {
-	my $self = shift;
-	my $result = shift;
-	
-	my $json;
-	for my $line (split qq{\n}, join q{}, @{$result->{scripts}}) {
-		# 2009/11初頭ぐらいからHTMLが変わったっぽい
-		#if ($line =~ /^\s*var\s*swfArgs\s*=\s*({.*});/) {
-		$line =~ s/&#39;/'/g;
-		if ($line =~ /'SWF_ARGS'\s*:\s*({.*})/) {
-			$json = HTML::Entities::decode_entities($1);
-			last;
-		}
-	}
-	
-	my $data = JSON::from_json $json or die 'JSON parse error';
-	
-	for my $key (keys %$data) {
-		$data->{$key} = uri_unescape $data->{$key};
-	}
-	
-	return $data;
+    my $self = shift;
+    my $result = shift;
+    
+    my $json;
+    for my $line (split qq{\n}, join q{}, @{$result->{scripts}}) {
+        # 2009/11初頭ぐらいからHTMLが変わったっぽい
+        #if ($line =~ /^\s*var\s*swfArgs\s*=\s*({.*});/) {
+        $line =~ s/&#39;/'/g;
+        if ($line =~ /'SWF_ARGS'\s*:\s*({.*})/) {
+            $json = HTML::Entities::decode_entities($1);
+            last;
+        }
+    }
+    
+    my $data = JSON::from_json $json or die 'JSON parse error';
+    
+    for my $key (keys %$data) {
+        $data->{$key} = uri_unescape $data->{$key};
+    }
+    
+    return $data;
 }
 
 sub _get_fmt {
-	my $self = shift;
-	my $swfArgs = shift;
-	my $fmt = 0;
-	
-	if ($self->quality) {
-		$fmt = $self->qualiry =~ /^[0-9]+$/ ? $self->quality : $quality{$self->quality};
-		Carp::croak 'unknown quality (', $self->quality, '). you must be [normal|high|low] or any numbers' unless $fmt;
-	}
-	
-	return $fmt;
+    my $self = shift;
+    my $swfArgs = shift;
+    my $fmt = 0;
+    
+    if ($self->quality) {
+        $fmt = $self->qualiry =~ /^[0-9]+$/ ? $self->quality : $quality{$self->quality};
+        Carp::croak 'unknown quality (', $self->quality, '). you must be [normal|high|low] or any numbers' unless $fmt;
+    }
+    
+    return $fmt;
 }
 
 sub _get_filename {
-	my $self = shift;
-	my $title = shift;
-	
-	my $suffix = $self->fmt =~ /18|22/ ? '.mp4'
-	           : $self->fmt =~ /13|17/ ? '.3gp'
-	           :                         '.flv';
-	
-	return Encode::encode($self->encode, $title, sub {"U+%04X", shift}) . $suffix;
+    my $self = shift;
+    my $title = shift;
+    
+    my $suffix = $self->fmt =~ /18|22/ ? '.mp4'
+               : $self->fmt =~ /13|17/ ? '.3gp'
+               :                         '.flv';
+    
+    return Encode::encode($self->encode, $title, sub {"U+%04X", shift}) . $suffix;
 }
 
 1;
