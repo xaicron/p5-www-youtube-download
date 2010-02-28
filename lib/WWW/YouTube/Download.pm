@@ -32,9 +32,10 @@ has '_scraper',   is => 'ro', isa => 'Web::Scraper',   default => sub {
 
 no Any::Moose;
 
-my @fmt_list = qw(35 34 22 18 17 13 6 5);
+my @fmt_list = qw(37 35 34 22 18 17 13 6 5);
 
 my %quality = (
+    full_hd => '37',
     high    => '35',
     low     => '6',
     normal  => '18',
@@ -156,9 +157,9 @@ sub _get_filename {
     my $self = shift;
     my $title = shift;
     
-    my $suffix = $self->fmt =~ /18|22/ ? '.mp4'
-               : $self->fmt =~ /13|17/ ? '.3gp'
-               :                         '.flv';
+    my $suffix = $self->fmt =~ /18|22|37/ ? '.mp4'
+               : $self->fmt =~ /13|17/    ? '.3gp'
+               :                            '.flv';
     
     return Encode::encode($self->encode, $title, sub {"U+%04X", shift}) . $suffix;
 }
