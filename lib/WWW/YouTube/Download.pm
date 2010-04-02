@@ -4,67 +4,56 @@ use strict;
 use warnings;
 use 5.008001;
 
-our $VERSION = '0.07';
+our $VERSION = '0.10';
 
-use Encode ();
-use JSON ();
 use Carp ();
 use URI ();
-use Web::Scraper;
-use LWP::Simple ();
 use LWP::UserAgent;
 use URI::Escape qw/uri_unescape/;
 
-use Any::Moose;
-has 'quality',    is => 'rw', isa => 'Str';
-has 'filename',   is => 'rw', isa => 'Str';
-has 'verbose',    is => 'rw', isa => 'Int';
-has 'video_url',  is => 'rw', isa => 'Str';
-has 'fmt',        is => 'rw', isa => 'Int';
-has 'encode',     is => 'rw', isa => 'Str',            default => 'utf8';
-has 'user_agent', is => 'rw', isa => 'LWP::UserAgent', default => sub { LWP::UserAgent->new() };
-has '_scraper',   is => 'ro', isa => 'Web::Scraper',   default => sub {
-    scraper {
-        process '/html/head/script', 'scripts[]' => 'html';
-        process '//*[@id="watch-vid-title"]/h1', title => 'TEXT';
-    };
-};
+use constant DEFAULT_FMT => 18;
 
-no Any::Moose;
+our $ua = LWP::UserAgent->new;
 
-my @fmt_list = qw(37 35 34 22 18 17 13 6 5);
+my $info = 'http://www.youtube.com/get_video_info?video_id=';
+my $down = "http://www.youtube.com/get_video?video_id=%s&t=%s";
 
-my %quality = (
-    full_hd => '37',
-    high    => '35',
-    low     => '6',
-    normal  => '18',
-);
+sub new {
+    my $class = shift;
+    bless { @_ }, $class;
+}
 
 sub download {
     my $self = shift;
     my $video_id = shift || Carp::croak "Usage $self->download('[video_id|video_url]')";
-    my $cb = shift;
+    my $args = shift || {}; # fmt / file_name
     
-    $self->video_url( $self->get_video_url($video_id) );
+    my $data = $self->prepare_download($video_id);
     
-    $cb = $self->_default_cb unless ref $cb eq 'CODE';
+    my $fmt = $args->{fmt} || $data->{fmt};
+    my $video_url = sprintf "%s&fmt=%d", $data->{video_url}, $fmt;
+    my $file_name = $args->{file_name} || $data->{video_id} . _suffix($fmt);
     
-    my $res = $self->user_agent->get($self->video_url, ':content_cb' => $cb);
+    $args->{cb} = $self->_default_cb({
+        file_name => $file_name,
+        verbose   => $args->{verbose},
+    }) unless ref $args->{cb} eq 'CODE';
     
+    my $res = $ua->get($video_url, ':content_cb' => $args->{cb});
     Carp::croak 'Download failed: ', $res->status_line if $res->is_error;
 }
 
 sub _default_cb {
     my $self = shift;
+    my $args = shift;
     
-    open my $wfh, '>', $self->filename or die $self->filename, " $!";
+    open my $wfh, '>', $args->{file_name} or die $args->{file_name}, " $!";
     binmode $wfh;
     return sub {
         my ($chunk, $res, $proto) = @_;
         print $wfh $chunk; # write file
         
-        if ($self->verbose) {
+        if ($self->{verbose} || $args->{verbose}) {
             my $size = tell $wfh;
             if (my $total = $res->header('Content-Length')) {
                 printf "%d/%d (%f%%)\r", $size, $total, $size / $total * 100;
@@ -78,90 +67,72 @@ sub _default_cb {
 
 sub get_video_url {
     my $self = shift;
-    my $video_id = shift || Carp::croak "Usage $self->get_video_id('[video_id|video_url]')";
-    my $video_url;
+    my $video_id = shift || Carp::croak "Usage $self->get_video_url('[video_id|watch_url]')";
     
-    if ($video_id =~ /watch\?v=([^&]+)/) {
-        $video_id = $1;
-    }
+    my $data = $self->prepare_download($video_id);
     
-    my $uri = URI->new("http://www.youtube.com/watch?v=$video_id") or die "$video_id error";
-    
-    my $result = $self->_scraper->scrape($uri) or die "failed scraping $uri";
-    my $swfArgs = $self->_get_swfArgs($result);
-    $video_url = sprintf "http://www.youtube.com/get_video?video_id=%s&t=%s", $swfArgs->{video_id}, $swfArgs->{t};
-    
-    $self->fmt( $self->_get_fmt($swfArgs) );
-    unless ($self->fmt) {
-        for my $fmt ( sort { $b->[1] <=> $a->[1] } map { m{^(\d+)/(\d+)/}; [$1, $2] } split /,/ => $swfArgs->{fmt_map} ) {
-            if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt->[0])) {
-                $self->fmt( $fmt->[0] );
-                last;
-            }
-        }
-    }
-    
-    unless ($self->fmt) {
-        for my $fmt (@fmt_list) {
-            if (LWP::Simple::head(sprintf "$video_url&fmt=%s", $fmt)) {
-                $self->fmt( $fmt );
-                last;
-            }
-        }
-    }
-    
-    unless ($self->filename) {
-        $self->filename( $self->_get_filename($result->{title}) );
-    }
-    
-    return sprintf "$video_url&fmt=%s", $self->fmt;
+    return $data->{video_url};
 }
 
-sub _get_swfArgs {
+sub get_title {
     my $self = shift;
-    my $result = shift;
+    my $video_id = shift || Carp::croak "Usage $self->get_title('[video_id|watch_url]')";
     
-    my $json;
-    for my $line (split qq{\n}, join q{}, @{$result->{scripts}}) {
-        $line =~ s/&#39;/'/g;
-        if ($line =~ /'SWF_ARGS'\s*:\s*({.*})/) {
-            $json = HTML::Entities::decode_entities($1);
-            last;
+    my $data = $self->prepare_download($video_id);
+    
+    return $data->{title};
+}
+
+sub get_fmt {
+    my $self = shift;
+    my $video_id = shift || Carp::croak "Usage $self->get_fmt('[video_id|watch_url]')";
+    
+    my $data = $self->prepare_download($video_id);
+    
+    return $data->{fmt};
+}
+
+sub prepare_download {
+    my $self = shift;
+    my $video_id = shift || Carp::croak "Usage $self->prepare_download('[video_id|watch_url]')";
+    $video_id = _video_id($video_id);
+    
+    return $self->{cache}{$video_id} if ref $self->{cache}{$video_id} eq 'HASH';
+    
+    my $res = $ua->get("$info$video_id");
+    die "get info failed. status: ", $res->status_line if $res->is_error;
+    
+    my $param = +{};
+    for my $p (split '&', uri_unescape $res->content) {
+        my ($key, $value) = $p =~ m/^(\w+)=(.*)/;
+        if ($key eq 'itag' && $param->{$key}) {
+            $param->{$key} = $value if $value > $param->{$key};
+            next;
         }
-    }
-    Carp::croak 'json part not found' unless $json;
-    
-    my $data = JSON::from_json $json or die 'JSON parse error';
-    
-    for my $key (keys %$data) {
-        $data->{$key} = uri_unescape $data->{$key};
+        $param->{$key} = $value;
     }
     
-    return $data;
+    return $self->{cache}{$video_id} = +{
+        video_id  => $video_id,
+        video_url => sprintf($down, $video_id, $param->{token}),
+        title     => $param->{title},
+        fmt       => $param->{itag} || DEFAULT_FMT,
+        suffix    => _suffix($param->{itag}),
+    };
 }
 
-sub _get_fmt {
-    my $self = shift;
-    my $swfArgs = shift;
-    my $fmt = 0;
-    
-    if ($self->quality) {
-        $fmt = $self->qualiry =~ /^[0-9]+$/ ? $self->quality : $quality{$self->quality};
-        Carp::croak 'unknown quality (', $self->quality, '). you must be [normal|high|low] or any numbers' unless $fmt;
-    }
-    
-    return $fmt;
+sub _suffix {
+    my $fmt = shift;
+    return $fmt =~ /18|22|37/ ? '.mp4'
+         : $fmt =~ /13|17/    ? '.3gp'
+         :                      '.flv'
+    ;
 }
 
-sub _get_filename {
-    my $self = shift;
-    my $title = shift;
-    
-    my $suffix = $self->fmt =~ /18|22|37/ ? '.mp4'
-               : $self->fmt =~ /13|17/    ? '.3gp'
-               :                            '.flv';
-    
-    return Encode::encode($self->encode, $title, sub {"U+%04X", shift}) . $suffix;
+sub _video_id {
+    my $video_id = shift;
+    $video_id =~ /watch\?v=([^&]+)/;
+    return $1 || $video_id;
 }
 
 1;
@@ -175,12 +146,16 @@ WWW::YouTube::Download - Verry simpliy YouTube video download interface.
 
   use WWW::YouTube::Download;
   
-  my $client = WWW::YouTube::Download->new();
+  my $client = WWW::YouTube::Download->new;
   $client->download($video_id);
+  
+  my $video_url = $client->get_video_url($video_id);
+  my $title     = $client->get_title($video_id);     # maybe encoded utf8 string.
+  my $fmt       = $client->get_fmt($video_id);       # maybe highest quality.
 
 =head1 DESCRIPTION
 
-WWW::YouTube::Download is a YouTube video download interface.
+WWW::YouTube::Download is a download video from YouTube video.
 
 =head1 METHODS
 
@@ -188,26 +163,40 @@ WWW::YouTube::Download is a YouTube video download interface.
 
 =item B<new()>
 
-  $client = WWW::YouTube::Download->new(
-      encode   => $enc,      # default utf8
-      filename => $filename, # default video title + suffix
-      quality  => 'low',     # default auto
-  );
+  $client = WWW::YouTube::Download->new;
 
-=item B<download()>
+=item B<download($video_id [, \%args, \&callback])>
 
   $client->download($video_id);
-  $client->download($video_id, \&callback);
+  $client->download($video_id, {
+      fmt       => 37,
+      file_name => 'sample.mp4', # save file name
+  });
+  $client->download($video_id, \%args, \&callback);
+  
+\&callback details SEE ALSO L<LWP::UserAgent> ':content_db'.
 
-=item B<get_video_url()>
+=item B<get_video_url($video_id)>
 
-  my $url = $client->get_video_url();
+  my $url = $client->get_video_url($video_id);
+
+=item B<get_title($video_id)>
+
+  my $url = $client->get_title($video_id);
+
+=item B<get_fmt($video_id)>
+
+  my $url = $client->get_fmt($video_id);
 
 =back
 
 =head1 AUTHOR
 
-Yuji Shimada E<lt>xaicron {at} gmail.comE<gt>
+Yuji Shimada
+
+=head1 CONTRIBUTORS
+
+yusukebe
 
 =head1 SEE ALSO
 
