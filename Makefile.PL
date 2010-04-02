@@ -2,9 +2,7 @@ use inc::Module::Install;
 name 'WWW-YouTube-Download';
 all_from 'lib/WWW/YouTube/Download.pm';
 
-requires 'JSON';
-requires 'Web::Scraper';
-requires 'Any::Moose';
+requires 'LWP';
 requires 'URI::Escape';
 
 tests 't/*.t';
