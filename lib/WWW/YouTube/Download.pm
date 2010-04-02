@@ -23,10 +23,21 @@ sub new {
     bless { @_ }, $class;
 }
 
+for my $name (qw[video_id video_url title fmt suffix]) {
+    no strict 'refs';
+    *{"get_$name"} = sub {
+        my $self = shift;
+        my $video_id = shift || Carp::croak "Usage: $self->get_$name(\$video_id|\$watch_url)";
+        
+        my $data = $self->prepare_download($video_id);
+        return $data->{$name};
+    };
+}
+
 sub download {
     my $self = shift;
-    my $video_id = shift || Carp::croak "Usage $self->download('[video_id|video_url]')";
-    my $args = shift || {}; # fmt / file_name
+    my $video_id = shift || Carp::croak "Usage: $self->download('[video_id|video_url]')";
+    my $args = shift || {};
     
     my $data = $self->prepare_download($video_id);
     
@@ -65,46 +76,25 @@ sub _default_cb {
     };
 }
 
-sub get_video_url {
-    my $self = shift;
-    my $video_id = shift || Carp::croak "Usage $self->get_video_url('[video_id|watch_url]')";
-    
-    my $data = $self->prepare_download($video_id);
-    
-    return $data->{video_url};
-}
-
-sub get_title {
-    my $self = shift;
-    my $video_id = shift || Carp::croak "Usage $self->get_title('[video_id|watch_url]')";
-    
-    my $data = $self->prepare_download($video_id);
-    
-    return $data->{title};
-}
-
-sub get_fmt {
-    my $self = shift;
-    my $video_id = shift || Carp::croak "Usage $self->get_fmt('[video_id|watch_url]')";
-    
-    my $data = $self->prepare_download($video_id);
-    
-    return $data->{fmt};
-}
-
 sub prepare_download {
     my $self = shift;
-    my $video_id = shift || Carp::croak "Usage $self->prepare_download('[video_id|watch_url]')";
+    my $video_id = shift || Carp::croak "Usage: $self->prepare_download('[video_id|watch_url]')";
     $video_id = _video_id($video_id);
     
     return $self->{cache}{$video_id} if ref $self->{cache}{$video_id} eq 'HASH';
     
     my $res = $ua->get("$info$video_id");
-    die "get info failed. status: ", $res->status_line if $res->is_error;
+    
+    local $Carp::CarpLevel = 1;
+    Carp::croak "get info failed. status: ", $res->status_line if $res->is_error;
     
     my $param = +{};
     for my $p (split '&', uri_unescape $res->content) {
         my ($key, $value) = $p =~ m/^(\w+)=(.*)/;
+        if ($key eq 'status' && $value eq 'fail') {
+            Carp::croak "$video_id not found";
+        }
+        
         if ($key eq 'itag' && $param->{$key}) {
             $param->{$key} = $value if $value > $param->{$key};
             next;
@@ -165,28 +155,24 @@ WWW::YouTube::Download is a download video from YouTube video.
 
   $client = WWW::YouTube::Download->new;
 
-=item B<download($video_id [, \%args, \&callback])>
+=item B<download($video_id [, \%args])>
 
   $client->download($video_id);
   $client->download($video_id, {
       fmt       => 37,
       file_name => 'sample.mp4', # save file name
   });
-  $client->download($video_id, \%args, \&callback);
+  $client->download($video_id, {
+      cb => \&callback,
+  });
   
-\&callback details SEE ALSO L<LWP::UserAgent> ':content_db'.
+B<\&callback> details SEE ALSO L<LWP::UserAgent> ':content_db'.
 
 =item B<get_video_url($video_id)>
 
-  my $url = $client->get_video_url($video_id);
-
 =item B<get_title($video_id)>
 
-  my $url = $client->get_title($video_id);
-
 =item B<get_fmt($video_id)>
-
-  my $url = $client->get_fmt($video_id);
 
 =back
 
