@@ -13,14 +13,14 @@ use URI::Escape qw/uri_unescape/;
 
 use constant DEFAULT_FMT => 18;
 
-our $ua = LWP::UserAgent->new;
+my $ua = LWP::UserAgent->new;
 
 my $info = 'http://www.youtube.com/get_video_info?video_id=';
 my $down = "http://www.youtube.com/get_video?video_id=%s&t=%s";
 
 sub new {
     my $class = shift;
-    bless { @_ }, $class;
+    bless { ua => $ua, @_ }, $class;
 }
 
 for my $name (qw[video_id video_url title fmt suffix]) {
@@ -50,7 +50,7 @@ sub download {
         verbose   => $args->{verbose},
     }) unless ref $args->{cb} eq 'CODE';
     
-    my $res = $ua->get($video_url, ':content_cb' => $args->{cb});
+    my $res = $self->ua->get($video_url, ':content_cb' => $args->{cb});
     Carp::croak 'Download failed: ', $res->status_line if $res->is_error;
 }
 
@@ -83,7 +83,7 @@ sub prepare_download {
     
     return $self->{cache}{$video_id} if ref $self->{cache}{$video_id} eq 'HASH';
     
-    my $res = $ua->get("$info$video_id");
+    my $res = $self->ua->get("$info$video_id");
     
     local $Carp::CarpLevel = 1;
     Carp::croak "get info failed. status: ", $res->status_line if $res->is_error;
@@ -109,6 +109,13 @@ sub prepare_download {
         fmt       => $param->{itag} || DEFAULT_FMT,
         suffix    => _suffix($param->{itag}),
     };
+}
+
+sub ua {
+    my $self = shift;
+    my $ua = shift || return $self->{ua};
+    Carp::croak "Usage: $self->ua(\$LWP_LIKE_OBJECT)" unless eval { $ua->isa('LWP::UserAgent') };
+    $self->{ua} = $ua;
 }
 
 sub _suffix {
@@ -167,6 +174,11 @@ WWW::YouTube::Download is a download video from YouTube video.
   });
   
 B<\&callback> details SEE ALSO L<LWP::UserAgent> ':content_db'.
+
+=item B<ua([$ua])>
+
+  $self->ua->agent();
+  $self->ua($LWP_LIKE_OBJECT);
 
 =item B<get_video_url($video_id)>
 
