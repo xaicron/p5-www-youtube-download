@@ -6,6 +6,7 @@ use 5.008001;
 
 our $VERSION = '0.10';
 
+use CGI ();
 use Carp ();
 use URI ();
 use LWP::UserAgent;
@@ -88,26 +89,17 @@ sub prepare_download {
     local $Carp::CarpLevel = 1;
     Carp::croak "get info failed. status: ", $res->status_line if $res->is_error;
     
-    my $param = +{};
-    for my $p (split '&', uri_unescape $res->content) {
-        my ($key, $value) = $p =~ m/^(\w+)=(.*)/;
-        if ($key eq 'status' && $value eq 'fail') {
-            Carp::croak "$video_id not found";
-        }
-        
-        if ($key eq 'itag' && $param->{$key}) {
-            $param->{$key} = $value if $value > $param->{$key};
-            next;
-        }
-        $param->{$key} = $value;
-    }
+    my $params = CGI->new(uri_unescape $res->content);
+    Carp::croak "$video_id not found" if $params->param('status') ne 'ok';
+    
+    my $fmt = ( sort { $b <=> $a } $params->param('itag') )[0] || DEFAULT_FMT;
     
     return $self->{cache}{$video_id} = +{
         video_id  => $video_id,
-        video_url => sprintf($down, $video_id, $param->{token}),
-        title     => $param->{title},
-        fmt       => $param->{itag} || DEFAULT_FMT,
-        suffix    => _suffix($param->{itag}),
+        video_url => sprintf($down, $video_id, $params->param('token')),
+        title     => $params->param('title'),
+        fmt       => $fmt,
+        suffix    => _suffix($fmt),
     };
 }
 

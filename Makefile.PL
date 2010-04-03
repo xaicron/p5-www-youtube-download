@@ -2,6 +2,7 @@ use inc::Module::Install;
 name 'WWW-YouTube-Download';
 all_from 'lib/WWW/YouTube/Download.pm';
 
+requires 'CGI';
 requires 'LWP';
 requires 'URI::Escape';
 
