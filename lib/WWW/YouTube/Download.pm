@@ -24,7 +24,7 @@ sub new {
     bless { ua => $ua, @_ }, $class;
 }
 
-for my $name (qw[video_id video_url title fmt suffix]) {
+for my $name (qw[video_id video_url title fmt fmt_list suffix]) {
     no strict 'refs';
     *{"get_$name"} = sub {
         my $self = shift;
@@ -92,13 +92,15 @@ sub prepare_download {
     my $params = CGI->new(uri_unescape $res->content);
     Carp::croak "$video_id not found" if $params->param('status') ne 'ok';
     
-    my $fmt = ( sort { $b <=> $a } $params->param('itag') )[0] || DEFAULT_FMT;
+    my $fmt_list = [ do { my %h; sort { $b <=> $a } grep { !$h{$_}++ } ($params->param('itag'), DEFAULT_FMT) } ];
+    my $fmt = $fmt_list->[0];
     
     return $self->{cache}{$video_id} = +{
         video_id  => $video_id,
         video_url => sprintf($down, $video_id, $params->param('token')),
         title     => $params->param('title'),
         fmt       => $fmt,
+        fmt_list  => $fmt_list,
         suffix    => _suffix($fmt),
     };
 }

@@ -21,6 +21,7 @@ is_deeply $data, +{
     video_url => "http://www.youtube.com/get_video?video_id=$video_id&t=TOKEN",
     title     => 'Sample',
     fmt       => '37',
+    fmt_list  => [qw/37 35 34 22 18 5/],
     suffix    => '.mp4',
 };
 
