@@ -146,7 +146,7 @@ WWW::YouTube::Download - Verry simpliy YouTube video download interface.
 
 =head1 DESCRIPTION
 
-WWW::YouTube::Download is a download video from YouTube video.
+WWW::YouTube::Download is a download video from YouTube.
 
 =head1 METHODS
 
