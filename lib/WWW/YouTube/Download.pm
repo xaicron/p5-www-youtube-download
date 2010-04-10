@@ -20,7 +20,7 @@ my $down = "http://www.youtube.com/get_video?video_id=%s&t=%s";
 sub new {
     my $class = shift;
     my %args = @_;
-    $args->{ua} = LWP::UserAgent->new unless exists $args->{ua};
+    $args{ua} = LWP::UserAgent->new unless exists $args{ua};
     bless \%args, $class;
 }
 
