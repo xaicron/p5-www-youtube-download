@@ -14,14 +14,14 @@ use URI::Escape qw/uri_unescape/;
 
 use constant DEFAULT_FMT => 18;
 
-my $ua = LWP::UserAgent->new;
-
 my $info = 'http://www.youtube.com/get_video_info?video_id=';
 my $down = "http://www.youtube.com/get_video?video_id=%s&t=%s";
 
 sub new {
     my $class = shift;
-    bless { ua => $ua, @_ }, $class;
+    my %args = @_;
+    $args->{ua} = LWP::UserAgent->new unless exists $args->{ua};
+    bless \%args, $class;
 }
 
 for my $name (qw[video_id video_url title fmt fmt_list suffix]) {
