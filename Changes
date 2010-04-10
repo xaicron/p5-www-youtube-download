@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.13    Sat Apr 10 18:20:05 2010
+        - Each instance to create a LWP::UserAgent. # thx kuniyoshi
+
 0.12    Sat Apr  3 16:06:33 2010
         - upload miss X(
 
