@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 use CGI ();
 use Carp ();

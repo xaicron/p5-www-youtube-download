@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.14    Fri May  7 02:50:42 2010
+        - typo fix
+        - wrote pod
+
 0.13    Sat Apr 10 18:20:05 2010
         - Each instance to create a LWP::UserAgent. # thx kuniyoshi
 
