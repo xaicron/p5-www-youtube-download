@@ -156,6 +156,8 @@ WWW::YouTube::Download is a download video from YouTube.
 
   $client = WWW::YouTube::Download->new;
 
+Creates a WWW::YouTube::Donwload instance.
+
 =item B<download($video_id [, \%args])>
 
   $client->download($video_id);
@@ -166,13 +168,17 @@ WWW::YouTube::Download is a download video from YouTube.
   $client->download($video_id, {
       cb => \&callback,
   });
-  
-B<\&callback> details SEE ALSO L<LWP::UserAgent> ':content_db'.
+
+Download the video file.
+The first parameter is passed to YouTube video url.
+B<\&callback> details SEE ALSO L<LWP::UserAgent> ':content_cb'.
 
 =item B<ua([$ua])>
 
   $self->ua->agent();
   $self->ua($LWP_LIKE_OBJECT);
+
+Sets and gets LWP::UserAgent object.
 
 =item B<get_video_url($video_id)>
 
@@ -191,6 +197,8 @@ Yuji Shimada
 yusukebe
 
 =head1 SEE ALSO
+
+L<WWW::NicoVideo::Download>
 
 =head1 LICENSE
 
