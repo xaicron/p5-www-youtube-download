@@ -18,7 +18,7 @@ my $client = new_ok 'WWW::YouTube::Download';
 ok my $data = $client->prepare_download($video_id);
 is_deeply $data, +{
     video_id  => $video_id,
-    video_url => "http://www.youtube.com/get_video?video_id=$video_id&t=TOKEN",
+    video_url => "http://www.youtube.com/get_video?asv=2&video_id=$video_id&t=TOKEN",
     title     => 'Sample',
     fmt       => '37',
     fmt_list  => [qw/37 35 34 22 18 5/],
