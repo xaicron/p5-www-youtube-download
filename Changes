@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.16    Sun Oct 17 18:17:57 2010
+        - Required Text::More 0.96 later
+        - fixed POD spell miss
+
 0.15    Wed Aug 11 00:14:53 2010
         - YouTube's API has changed so I fixed it. (reported by Bruce David)
 
