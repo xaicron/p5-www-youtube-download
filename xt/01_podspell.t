@@ -31,3 +31,6 @@ __DATA__
 Yuji Shimada
 xaicron {at} gmail.com
 WWW::YouTube::Download
+yusukebe:
+url
+simply
