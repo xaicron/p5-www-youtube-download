@@ -5,6 +5,7 @@ all_from 'lib/WWW/YouTube/Download.pm';
 requires 'CGI';
 requires 'LWP';
 requires 'URI::Escape';
+requires 'JSON';
 
 tests 't/*.t';
 author_tests 'xt';

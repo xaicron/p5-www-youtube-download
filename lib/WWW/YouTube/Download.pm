@@ -11,11 +11,12 @@ use Carp ();
 use URI ();
 use LWP::UserAgent;
 use URI::Escape qw/uri_unescape/;
+use JSON;
 
 use constant DEFAULT_FMT => 18;
 
-my $info = 'http://www.youtube.com/get_video_info?video_id=';
-my $down = "http://www.youtube.com/get_video?asv=2&video_id=%s&t=%s";
+my $base_url = 'http://www.youtube.com/watch?v=';
+my $info     = 'http://www.youtube.com/get_video_info?video_id=';
 
 sub new {
     my $class = shift;
@@ -42,8 +43,8 @@ sub download {
 
     my $data = $self->prepare_download($video_id);
 
-    my $fmt = $args->{fmt} || $data->{fmt};
-    my $video_url = sprintf "%s&fmt=%d", $data->{video_url}, $fmt;
+    my $fmt = $args->{fmt} || $data->{fmt} || DEFAULT_FMT;
+    my $video_url = $data->{video_url_map}{$fmt}{url} || Carp::croak "this video has not supported fmt: $fmt";
     my $file_name = $args->{file_name} || $data->{video_id} . _suffix($fmt);
 
     $args->{cb} = $self->_default_cb({
@@ -52,7 +53,7 @@ sub download {
     }) unless ref $args->{cb} eq 'CODE';
 
     my $res = $self->ua->get($video_url, ':content_cb' => $args->{cb});
-    Carp::croak 'Download failed: ', $res->status_line if $res->is_error;
+    Carp::croak '!! $video_id download failed: ', $res->status_line if $res->is_error;
 }
 
 sub _default_cb {
@@ -84,25 +85,117 @@ sub prepare_download {
 
     return $self->{cache}{$video_id} if ref $self->{cache}{$video_id} eq 'HASH';
 
-    my $res = $self->ua->get("$info$video_id");
+    local $Carp::CarpLevel = $Carp::CarpLevel + 1;
 
-    local $Carp::CarpLevel = 1;
-    Carp::croak "get info failed. status: ", $res->status_line if $res->is_error;
+    my $params        = $self->_get_info($video_id);
+    my $video_url_map = $self->_get_video_url_map($video_id);
+
+    my $fmt_list = [];
+    my $sorted = [
+        map {
+            push @$fmt_list, $_->[0]->{fmt};
+            $_->[0]
+        } sort {
+            $b->[1] <=> $a->[1]
+        } map {
+            my $resolution = $_->{resolution};
+            $resolution =~ s/(\d+)x(\d+)/$1 * $2/e;
+            [ $_, $resolution ]
+        } values %$video_url_map,
+    ];
+
+    my $hq_data = $sorted->[0];
+
+    return $self->{cache}{$video_id} = {
+        video_id      => $video_id,
+        video_url     => $hq_data->{url},
+        title         => $params->param('title'),
+        video_url_map => $video_url_map,
+        fmt           => $hq_data->{fmt},
+        fmt_lsit      => $fmt_list,
+        suffix        => $hq_data->{suffix},
+    };
+}
+
+sub _get_info {
+    my ($self, $video_id) = @_;
+
+    local $Carp::CarpLevel = $Carp::CarpLevel + 1;
+
+    my $url = "$info$video_id";
+    my $res = $self->ua->get($url);
+    Carp::croak "GET $url failed. status: ", $res->status_line if $res->is_error;
 
     my $params = CGI->new(uri_unescape $res->content);
     Carp::croak "$video_id not found" if $params->param('status') ne 'ok';
 
-    my $fmt_list = [ do { my %h; sort { $b <=> $a } grep { !$h{$_}++ } ($params->param('itag'), DEFAULT_FMT) } ];
-    my $fmt = $fmt_list->[0];
+    return $params;
+}
 
-    return $self->{cache}{$video_id} = +{
-        video_id  => $video_id,
-        video_url => sprintf($down, $video_id, $params->param('token')),
-        title     => $params->param('title'),
-        fmt       => $fmt,
-        fmt_list  => $fmt_list,
-        suffix    => _suffix($fmt),
+sub _get_video_url_map {
+    my ($self, $video_id) = @_;
+
+    local $Carp::CarpLevel = $Carp::CarpLevel + 1;
+
+    my $args        = $self->_get_args($video_id);
+    my $fmt_url_map = _parse_fmt_url_map($args->{fmt_url_map});
+    my $fmt_map     = _parse_fmt_map($args->{fmt_map});
+
+    my $video_url_map = +{
+        map {
+            $_->{fmt} => $_,
+        } map +{
+            fmt        => $_,
+            resolution => $fmt_map->{$_},
+            url        => $fmt_url_map->{$_},
+            suffix     => _suffix($_),
+        }, keys %$fmt_map
     };
+
+    return $video_url_map;
+}
+
+sub _get_args {
+    my ($self, $video_id) = @_;
+
+    local $Carp::CarpLevel = $Carp::CarpLevel + 1;
+
+    my $url = "$base_url$video_id";
+    my $res = $self->ua->get($url);
+    Carp::croak "GET $url failed. status: ", $res->status_line if $res->is_error;
+
+    my $data;
+    for (split "\n", $res->content) {
+        if ($_ && /videoplayback/ && /signature/ && !/HTML/) {
+            my ($json) = $_ =~ /^[^{]+(.*)[^}]+$/;
+            $data = JSON->new->utf8(1)->decode($json);
+            last;
+        }
+    }
+
+    return $data->{args};
+}
+
+sub _parse_fmt_url_map {
+    my $param = shift;
+    my $fmt_url_map = {};
+    for my $stuff (split ',', $param) {
+        my ($fmt, $playback_url) = split '\|', $stuff, 2;
+        $fmt_url_map->{$fmt} = $playback_url;
+    }
+
+    return $fmt_url_map;
+}
+
+sub _parse_fmt_map {
+    my $param = shift;
+    my $fmt_map = {};
+    for my $stuff (split ',', $param) {
+        my ($fmt, $resolution) = split '/', $stuff;
+        $fmt_map->{$fmt} = $resolution;
+    }
+
+    return $fmt_map;
 }
 
 sub ua {
