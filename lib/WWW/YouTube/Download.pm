@@ -29,7 +29,7 @@ for my $name (qw[video_id video_url title fmt fmt_list suffix]) {
     *{"get_$name"} = sub {
         my $self = shift;
         my $video_id = shift || Carp::croak "Usage: $self->get_$name(\$video_id|\$watch_url)";
-        
+
         my $data = $self->prepare_download($video_id);
         return $data->{$name};
     };
@@ -39,18 +39,18 @@ sub download {
     my $self = shift;
     my $video_id = shift || Carp::croak "Usage: $self->download('[video_id|video_url]')";
     my $args = shift || {};
-    
+
     my $data = $self->prepare_download($video_id);
-    
+
     my $fmt = $args->{fmt} || $data->{fmt};
     my $video_url = sprintf "%s&fmt=%d", $data->{video_url}, $fmt;
     my $file_name = $args->{file_name} || $data->{video_id} . _suffix($fmt);
-    
+
     $args->{cb} = $self->_default_cb({
         file_name => $file_name,
         verbose   => $args->{verbose},
     }) unless ref $args->{cb} eq 'CODE';
-    
+
     my $res = $self->ua->get($video_url, ':content_cb' => $args->{cb});
     Carp::croak 'Download failed: ', $res->status_line if $res->is_error;
 }
@@ -58,13 +58,13 @@ sub download {
 sub _default_cb {
     my $self = shift;
     my $args = shift;
-    
+
     open my $wfh, '>', $args->{file_name} or die $args->{file_name}, " $!";
     binmode $wfh;
     return sub {
         my ($chunk, $res, $proto) = @_;
         print $wfh $chunk; # write file
-        
+
         if ($self->{verbose} || $args->{verbose}) {
             my $size = tell $wfh;
             if (my $total = $res->header('Content-Length')) {
@@ -81,20 +81,20 @@ sub prepare_download {
     my $self = shift;
     my $video_id = shift || Carp::croak "Usage: $self->prepare_download('[video_id|watch_url]')";
     $video_id = _video_id($video_id);
-    
+
     return $self->{cache}{$video_id} if ref $self->{cache}{$video_id} eq 'HASH';
-    
+
     my $res = $self->ua->get("$info$video_id");
-    
+
     local $Carp::CarpLevel = 1;
     Carp::croak "get info failed. status: ", $res->status_line if $res->is_error;
-    
+
     my $params = CGI->new(uri_unescape $res->content);
     Carp::croak "$video_id not found" if $params->param('status') ne 'ok';
-    
+
     my $fmt_list = [ do { my %h; sort { $b <=> $a } grep { !$h{$_}++ } ($params->param('itag'), DEFAULT_FMT) } ];
     my $fmt = $fmt_list->[0];
-    
+
     return $self->{cache}{$video_id} = +{
         video_id  => $video_id,
         video_url => sprintf($down, $video_id, $params->param('token')),
