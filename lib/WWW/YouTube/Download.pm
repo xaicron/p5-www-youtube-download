@@ -214,9 +214,8 @@ sub _suffix {
 }
 
 sub _video_id {
-    my $video_id = shift;
-    $video_id =~ /watch\?v=([^&]+)/;
-    return $1 || $video_id;
+    my $stuff = shift;
+    return $stuff =~ /watch\?v=([^&]+)/ ? $1 : $stuff;
 }
 
 1;

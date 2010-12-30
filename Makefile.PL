@@ -7,7 +7,7 @@ requires 'LWP';
 requires 'URI::Escape';
 requires 'JSON';
 
-tests 't/*.t';
+tests 't/*.t t/*/*.t';
 author_tests 'xt';
 
 test_requires 'Test::More', '0.96';
