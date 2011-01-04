@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.21    Wed Jan  5 00:17:54 2011
+        - Fixed a problem that can not download videos there. (reported by Octavian)
+
 0.20    Wed Dec 15 00:57:43 2010
         - YouTube's API had change, maybe fixed it.
 
