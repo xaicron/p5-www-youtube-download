@@ -4,14 +4,13 @@ use Test::More tests => 3;
 use WWW::YouTube::Download;
 
 do {
-    my $info = 'title=%E3%80%90%E9%AB%98%E9%9F%B3%E8%B3%AA%E3%80%91%E4%BE%B5%E7%95%A5%21%E3%82%A4%E3%82%AB%E5%A8%98OP+%E3%80%8C%E4%BE%B5%E7%95%A5%E3%83%8E%E3%82%B9%E3%82%B9%E3%83%A1%E2%98%86%E3%80%8D%E7%94%BB%E5%83%8FVer.&status=ok';
     my $content = do {
         open my $fh, '<', 't/01_data.txt' or die $!;
         local $/;
         <$fh>;
     };
 
-    my $contents = [$info, $content];
+    my $contents = [$content];
 
     no warnings 'redefine';
     *LWP::UserAgent::get = sub {
@@ -29,7 +28,7 @@ is_deeply $data, +{
     video_id      => $video_id,
     fmt_lsit      => [ '22', '35', '34', '18', '5' ],
     suffix        => '.mp4',
-    title         => '【高音質】侵略!イカ娘OP 「侵略ノススメ☆」画像Ver.',
+    title         => '【高音質】侵略!イカ娘OP 「侵略ノススメ☆」歌詞付き&画像Ver.',
     fmt           => '22',
     video_url     => 'http://v5.lscache8.c.youtube.com/videoplayback?ip=119.0.0.0&sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Cratebypass&fexp=906322%2C907048&itag=22&ipbits=8&sver=3&ratebypass=yes&expire=1292364000&key=yt1&signature=188170E1FAC8B18D7E88B133DC49C02AD6187825.84C91F49CF2E39ED76849BCF0741F228AA623551&id=472e91ba99b792a3',
     video_url_map => {
