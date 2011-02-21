@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 
-our $VERSION = '0.22';
+our $VERSION = '0.23';
 
 use Carp ();
 use URI ();
@@ -216,7 +216,18 @@ sub _suffix {
 
 sub _video_id {
     my $stuff = shift;
-    return $stuff =~ /watch\?v=([^&]+)/ ? $1 : $stuff;
+    if ($stuff =~ m{/watch\?.*?v=([^&]+)}) {
+        return $1;
+    }
+    elsif ($stuff =~ m{/(?:v|embed)/([^&]+)}) {
+        return $1;
+    }
+    elsif ($stuff =~ m{#p/(?:u|search)/\d+/([^&?/]+)}) {
+        return $1;
+    }
+    else {
+        return $stuff;
+    }
 }
 
 1;

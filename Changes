@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.23    Tue Feb 22 00:00:22 2011
+        - supported any video urls (mikolaj++)
+
 0.22    Wed Jan  5 00:17:54 2011
         - Fixed a problem that can not download videos there. (reported by Octavian)
 
