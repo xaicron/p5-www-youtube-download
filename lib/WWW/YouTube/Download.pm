@@ -167,7 +167,7 @@ sub _get_args {
 
     my $data;
     for (split "\n", $content) {
-        if ($_ && /videoplayback/ && /signature/ && !/HTML/) {
+        if ($_ && /videoplayback/ && /signature/ && !/HTML/ && /Config/) {
             my ($json) = $_ =~ /^[^{]+(.*)[^}]+$/;
             $data = JSON->new->utf8(1)->decode($json);
             last;
