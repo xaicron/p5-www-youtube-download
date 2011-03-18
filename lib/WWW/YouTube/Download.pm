@@ -216,10 +216,10 @@ sub _suffix {
 
 sub _video_id {
     my $stuff = shift;
-    if ($stuff =~ m{/watch\?.*?v=([^&]+)}) {
+    if ($stuff =~ m{/.*?[?&;]v=([^&#?=/;]+)}) {
         return $1;
     }
-    elsif ($stuff =~ m{/(?:v|embed)/([^&]+)}) {
+    elsif ($stuff =~ m{/(?:e|v|embed)/([^&#?=/;]+)}) {
         return $1;
     }
     elsif ($stuff =~ m{#p/(?:u|search)/\d+/([^&?/]+)}) {
