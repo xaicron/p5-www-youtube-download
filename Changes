@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.25    Sat Mar 19 00:39:41 2011
+        - added few more match URLs (mikolaj++)
+
 0.24    Fri Mar  4 01:45:20 2011
         - fixed could not fetch json data problem (akiym++)
 
