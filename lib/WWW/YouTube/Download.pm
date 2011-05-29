@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 
-our $VERSION = '0.23';
+our $VERSION = '0.26';
 
 use Carp ();
 use URI ();
@@ -167,7 +167,7 @@ sub _get_args {
 
     my $data;
     for (split "\n", $content) {
-        if ($_ && /videoplayback/ && /signature/ && !/HTML/ && /Config/) {
+        if ($_ && /var\s+swfConfig\s+=/) {
             my ($json) = $_ =~ /^[^{]+(.*)[^}]+$/;
             $data = JSON->new->utf8(1)->decode($json);
             last;
@@ -216,10 +216,10 @@ sub _suffix {
 
 sub _video_id {
     my $stuff = shift;
-    if ($stuff =~ m{/watch\?.*?v=([^&]+)}) {
+    if ($stuff =~ m{/.*?[?&;]v=([^&#?=/;]+)}) {
         return $1;
     }
-    elsif ($stuff =~ m{/(?:v|embed)/([^&]+)}) {
+    elsif ($stuff =~ m{/(?:e|v|embed)/([^&#?=/;]+)}) {
         return $1;
     }
     elsif ($stuff =~ m{#p/(?:u|search)/\d+/([^&?/]+)}) {

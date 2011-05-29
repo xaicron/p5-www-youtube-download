@@ -53,5 +53,25 @@ test_video_id(
     'ZgDKIyxaK8A',
 );
 
+test_video_id(
+    'http://www.youtube.com/e/UpaxndP5G2Y',
+    'UpaxndP5G2Y',
+);
+
+test_video_id(
+    'www.youtube.com/?v=AfooxdRYeJU',
+    'AfooxdRYeJU',
+);
+
+test_video_id(
+    'http://www.youtube.com/embed/0zM3nApSvMg?rel=0',
+    '0zM3nApSvMg',
+);
+
+test_video_id(
+    'http://www.youtube.com/v/INsSU8Jnx-4?fs=1&hl=en',
+    'INsSU8Jnx-4',
+);
+
 done_testing;
 
