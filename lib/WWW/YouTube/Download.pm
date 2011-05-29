@@ -113,7 +113,7 @@ sub prepare_download {
         title         => $title,
         video_url_map => $video_url_map,
         fmt           => $hq_data->{fmt},
-        fmt_lsit      => $fmt_list,
+        fmt_list      => $fmt_list,
         suffix        => $hq_data->{suffix},
     };
 }

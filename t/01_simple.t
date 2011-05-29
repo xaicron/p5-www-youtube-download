@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More tests => 9;
 use WWW::YouTube::Download;
 
 do {
@@ -26,7 +26,7 @@ my $client = new_ok 'WWW::YouTube::Download';
 ok my $data = $client->prepare_download($video_id);
 is_deeply $data, +{
     'video_id'      => $video_id,
-    'fmt_lsit'      => [ '34', '18', '5' ],
+    'fmt_list'      => [ '34', '18', '5' ],
     'suffix'        => '.flv',
     'title'         => 'の手書きで魔法少女まどか☆マギカＯＰ.mp4',
     'fmt'           => '34',
@@ -52,6 +52,13 @@ is_deeply $data, +{
         },
     },
 };
+
+is $client->get_video_id($video_id), $video_id;
+is $client->get_video_url($video_id), 'http://v9.lscache1.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Calgorithm%2Cburst%2Cfactor%2Coc%3AU0dYTlFUUV9FSkNNOF9JTlVD&algorithm=throttle-factor&itag=34&ipbits=0&burst=40&sver=3&signature=4D216F61C63A1B9DDDD3A837F3EFFCBCDA06297B.ABC59F7AAB4A47CC938CB6833A014701666234CA&expire=1299193200&key=yt1&ip=0.0.0.0&factor=1.25&id=48334a2162ac9611';
+is $client->get_title($video_id), 'の手書きで魔法少女まどか☆マギカＯＰ.mp4';
+is $client->get_fmt($video_id), '34';
+is_deeply $client->get_fmt_list($video_id), ['34', '18', '5'];
+is $client->get_suffix($video_id), '.flv';
 
 done_testing;
 
