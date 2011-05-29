@@ -121,9 +121,7 @@ sub prepare_download {
 sub _fetch_title {
     my ($self, $content) = @_;
 
-    my ($title) = $content =~ m|<title>(.+)</title>|ims or return;
-    $title =~ s/[\r\n]|^\s+|\s+$//g;
-    $title = (split /\s+-\s+/, $title, 2)[1];
+    my ($title) = $content =~ /<meta name="title" content="(.+?)">/ or return;
     return decode_entities($title);
 }
 
