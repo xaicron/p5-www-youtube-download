@@ -73,5 +73,15 @@ test_video_id(
     'INsSU8Jnx-4',
 );
 
+test_video_id(
+    'http://www.youtube.com/watch#!v=fqNKwF18cq0',
+    'fqNKwF18cq0',
+);
+
+test_video_id(
+    'youtu.be/HyNh3AXegxw',
+    'HyNh3AXegxw',
+);
+
 done_testing;
 

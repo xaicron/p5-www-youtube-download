@@ -164,13 +164,20 @@ sub _get_args {
     my ($self, $content) = @_;
 
     my $data;
-    for (split "\n", $content) {
-        if ($_ && /var\s+swfConfig\s+=/) {
-            my ($json) = $_ =~ /^[^{]+(.*)[^}]+$/;
+    for my $line (split "\n", $content) {
+        next unless $line;
+        if ($line =~ /var\s+swfConfig\s+=/) {
+            my ($json) = $line =~ /^[^{]+(.*)[^}]+$/;
             $data = JSON->new->utf8(1)->decode($json);
             last;
         }
+        elsif ($line =~ /^\s*'PLAYER_CONFIG'\s*:\s*({.*})\s*$/) {
+            $data = JSON->new->utf8(1)->decode($1);
+            last;
+        }
     }
+
+    Carp::croak 'failed to extract JSON data.' unless $data->{args};
 
     return $data->{args};
 }
@@ -214,13 +221,16 @@ sub _suffix {
 
 sub _video_id {
     my $stuff = shift;
-    if ($stuff =~ m{/.*?[?&;]v=([^&#?=/;]+)}) {
+    if ($stuff =~ m{/.*?[?&;!]v=([^&#?=/;]+)}) {
         return $1;
     }
     elsif ($stuff =~ m{/(?:e|v|embed)/([^&#?=/;]+)}) {
         return $1;
     }
     elsif ($stuff =~ m{#p/(?:u|search)/\d+/([^&?/]+)}) {
+        return $1;
+    }
+    elsif ($stuff =~ m{youtu.be/([^&#?=/;]+)}) {
         return $1;
     }
     else {
