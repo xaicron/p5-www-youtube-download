@@ -130,9 +130,19 @@ sub _fetch_video_url_map {
 
     local $Carp::CarpLevel = $Carp::CarpLevel + 1;
 
-    my $args        = $self->_get_args($content);
-    my $fmt_url_map = _parse_fmt_url_map($args->{fmt_url_map});
-    my $fmt_map     = _parse_fmt_map($args->{fmt_map});
+    my $args = $self->_get_args($content);
+    unless (
+        ($args->{fmt_map} and $args->{fmt_url_map}) ||
+        ($args->{fmt_list} and $args->{url_encoded_fmt_stream_map})
+    ) {
+        Carp::croak 'failed to find video urls';
+    }
+
+    my $fmt_map     = _parse_fmt_map($args->{fmt_map} || $args->{fmt_list});
+    my $fmt_url_map = $args->{fmt_url_map}
+        ? _parse_fmt_url_map($args->{fmt_url_map})
+        : _parse_url_encoded_fmt_stream_map($args->{url_encoded_fmt_stream_map})
+    ;
 
     my $video_url_map = +{
         map {
@@ -202,6 +212,19 @@ sub _parse_fmt_map {
     }
 
     return $fmt_map;
+}
+
+sub _parse_url_encoded_fmt_stream_map {
+    my $param       = shift;
+    my $fmt_url_map = {};
+    for my $stuff (split ',', $param) {
+        my $uri = URI->new;
+        $uri->query($stuff);
+        my $query = +{ $uri->query_form };
+        $fmt_url_map->{$query->{itag}} = $query->{url};
+    }
+
+    return $fmt_url_map;
 }
 
 sub ua {
