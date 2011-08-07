@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.30    Sun Aug  7 15:25:11 2011
+        - cleanup (mikolaj++)
+
 0.29    Fri Aug  5 01:29:27 2011
         - fixed a problem that did not works, becouse changed YouTube's design. (katsuhito konishi++)
 
