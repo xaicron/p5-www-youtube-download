@@ -9,7 +9,6 @@ our $VERSION = '0.29';
 use Carp ();
 use URI ();
 use LWP::UserAgent;
-use URI::Escape qw/uri_unescape/;
 use JSON;
 use HTML::Entities qw/decode_entities/;
 
@@ -131,18 +130,12 @@ sub _fetch_video_url_map {
     local $Carp::CarpLevel = $Carp::CarpLevel + 1;
 
     my $args = $self->_get_args($content);
-    unless (
-        ($args->{fmt_map} and $args->{fmt_url_map}) ||
-        ($args->{fmt_list} and $args->{url_encoded_fmt_stream_map})
-    ) {
+    unless ($args->{fmt_list} and $args->{url_encoded_fmt_stream_map}) {
         Carp::croak 'failed to find video urls';
     }
 
-    my $fmt_map     = _parse_fmt_map($args->{fmt_map} || $args->{fmt_list});
-    my $fmt_url_map = $args->{fmt_url_map}
-        ? _parse_fmt_url_map($args->{fmt_url_map})
-        : _parse_url_encoded_fmt_stream_map($args->{url_encoded_fmt_stream_map})
-    ;
+    my $fmt_map     = _parse_fmt_map($args->{fmt_list});
+    my $fmt_url_map = _parse_stream_map($args->{url_encoded_fmt_stream_map});
 
     my $video_url_map = +{
         map {
@@ -176,12 +169,7 @@ sub _get_args {
     my $data;
     for my $line (split "\n", $content) {
         next unless $line;
-        if ($line =~ /var\s+swfConfig\s+=/) {
-            my ($json) = $line =~ /^[^{]+(.*)[^}]+$/;
-            $data = JSON->new->utf8(1)->decode($json);
-            last;
-        }
-        elsif ($line =~ /^\s*'PLAYER_CONFIG'\s*:\s*({.*})\s*$/) {
+        if ($line =~ /^\s*'PLAYER_CONFIG'\s*:\s*({.*})\s*$/) {
             $data = JSON->new->utf8(1)->decode($1);
             last;
         }
@@ -190,17 +178,6 @@ sub _get_args {
     Carp::croak 'failed to extract JSON data.' unless $data->{args};
 
     return $data->{args};
-}
-
-sub _parse_fmt_url_map {
-    my $param = shift;
-    my $fmt_url_map = {};
-    for my $stuff (split ',', $param) {
-        my ($fmt, $playback_url) = split '\|', $stuff, 2;
-        $fmt_url_map->{$fmt} = $playback_url;
-    }
-
-    return $fmt_url_map;
 }
 
 sub _parse_fmt_map {
@@ -214,7 +191,7 @@ sub _parse_fmt_map {
     return $fmt_map;
 }
 
-sub _parse_url_encoded_fmt_stream_map {
+sub _parse_stream_map {
     my $param       = shift;
     my $fmt_url_map = {};
     for my $stuff (split ',', $param) {
@@ -236,7 +213,8 @@ sub ua {
 
 sub _suffix {
     my $fmt = shift;
-    return $fmt =~ /18|22|37/ ? '.mp4'
+    return $fmt =~ /43|44|45/ ? '.webm'
+         : $fmt =~ /18|22|37/ ? '.mp4'
          : $fmt =~ /13|17/    ? '.3gp'
          :                      '.flv'
     ;
@@ -320,6 +298,10 @@ Sets and gets LWP::UserAgent object.
 =item B<get_title($video_id)>
 
 =item B<get_fmt($video_id)>
+
+=item B<get_fmt_list($video_id)>
+
+=item B<get_suffix($video_id)>
 
 =back
 

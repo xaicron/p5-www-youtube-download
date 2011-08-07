@@ -3,7 +3,6 @@ name 'WWW-YouTube-Download';
 all_from 'lib/WWW/YouTube/Download.pm';
 
 requires 'LWP';
-requires 'URI::Escape';
 requires 'JSON';
 requires 'HTML::Entities';
 
