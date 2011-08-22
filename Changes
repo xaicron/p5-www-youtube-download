@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.31    Tue Aug 23 00:25:02 2011
+        - added fmt 38 to .mp4 (mikolaj++)
+
 0.30    Sun Aug  7 15:25:11 2011
         - cleanup (mikolaj++)
 
