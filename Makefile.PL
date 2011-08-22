@@ -2,7 +2,8 @@ use inc::Module::Install;
 name 'WWW-YouTube-Download';
 all_from 'lib/WWW/YouTube/Download.pm';
 
-requires 'LWP';
+requires 'URI';
+requires 'LWP::UserAgent';
 requires 'JSON';
 requires 'HTML::Entities';
 
