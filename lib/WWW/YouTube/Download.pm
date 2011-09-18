@@ -58,6 +58,7 @@ sub download {
 
     my $res = $self->ua->get($video_url, ':content_cb' => $args->{cb});
     Carp::croak '!! $video_id download failed: ', $res->status_line if $res->is_error;
+    return $file_name;
 }
 
 sub _default_cb {
