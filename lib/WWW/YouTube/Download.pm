@@ -45,9 +45,10 @@ sub download {
     my $fmt = $args->{fmt} || $data->{fmt} || DEFAULT_FMT;
     my $video_url = $data->{video_url_map}{$fmt}{url} || Carp::croak "this video has not supported fmt: $fmt";
     my $file_name =
+        $args->{file_name} ||
         ($args->{save_as_title}
             ? $data->{title}
-            : $args->{file_name} || $data->{video_id})
+            : $data->{video_id})
         . _suffix($fmt);
 
     $args->{cb} = $self->_default_cb({
