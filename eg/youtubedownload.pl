@@ -40,8 +40,17 @@ my @video_ids = map {
 
 my $client = WWW::YouTube::Download->new(ua => $ua);
 print "Going to download ".@video_ids." videos...\n";
+my $skipto = undef; # "wCCNGTW8eH8";
 for (@video_ids) {
+    next unless !$skipto || (/$skipto/ && do { undef $skipto; 1 });
     print "Downloading $_\n";
-    $client->download($_, {save_as_title => 1});
-    sleep int(15 * rand());
+    eval { $client->download($_, {save_as_title => 1}); };
+    if ($@) {
+        warn "$@\n";
+        warn "Enter to continue... Resume? See code a few line up\n";
+        <STDIN>
+    }
+    else {
+        sleep int(15 * rand());
+    }
 }
