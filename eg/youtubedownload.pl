@@ -6,6 +6,31 @@ use warnings;
 use WWW::YouTube::Download;
 use LWP::UserAgent;
 
+if ($ARGV[0] && $ARGV[0] eq "--strip-audio") {
+    # bonus functionality!
+    die "need ffmpeg" unless -x "/usr/bin/ffmpeg";
+    die "need MP4box, from 'gpac'" unless -x "/usr/bin/MP4Box";
+    my @flvs = map { chomp; $_ } `ls -1 *.flv`;
+    exit unless @flvs;
+    print "Going to copy audio tracks out of ".@flvs." flvs...\n";
+    my $wd = `pwd`; chomp $wd;
+    for my $flv (@flvs) {
+        print "Processing '$flv'\n";
+        my $tmp = "/tmp/$$.hax";
+        system 'ln', '-s', "$wd/$flv", $tmp;
+        my $pid = $$;
+        `ffmpeg -i $tmp -acodec copy finished.$pid.aac`;
+        `MP4Box -new -add finished.$pid.aac finished.$pid.mp4`;
+        `rm finished.$pid.aac`;
+        my $finito = $flv;
+        $finito =~ s/flv$/mp4/;
+        system("mv", "finished.$pid.mp4", $finito);
+        system('unlink', $tmp);
+    }
+    print "\n\nDone. Check things over and remove the .flv sources yourself.\n";
+    exit;
+}
+
 @ARGV || die "Usage: $0 [video_id, video_url or url to find video urls at] ...\n";
 
 my $ua = LWP::UserAgent->new;
