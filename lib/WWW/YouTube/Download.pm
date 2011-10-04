@@ -29,18 +29,18 @@ sub new {
 for my $name (qw[video_id video_url title fmt fmt_list suffix]) {
     no strict 'refs';
     *{"get_$name"} = sub {
-        my $self = shift;
-        my $video_id = shift || Carp::croak "Usage: $self->get_$name(\$video_id|\$watch_url)";
-
+        use strict 'refs';
+        my ($self, $video_id) = @_;
+        Carp::croak "Usage: $self->get_$name(\$video_id|\$watch_url)" unless $video_id;
         my $data = $self->prepare_download($video_id);
         return $data->{$name};
     };
 }
 
 sub download {
-    my $self = shift;
-    my $video_id = shift || Carp::croak "Usage: $self->download('[video_id|video_url]')";
-    my $args = shift || {};
+    my ($self, $video_id, $args) = @_;
+    Carp::croak "Usage: $self->download('[video_id|video_url]')" unless $video_id;
+    $args ||= {};
 
     my $data = $self->prepare_download($video_id);
 
