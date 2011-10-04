@@ -45,36 +45,56 @@ sub download {
     my $data = $self->prepare_download($video_id);
 
     my $fmt = $args->{fmt} || $data->{fmt} || DEFAULT_FMT;
+
     my $video_url = $data->{video_url_map}{$fmt}{url} || Carp::croak "this video has not supported fmt: $fmt";
-    my $file_name = $args->{file_name} || $data->{video_id} . _suffix($fmt);
+    my $file_name = $self->_foramt_file_name($args->{file_name}, {
+        video_id => $data->{video_id},
+        title    => $data->{title},
+        fmt      => $fmt,
+        suffix   => _suffix($fmt),
+    });
 
     $args->{cb} = $self->_default_cb({
         file_name => $file_name,
         verbose   => $args->{verbose},
+        overwrite => defined $args->{overwrite} ? $args->{overwrite} : 1,
     }) unless ref $args->{cb} eq 'CODE';
 
     my $res = $self->ua->get($video_url, ':content_cb' => $args->{cb});
     Carp::croak "!! $video_id download failed: ", $res->status_line if $res->is_error;
 }
 
-sub _default_cb {
-    my $self = shift;
-    my $args = shift;
+sub _foramt_file_name {
+    my ($self, $file_name, $data) = @_;
+    return $data->{video_id}.$data->{suffix} unless defined $file_name;
+    $file_name =~ s#{([^}]+)}#$data->{$1} || "{$1}"#eg;
+    return $file_name;
+}
 
-    open my $wfh, '>', $args->{file_name} or die $args->{file_name}, " $!";
+sub _is_supported_fmt {
+    my ($self, $video_id, $fmt) = @_;
+    my $data = $self->prepare_download($video_id);
+    $data->{video_url_map}{$fmt}{url} ? 1 : 0;
+}
+
+sub _default_cb {
+    my ($self, $args) = @_;
+    my ($file, $verbose, $overwrite) = @$args{qw/file_name verbose overwrite/};
+
+    Carp::croak "file exists! $file" if -f $file and !$overwrite;
+    open my $wfh, '>', $file or die $file, " $!";
     binmode $wfh;
+
+    print "Downloading for `$file`\n" if $verbose;
     return sub {
         my ($chunk, $res, $proto) = @_;
         print $wfh $chunk; # write file
 
-        if ($self->{verbose} || $args->{verbose}) {
+        if ($verbose || $self->{verbose}) {
             my $size = tell $wfh;
-            if (my $total = $res->header('Content-Length')) {
-                printf "%d/%d (%f%%)\r", $size, $total, $size / $total * 100;
-            }
-            else {
-                printf "%d/Unknown bytes\r", $size;
-            }
+            my $total = $res->header('Content-Length');
+            printf "%d/%d (%.2f%%)\r", $size, $total, $size / $total * 100;
+            print "\n" if $total == $size;
         }
     };
 }
@@ -215,10 +235,10 @@ sub ua {
 
 sub _suffix {
     my $fmt = shift;
-    return $fmt =~ /43|44|45/    ? '.webm'
-         : $fmt =~ /18|22|37|38/ ? '.mp4'
-         : $fmt =~ /13|17/       ? '.3gp'
-         :                         '.flv'
+    return $fmt =~ /43|44|45/    ? 'webm'
+         : $fmt =~ /18|22|37|38/ ? 'mp4'
+         : $fmt =~ /13|17/       ? '3gp'
+         :                         'flv'
     ;
 }
 
