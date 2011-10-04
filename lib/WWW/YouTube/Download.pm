@@ -44,7 +44,12 @@ sub download {
 
     my $fmt = $args->{fmt} || $data->{fmt} || DEFAULT_FMT;
     my $video_url = $data->{video_url_map}{$fmt}{url} || Carp::croak "this video has not supported fmt: $fmt";
-    my $file_name = $args->{file_name} || $data->{video_id} . _suffix($fmt);
+    my $file_name =
+        $args->{file_name} ||
+        ($args->{save_as_title}
+            ? $data->{title}
+            : $data->{video_id})
+        . _suffix($fmt);
 
     $args->{cb} = $self->_default_cb({
         file_name => $file_name,
@@ -53,6 +58,7 @@ sub download {
 
     my $res = $self->ua->get($video_url, ':content_cb' => $args->{cb});
     Carp::croak '!! $video_id download failed: ', $res->status_line if $res->is_error;
+    return $file_name;
 }
 
 sub _default_cb {
@@ -274,6 +280,9 @@ Creates a WWW::YouTube::Donwload instance.
 =item B<download($video_id [, \%args])>
 
   $client->download($video_id);
+  $client->download($video_id, {
+      save_as_title => 1, # use video title as save file name
+  });
   $client->download($video_id, {
       fmt       => 37,
       file_name => 'sample.mp4', # save file name
