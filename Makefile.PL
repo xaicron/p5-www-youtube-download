@@ -11,6 +11,5 @@ tests 't/*.t t/*/*.t';
 author_tests 'xt';
 
 test_requires 'Test::More', '0.96';
-auto_include;
 auto_set_repository;
 WriteAll;
