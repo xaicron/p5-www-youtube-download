@@ -54,7 +54,7 @@ sub download {
     }) unless ref $args->{cb} eq 'CODE';
 
     my $res = $self->ua->get($video_url, ':content_cb' => $args->{cb});
-    Carp::croak '!! $video_id download failed: ', $res->status_line if $res->is_error;
+    Carp::croak "!! $video_id download failed: ", $res->status_line if $res->is_error;
 }
 
 sub _default_cb {
