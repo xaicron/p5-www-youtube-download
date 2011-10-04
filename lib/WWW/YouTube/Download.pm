@@ -271,7 +271,7 @@ WWW::YouTube::Download is a download video from YouTube.
 
   $client = WWW::YouTube::Download->new;
 
-Creates a WWW::YouTube::Donwload instance.
+Creates a WWW::YouTube::Download instance.
 
 =item B<download($video_id [, \%args])>
 
