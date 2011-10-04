@@ -258,6 +258,7 @@ WWW::YouTube::Download - Very simply YouTube video download interface.
   my $video_url = $client->get_video_url($video_id);
   my $title     = $client->get_title($video_id);     # maybe encoded utf8 string.
   my $fmt       = $client->get_fmt($video_id);       # maybe highest quality.
+  my $suffix    = $client->get_suffix($video_id);    # maybe highest quality file suffix
 
 =head1 DESCRIPTION
 
