@@ -80,8 +80,8 @@ sub _default_cb {
 }
 
 sub prepare_download {
-    my $self = shift;
-    my $video_id = shift || Carp::croak "Usage: $self->prepare_download('[video_id|watch_url]')";
+    my ($self, $video_id) = @_;
+    Carp::croak "Usage: $self->prepare_download('[video_id|watch_url]')" unless $video_id;
     $video_id = _video_id($video_id);
 
     return $self->{cache}{$video_id} if ref $self->{cache}{$video_id} eq 'HASH';
@@ -207,8 +207,8 @@ sub _parse_stream_map {
 }
 
 sub ua {
-    my $self = shift;
-    my $ua = shift || return $self->{ua};
+    my ($self, $ua) = @_;
+    return $self->{ua} unless $ua;
     Carp::croak "Usage: $self->ua(\$LWP_LIKE_OBJECT)" unless eval { $ua->isa('LWP::UserAgent') };
     $self->{ua} = $ua;
 }
