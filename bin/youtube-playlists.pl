@@ -1,0 +1,125 @@
+#!perl
+use strict;
+use warnings;
+use URI;
+use URI::QueryParam;
+use XML::TreePP;
+use WWW::YouTube::Download;
+use Getopt::Long qw(GetOptions :config bundling);
+use Pod::Usage qw(pod2usage);
+use Term::ANSIColor qw(colored);
+
+my $api_url = 'http://gdata.youtube.com/feeds/api/playlists';
+
+GetOptions(
+    'v|verbose' => \my $verbose,
+    'h|help'    => sub { pod2usage(exitval => 0, -noperldoc => 1, -verbose => 2) },
+    'V|version' => sub { show_version() },
+) or pod2usage(2);
+pod2usage(colored ['red'], "playlist_id_or_url must be specified\n") unless @ARGV;
+
+my $ua  = WWW::YouTube::Download->new->ua;
+my $tpp = XML::TreePP->new;
+
+main: {
+    for my $id_or_url (@ARGV) {
+        chatty("--> Works on %s\n", $id_or_url);
+        my $id = find_playlist_id($id_or_url);
+        throw('%s is not supported arguments', $id_or_url) unless $id;
+        my $xml = fetch_playlist_xml($id);
+        my $urls = find_video_urls($xml);
+        local $\ = "\n"; # auto print @_, "\n"
+        print join "\n", @$urls;
+    }
+}
+
+sub fetch_playlist_xml {
+    my $id = shift;
+    my $url = sprintf '%s/%s?v=2', $api_url, $id;
+    chatty('Fetching %s ... ', $url);
+    my $res = $ua->get($url);
+    unless ($res->is_success) {
+        throw('%s: %s', $id, $res->status_line);
+    }
+    chatty(colored ['green'], "done\n");
+    return $res->decoded_content;
+}
+
+sub find_video_urls {
+    my $xml = shift;
+    my $urls = [];
+    chatty('Parsing XML ... ');
+    my $tree = $tpp->parse($xml);
+    for my $entry (@{$tree->{feed}{entry}}) {
+        my $uri = URI->new($entry->{'media:group'}{'media:player'}{-url});
+        $uri->query_param_delete('feature');
+        push @$urls, $uri->as_string;
+    }
+    chatty(colored ['green'], "done\n");
+    return $urls;
+}
+
+sub find_playlist_id {
+    my $id_or_url = shift || return;
+    if ($id_or_url =~ /^http/) {
+        ($id_or_url) = $id_or_url =~ m/list=PL([0-9A-F]+)/;
+    }
+    else {
+        $id_or_url =~ s/^PL//;
+    }
+    return $id_or_url;
+}
+
+sub throw {
+    my $format = shift;
+    die colored ['red'], sprintf($format, @_), "\n";
+}
+
+sub chatty {
+    return unless $verbose;
+    my $format = shift;
+    print STDERR sprintf $format, @_;
+}
+
+sub show_version {
+    print "youtube-playlists.pl (WWW::YouTube::Download) version $WWW::YouTube::Download::VERSION\n";
+    exit;
+}
+__END__
+
+=head1 NAME
+
+youtube-playlists.pl - Find a YuTube video urls from playlis(s)
+
+=head1 SYNOPSIS
+
+  # print the list of video urls
+  $ youtube-playlists.pl http://www.youtube.com/watch?list=PLB199169FA7413767
+  $ youtube-playlists.pl PLB199169FA7413767
+  $ youtube-playlists.pl B199169FA7413767
+
+  # with youtube-download.pl
+  $ youtube-playlists.pl B199169FA7413767 | youtube-download.pl
+
+=head1 OPTIONS
+
+=over
+
+=item -v, --verbose
+
+truns on chatty output
+
+=item -h, --help
+
+display help
+
+=item -V, --version
+
+display version
+
+=back
+
+=head1 AUTHOR
+
+Yuji Shiamda (xaicron)
+
