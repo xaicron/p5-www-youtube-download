@@ -10,7 +10,7 @@ requires 'HTML::Entities';
 tests 't/*.t t/*/*.t';
 author_tests 'xt';
 
-install_script 'bin/youtube-dl.pl';
+install_script 'bin/youtube-download.pl';
 
 test_requires 'Test::More', '0.96';
 auto_set_repository;
