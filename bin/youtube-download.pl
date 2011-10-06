@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 use Getopt::Long qw(GetOptions :config bundling);
+use Pod::Usage qw(pod2usage);
 use WWW::YouTube::Download;
 use Encode qw(find_encoding decode_utf8);
 use Time::HiRes;
@@ -19,11 +20,12 @@ GetOptions(
     'e|encode=s'   => \$encode,
     'f|force!'     => \$overwrite,
     'q|quiet!'     => sub { $verbose = 0 },
-    'h|help!'      => \&help,
-    'V|version!'   => \&show_version,
+    'h|help'       => sub { help() },
+    'm|man'        => sub { pod2usage(-verbose => 2) },
+    'V|version!'   => sub { show_version() },
 ) or help();
 challeng_load_argv_from_fh() unless @ARGV;
-help() unless @ARGV;
+help(colored ['red'], "video_id_or_url must be specified\n") unless @ARGV;
 
 my $encoder = find_encoding($encode) or throw("not supported encoding: $encode");
 $output = $encoder->decode($output) if $output;
@@ -33,7 +35,6 @@ my $client = WWW::YouTube::Download->new;
 main: {
     while (@ARGV) {
         my $video_id = shift @ARGV;
-
         my $meta_data = $client->prepare_download($video_id);
         chatty("--> Working on $meta_data->{video_id}");
         if ($fmt && !$client->_is_supported_fmt($video_id, $fmt)) {
@@ -57,7 +58,7 @@ main: {
             });
         };
         throw("[$meta_data->{video_id}] $@") if $@;
-        chatty(colored(['green'], 'Successfully download - '), $video_id);
+        chatty(colored ['green'], 'Download successfully!');
 
         Time::HiRes::sleep($interval) if @ARGV;
     }
@@ -86,27 +87,30 @@ sub chatty {
 }
 
 sub show_version {
-    print "youtube-dl.pl (WWW::YouTube::Download) version $WWW::YouTube::Download::VERSION\n";
+    print "youtube-download.pl (WWW::YouTube::Download) version $WWW::YouTube::Download::VERSION\n";
     exit;
 }
 
 sub help {
+    print @_, "\n" if @_;
     print << 'HELP';
 Usage:
     youtube-dl.pl [options] video_id_or_video_url ...
 
 Options:
-    -h, --help          Show this message
-    -o, --output        Output filename, supports `{$value}` style
+    -o, --output        Output filename, supports `{$value}` format
     -e, --encode        File system encoding (e.g. cp932)
     -F, --fmt           Video quality (SEE ALSO wikipedia)
-    -v, --verbose       Chatty output (defult enable)
     -f, --force         Force overwrite output file
-    -q, --quiet         Silence
     -i, --interval      Download interval 
+    -v, --verbose       Turns on chatty output (defult: enable)
+    -q, --quiet         Turns off progress
+    -h, --help          Display help
+    -m, --man           Display man page
+    -V, --version       Display version
 
-`{$value}` following are:
-    {video_id}, {title}, {fmt}, {suffix}
+supported `{$value}` format are:
+    {video_id} / {title} / {fmt} / {suffix}
 
     Example:
         $ youtube-dl.pl -o "[{video_id}] {title}.{suffix}"
@@ -116,3 +120,70 @@ HELP
 }
 
 __END__
+
+=head1 NAME
+
+youtube-download.pl - Download video(s) from YouTube
+
+=head1 SYNOPSIS
+
+  $ youtube-download.pl bT8yLWy4B5w
+  $ youtube-download.pl http://www.youtube.com/watch?v=bT8yLWy4B5w
+
+=head1 OPTIONS
+
+=over
+
+=item -o, --output
+
+output filename, supports `{$value}` format (defult: {video_id}.{suffix})
+
+=item -i, --interval
+
+Download interval (defult: 1 (sec))
+
+=item -e, --encode
+
+File system encoding (default: utf8)
+
+=item -f, --force
+
+Force overwrite output file (defult: disabled)
+
+=item -F, --fmt
+
+Video quality (SEE ALSO wikipedia)
+
+=item -v, --verbose
+
+Truns on chatty output (defult: enableed)
+
+=item -q, --quiet
+
+Truns off the most output
+
+=item -h, --help
+
+Display help
+
+=item -m, --man
+
+Display help page
+
+=item -V, --version
+
+Display version
+
+=back
+
+=head2 supported `{$value}` format
+
+{video_id} / {title} / {fmt} / {suffix}
+
+  Example:
+  $ youtube-dl.pl -o "[{video_id}] {title}.{suffix}"
+
+=head1 AUTHOR
+
+Yuji Shiamda (xaicron)
+
