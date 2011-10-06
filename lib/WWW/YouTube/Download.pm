@@ -66,7 +66,7 @@ sub download {
 
 sub _foramt_file_name {
     my ($self, $file_name, $data) = @_;
-    return $data->{video_id}.$data->{suffix} unless defined $file_name;
+    return "$data->{video_id}.$data->{suffix}" unless defined $file_name;
     $file_name =~ s#{([^}]+)}#$data->{$1} || "{$1}"#eg;
     return $file_name;
 }
