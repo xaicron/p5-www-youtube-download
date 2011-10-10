@@ -101,7 +101,7 @@ Options:
     -e, --encode        File system encoding (e.g. cp932)
     -F, --fmt           Video quality (SEE ALSO wikipedia)
     -f, --force         Force overwrite output file
-    -i, --interval      Download interval 
+    -i, --interval      Download interval
     -v, --verbose       Turns on chatty output (defult: enable)
     -q, --quiet         Turns off progress
     -h, --help          Display help
