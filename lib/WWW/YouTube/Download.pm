@@ -302,12 +302,22 @@ Creates a WWW::YouTube::Download instance.
       file_name => 'sample.mp4', # save file name
   });
   $client->download($video_id, {
+      file_name => '{title}.{suffix}', # maybe `video_title.mp4`
+  });
+  $client->download($video_id, {
       cb => \&callback,
   });
 
 Download the video file.
 The first parameter is passed to YouTube video url.
 B<\&callback> details SEE ALSO L<LWP::UserAgent> ':content_cb'.
+
+C<< file_name >> supported format:
+
+  {video_id}
+  {title}
+  {fmt}
+  {suffix}
 
 =item B<ua([$ua])>
 
