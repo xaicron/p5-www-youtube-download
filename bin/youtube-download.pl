@@ -25,7 +25,7 @@ GetOptions(
     'V|version!'   => sub { show_version() },
 ) or help();
 challeng_load_argv_from_fh() unless @ARGV;
-help(colored ['red'], "video_id_or_url must be specified\n") unless @ARGV;
+help() unless @ARGV;
 
 my $encoder = find_encoding($encode) or throw("not supported encoding: $encode");
 $output = $encoder->decode($output) if $output;
@@ -92,7 +92,6 @@ sub show_version {
 }
 
 sub help {
-    print @_, "\n" if @_;
     print << 'HELP';
 Usage:
     youtube-dl.pl [options] video_id_or_video_url ...
@@ -129,6 +128,7 @@ youtube-download.pl - Download video(s) from YouTube
 
   $ youtube-download.pl bT8yLWy4B5w
   $ youtube-download.pl http://www.youtube.com/watch?v=bT8yLWy4B5w
+  $ youtube-download.pl < video_list_file
 
 =head1 OPTIONS
 

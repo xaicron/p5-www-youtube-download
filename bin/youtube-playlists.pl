@@ -16,7 +16,7 @@ GetOptions(
     'h|help'    => sub { pod2usage(exitval => 0, -noperldoc => 1, -verbose => 2) },
     'V|version' => sub { show_version() },
 ) or pod2usage(2);
-pod2usage(colored ['red'], "playlist_id_or_url must be specified\n") unless @ARGV;
+pod2usage() unless @ARGV;
 
 my $ua  = WWW::YouTube::Download->new->ua;
 my $tpp = XML::TreePP->new;
