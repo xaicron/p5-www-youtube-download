@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.33    Wed Oct 12 01:17:34 2011
+        - added youtube-download.pl and youtube-playlist.pl (request by st3vil++)
+        - fix doc
+
 0.32    Tue Aug 23 01:52:20 2011
         - added LICENSE file (no code change)
 
