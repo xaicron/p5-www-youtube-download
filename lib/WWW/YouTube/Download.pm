@@ -86,7 +86,7 @@ sub _default_cb {
     open my $wfh, '>', $file or die $file, " $!";
     binmode $wfh;
 
-    print "Downloading for `$file`\n" if $verbose;
+    print "Downloading `$file`\n" if $verbose;
     return sub {
         my ($chunk, $res, $proto) = @_;
         print $wfh $chunk; # write file
