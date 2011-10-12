@@ -8,6 +8,8 @@ use Encode qw(find_encoding decode_utf8);
 use Time::HiRes;
 use Term::ANSIColor qw(colored);
 
+$ENV{ANSI_COLORS_DISABLED} = 1 if $^O eq 'MSWin32';
+
 my $encode    = 'utf8';
 my $overwrite = 0;
 my $verbose   = 1;
