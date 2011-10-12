@@ -51,7 +51,7 @@ sub download {
         video_id => $data->{video_id},
         title    => $data->{title},
         fmt      => $fmt,
-        suffix   => _suffix($fmt),
+        suffix   => $data->{video_url_map}{$fmt}{suffix} || _suffix($fmt),
     });
 
     $args->{cb} = $self->_default_cb({
