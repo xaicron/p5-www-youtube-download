@@ -43,11 +43,9 @@ main: {
             throw("[$meta_data->{video_id}] this video has not supported fmt: $fmt");
         }
 
+        # multibyte fixes
         $output = $client->_foramt_file_name($output, {
-            video_id => $meta_data->{video_id},
-            title    => decode_utf8($meta_data->{title}),
-            fmt      => $fmt || $meta_data->{fmt},
-            suffix   => $client->_suffix($fmt),
+            title => decode_utf8($meta_data->{title}),
         });
         $output = $encoder->encode($output, sub { sprintf 'U+%x', shift });
 
