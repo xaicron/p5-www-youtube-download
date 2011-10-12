@@ -180,7 +180,7 @@ Display version
 
 =head2 supported `{$value}` format
 
-{video_id} / {title} / {fmt} / {suffix}
+{video_id} / {title} / {fmt} / {suffix} / {resolution}
 
   Example:
   $ youtube-dl.pl -o "[{video_id}] {title}.{suffix}"

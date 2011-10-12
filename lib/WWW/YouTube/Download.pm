@@ -48,10 +48,11 @@ sub download {
 
     my $video_url = $data->{video_url_map}{$fmt}{url} || Carp::croak "this video has not supported fmt: $fmt";
     my $file_name = $self->_foramt_file_name($args->{file_name}, {
-        video_id => $data->{video_id},
-        title    => $data->{title},
-        fmt      => $fmt,
-        suffix   => $data->{video_url_map}{$fmt}{suffix} || _suffix($fmt),
+        video_id   => $data->{video_id},
+        title      => $data->{title},
+        fmt        => $fmt,
+        suffix     => $data->{video_url_map}{$fmt}{suffix} || _suffix($fmt),
+        resolution => $data->{video_url_map}{$fmt}{resolution} || '0x0',
     });
 
     $args->{cb} = $self->_default_cb({
@@ -318,6 +319,7 @@ C<< file_name >> supported format:
   {title}
   {fmt}
   {suffix}
+  {resolution}
 
 =item B<ua([$ua])>
 
