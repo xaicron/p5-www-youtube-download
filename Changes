@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.34    Sat Oct 15 16:14:57 2011
+        - workaround for win32
+        - fix suffix problem
+
 0.33    Wed Oct 12 01:17:34 2011
         - added youtube-download.pl and youtube-playlist.pl (request by st3vil++)
         - fix doc
