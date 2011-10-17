@@ -89,7 +89,7 @@ __END__
 
 =head1 NAME
 
-youtube-playlists.pl - Find a YuTube video urls from playlis(s)
+youtube-playlists.pl - Find a YouTube video urls from playlis(s)
 
 =head1 SYNOPSIS
 
