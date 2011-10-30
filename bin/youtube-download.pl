@@ -45,7 +45,9 @@ main: {
 
         # multibyte fixes
         $output = $client->_foramt_file_name($output, {
-            title => decode_utf8($meta_data->{title}),
+            video_id => $meta_data->{video_id},
+            title    => decode_utf8($meta_data->{title}),
+            suffix   => $meta_data->{suffix},
         });
         $output = $encoder->encode($output, sub { sprintf 'U+%x', shift });
 
