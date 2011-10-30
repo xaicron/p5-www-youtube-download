@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.36    Mon Oct 31 02:45:48 2011
+        - fix default filename problem in youtube-download.pl
+
 0.35    Tue Oct 18 00:28:58 2011
         - fix typo in youtube-playlists.pl (rt:71721)
 
