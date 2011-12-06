@@ -47,7 +47,8 @@ sub download {
     my $fmt = $args->{fmt} || $data->{fmt} || DEFAULT_FMT;
 
     my $video_url = $data->{video_url_map}{$fmt}{url} || Carp::croak "this video has not supported fmt: $fmt";
-    my $file_name = $self->_foramt_file_name($args->{file_name}, {
+    $args->{filename} ||= $args->{file_name};
+    my $filename = $self->_foramt_filename($args->{filename}, {
         video_id   => $data->{video_id},
         title      => $data->{title},
         fmt        => $fmt,
@@ -56,7 +57,7 @@ sub download {
     });
 
     $args->{cb} = $self->_default_cb({
-        file_name => $file_name,
+        filename  => $filename,
         verbose   => $args->{verbose},
         overwrite => defined $args->{overwrite} ? $args->{overwrite} : 1,
     }) unless ref $args->{cb} eq 'CODE';
@@ -65,11 +66,11 @@ sub download {
     Carp::croak "!! $video_id download failed: ", $res->status_line if $res->is_error;
 }
 
-sub _foramt_file_name {
-    my ($self, $file_name, $data) = @_;
-    return "$data->{video_id}.$data->{suffix}" unless defined $file_name;
-    $file_name =~ s#{([^}]+)}#$data->{$1} || "{$1}"#eg;
-    return $file_name;
+sub _foramt_filename {
+    my ($self, $filename, $data) = @_;
+    return "$data->{video_id}.$data->{suffix}" unless defined $filename;
+    $filename =~ s#{([^}]+)}#$data->{$1} || "{$1}"#eg;
+    return $filename;
 }
 
 sub _is_supported_fmt {
@@ -80,7 +81,8 @@ sub _is_supported_fmt {
 
 sub _default_cb {
     my ($self, $args) = @_;
-    my ($file, $verbose, $overwrite) = @$args{qw/file_name verbose overwrite/};
+    my ($file, $verbose, $overwrite) = @$args{qw/filename verbose overwrite/};
+    $file ||= $args->{file_name};
 
     Carp::croak "file exists! $file" if -f $file and !$overwrite;
     open my $wfh, '>', $file or die $file, " $!";
@@ -299,11 +301,11 @@ Creates a WWW::YouTube::Download instance.
 
   $client->download($video_id);
   $client->download($video_id, {
-      fmt       => 37,
-      file_name => 'sample.mp4', # save file name
+      fmt      => 37,
+      filename => 'sample.mp4', # save file name
   });
   $client->download($video_id, {
-      file_name => '{title}.{suffix}', # maybe `video_title.mp4`
+      filename => '{title}.{suffix}', # maybe `video_title.mp4`
   });
   $client->download($video_id, {
       cb => \&callback,
@@ -313,7 +315,9 @@ Download the video file.
 The first parameter is passed to YouTube video url.
 B<\&callback> details SEE ALSO L<LWP::UserAgent> ':content_cb'.
 
-C<< file_name >> supported format:
+C<< file_name >> is B<< DEPRECATED!! >>
+
+C<< filename >> supported format:
 
   {video_id}
   {title}

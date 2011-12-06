@@ -44,7 +44,7 @@ main: {
         }
 
         # multibyte fixes
-        $output = $client->_foramt_file_name($output, {
+        $output = $client->_foramt_filename($output, {
             video_id => $meta_data->{video_id},
             title    => decode_utf8($meta_data->{title}),
             suffix   => $meta_data->{suffix},
@@ -53,7 +53,7 @@ main: {
 
         eval {
             $client->download($video_id, {
-                file_name => $output,
+                filename  => $output,
                 fmt       => $fmt,
                 verbose   => $verbose,
                 overwrite => $overwrite,
