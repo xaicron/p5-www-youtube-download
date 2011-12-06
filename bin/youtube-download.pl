@@ -71,7 +71,7 @@ exit;
 sub challeng_load_argv_from_fh {
     return unless $0 ne '-' && !-t STDIN;
 
-    # e.g. $ youtube-dl.pl < video_list
+    # e.g. $ youtube-download.pl < video_list
     while (defined (my $line = <STDIN>)) {
         chomp $line;
         $line =~ s/#.*$//;       # comment
@@ -96,7 +96,7 @@ sub show_version {
 sub help {
     print << 'HELP';
 Usage:
-    youtube-dl.pl [options] video_id_or_video_url ...
+    youtube-download.pl [options] video_id_or_video_url ...
 
 Options:
     -o, --output        Output filename, supports `{$value}` format
@@ -114,7 +114,7 @@ supported `{$value}` format are:
     {video_id} / {title} / {fmt} / {suffix}
 
     Example:
-        $ youtube-dl.pl -o "[{video_id}] {title}.{suffix}"
+        $ youtube-download.pl -o "[{video_id}] {title}.{suffix}"
 
 HELP
     exit 1;
@@ -183,7 +183,7 @@ Display version
 {video_id} / {title} / {fmt} / {suffix} / {resolution}
 
   Example:
-  $ youtube-dl.pl -o "[{video_id}] {title}.{suffix}"
+  $ youtube-download.pl -o "[{video_id}] {title}.{suffix}"
 
 =head1 AUTHOR
 
