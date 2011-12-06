@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.37    Wed Dec  7 02:33:23 2011
+        - fix wrong characters in filename in youtube-download.pl (mikolaj++)
+        - file_name option is DEPRECATED
+
 0.36    Mon Oct 31 02:45:48 2011
         - fix default filename problem in youtube-download.pl
 
