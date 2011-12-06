@@ -44,16 +44,17 @@ main: {
         }
 
         # multibyte fixes
-        $output = $client->_foramt_filename($output, {
+        my $filename = $client->_foramt_filename($output, {
             video_id => $meta_data->{video_id},
             title    => decode_utf8($meta_data->{title}),
             suffix   => $meta_data->{suffix},
         });
-        $output = $encoder->encode($output, sub { sprintf 'U+%x', shift });
+        $filename = filename_normalize($filename);
+        $filename = $encoder->encode($filename, sub { sprintf 'U+%x', shift });
 
         eval {
             $client->download($video_id, {
-                filename  => $output,
+                filename  => $filename,
                 fmt       => $fmt,
                 verbose   => $verbose,
                 overwrite => $overwrite,
@@ -78,6 +79,15 @@ sub challeng_load_argv_from_fh {
         $line =~ s/^\s+|\s+$//g; # trim spaces
         push @ARGV, $line;
     }
+}
+
+sub filename_normalize {
+    my $filename = shift;
+    $filename =~ s#[[:cntrl:]]##smg;          # remove all control characters
+    $filename =~ s#^\s+|\s+$##g;              # trim spaces
+    $filename =~ s#^\.+##;                    # remove multiple leading dots
+    $filename =~ tr#"/\\:*?<>|#'\-\-\-_____#; # NTFS and FAT unsupported characters
+    return $filename;
 }
 
 sub throw {
