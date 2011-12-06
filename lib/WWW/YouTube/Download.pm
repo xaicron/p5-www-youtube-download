@@ -85,7 +85,7 @@ sub _default_cb {
     $file ||= $args->{file_name};
 
     Carp::croak "file exists! $file" if -f $file and !$overwrite;
-    open my $wfh, '>', $file or die $file, " $!";
+    open my $wfh, '>', $file or Carp::croak $file, " $!";
     binmode $wfh;
 
     print "Downloading `$file`\n" if $verbose;
