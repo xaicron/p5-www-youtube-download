@@ -44,7 +44,7 @@ main: {
         }
 
         # multibyte fixes
-        my $filename = $client->_foramt_filename($output, {
+        my $filename = $client->_format_filename($output, {
             video_id => $meta_data->{video_id},
             title    => decode_utf8($meta_data->{title}),
             suffix   => $meta_data->{suffix},
