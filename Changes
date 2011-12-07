@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.38    Thu Dec  8 00:44:52 2011
+        - fix typo (mikolaj++)
+        - remove wrong code (mikolaj++)
+
 0.37    Wed Dec  7 02:33:23 2011
         - fix wrong characters in filename in youtube-download.pl (mikolaj++)
         - fix doc in youtube-download.pl (mikolaj++)
