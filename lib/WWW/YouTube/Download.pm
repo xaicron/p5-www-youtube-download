@@ -82,7 +82,6 @@ sub _is_supported_fmt {
 sub _default_cb {
     my ($self, $args) = @_;
     my ($file, $verbose, $overwrite) = @$args{qw/filename verbose overwrite/};
-    $file ||= $args->{file_name};
 
     Carp::croak "file exists! $file" if -f $file and !$overwrite;
     open my $wfh, '>', $file or Carp::croak $file, " $!";
