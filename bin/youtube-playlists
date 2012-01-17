@@ -82,24 +82,24 @@ sub chatty {
 }
 
 sub show_version {
-    print "youtube-playlists.pl (WWW::YouTube::Download) version $WWW::YouTube::Download::VERSION\n";
+    print "youtube-playlists (WWW::YouTube::Download) version $WWW::YouTube::Download::VERSION\n";
     exit;
 }
 __END__
 
 =head1 NAME
 
-youtube-playlists.pl - Find a YouTube video urls from playlis(s)
+youtube-playlists - Find a YouTube video urls from playlis(s)
 
 =head1 SYNOPSIS
 
   # print the list of video urls
-  $ youtube-playlists.pl http://www.youtube.com/watch?list=PLB199169FA7413767
-  $ youtube-playlists.pl PLB199169FA7413767
-  $ youtube-playlists.pl B199169FA7413767
+  $ youtube-playlists http://www.youtube.com/watch?list=PLB199169FA7413767
+  $ youtube-playlists PLB199169FA7413767
+  $ youtube-playlists B199169FA7413767
 
-  # with youtube-download.pl
-  $ youtube-playlists.pl B199169FA7413767 | youtube-download.pl
+  # with youtube-download
+  $ youtube-playlists B199169FA7413767 | youtube-download
 
 =head1 OPTIONS
 

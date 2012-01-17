@@ -72,7 +72,7 @@ exit;
 sub challeng_load_argv_from_fh {
     return unless $0 ne '-' && !-t STDIN;
 
-    # e.g. $ youtube-download.pl < video_list
+    # e.g. $ youtube-download < video_list
     while (defined (my $line = <STDIN>)) {
         chomp $line;
         $line =~ s/#.*$//;       # comment
@@ -99,14 +99,14 @@ sub chatty {
 }
 
 sub show_version {
-    print "youtube-download.pl (WWW::YouTube::Download) version $WWW::YouTube::Download::VERSION\n";
+    print "youtube-download (WWW::YouTube::Download) version $WWW::YouTube::Download::VERSION\n";
     exit;
 }
 
 sub help {
     print << 'HELP';
 Usage:
-    youtube-download.pl [options] video_id_or_video_url ...
+    youtube-download [options] video_id_or_video_url ...
 
 Options:
     -o, --output        Output filename, supports `{$value}` format
@@ -124,7 +124,7 @@ supported `{$value}` format are:
     {video_id} / {title} / {fmt} / {suffix}
 
     Example:
-        $ youtube-download.pl -o "[{video_id}] {title}.{suffix}"
+        $ youtube-download -o "[{video_id}] {title}.{suffix}"
 
 HELP
     exit 1;
@@ -134,13 +134,13 @@ __END__
 
 =head1 NAME
 
-youtube-download.pl - Download video(s) from YouTube
+youtube-download - Download video(s) from YouTube
 
 =head1 SYNOPSIS
 
-  $ youtube-download.pl bT8yLWy4B5w
-  $ youtube-download.pl http://www.youtube.com/watch?v=bT8yLWy4B5w
-  $ youtube-download.pl < video_list_file
+  $ youtube-download bT8yLWy4B5w
+  $ youtube-download http://www.youtube.com/watch?v=bT8yLWy4B5w
+  $ youtube-download < video_list_file
 
 =head1 OPTIONS
 
@@ -193,7 +193,7 @@ Display version
 {video_id} / {title} / {fmt} / {suffix} / {resolution}
 
   Example:
-  $ youtube-download.pl -o "[{video_id}] {title}.{suffix}"
+  $ youtube-download -o "[{video_id}] {title}.{suffix}"
 
 =head1 AUTHOR
 
