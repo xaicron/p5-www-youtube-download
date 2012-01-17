@@ -7,12 +7,13 @@ requires 'URI::QueryParam';
 requires 'LWP::UserAgent';
 requires 'JSON';
 requires 'HTML::Entities';
-requires 'XML::TreePP'; # for youtube-playlists.pl
+requires 'Term::ANSIColor'; # for youtube-download and youtube-playlists
+requires 'XML::TreePP'; # for youtube-playlists
 
 tests 't/*.t t/*/*.t';
 author_tests 'xt';
 
-install_script 'bin/youtube-download.pl', 'bin/youtube-playlists.pl';
+install_script 'bin/youtube-download', 'bin/youtube-playlists';
 
 test_requires 'Test::More', '0.96';
 auto_set_repository;
