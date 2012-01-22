@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.40    Sun Jan 22 16:54:53 2012
+        - Fixed a problem that did not works, because YouTube's design was changed.
+          (ks0608++, zentooo++)
+
 0.39    Wed Jan 18 01:28:00 2012
         - remove suffix from youtube-download.pl and youtube-playlists.pl (mikolaj++)
 
