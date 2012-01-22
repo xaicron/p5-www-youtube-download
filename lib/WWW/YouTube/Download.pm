@@ -193,7 +193,7 @@ sub _get_args {
     my $data;
     for my $line (split "\n", $content) {
         next unless $line;
-        if ($line =~ /^\s*'PLAYER_CONFIG'\s*:\s*({.*})\s*$/) {
+        if ($line =~ /^\s*yt\.playerConfig\s*=\s*({.*})/) {
             $data = JSON->new->utf8(1)->decode($1);
             last;
         }
