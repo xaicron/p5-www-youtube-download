@@ -222,7 +222,7 @@ sub _parse_stream_map {
         my $uri = URI->new;
         $uri->query($stuff);
         my $query = +{ $uri->query_form };
-        $fmt_url_map->{$query->{itag}} = $query->{url};
+        $fmt_url_map->{$query->{itag}} = $query->{url} . '&signature=' . $query->{sig}; #XXX
     }
 
     return $fmt_url_map;
