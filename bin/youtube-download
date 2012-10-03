@@ -65,7 +65,11 @@ main: {
                 overwrite => $overwrite,
             });
         };
-        throw("[$meta_data->{video_id}] $@") if $@;
+        if (my $e = $@) {
+           unlink $filename if -e $filename && !-s $filename;
+           throw("[$meta_data->{video_id}] $e");
+        }
+
         chatty(pcolor(['green'], 'Download successfully!'));
 
         Time::HiRes::sleep($interval) if @ARGV;
