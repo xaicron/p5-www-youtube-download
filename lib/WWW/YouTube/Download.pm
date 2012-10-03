@@ -37,6 +37,18 @@ for my $name (qw[video_id video_url title fmt fmt_list suffix]) {
     };
 }
 
+sub playback_url {
+    my ($self, $video_id, $args) = @_;
+    Carp::croak "Usage: $self->playback_url('[video_id|video_url]')" unless $video_id;
+    $args ||= {};
+
+    my $data = $self->prepare_download($video_id);
+    my $fmt  = $args->{fmt} || $data->{fmt} || DEFAULT_FMT;
+    my $video_url = $data->{video_url_map}{$fmt}{url} || Carp::croak "this video has not supported fmt: $fmt";
+
+    return $video_url;
+}
+
 sub download {
     my ($self, $video_id, $args) = @_;
     Carp::croak "Usage: $self->download('[video_id|video_url]')" unless $video_id;
@@ -222,7 +234,9 @@ sub _parse_stream_map {
         my $uri = URI->new;
         $uri->query($stuff);
         my $query = +{ $uri->query_form };
-        $fmt_url_map->{$query->{itag}} = $query->{url};
+        my $sig = $query->{sig};
+        my $url = $query->{url};
+        $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
     }
 
     return $fmt_url_map;
@@ -323,6 +337,14 @@ C<< filename >> supported format:
   {fmt}
   {suffix}
   {resolution}
+
+=item B<playback_url($video_id, [, \%args])>
+
+  $client->playback_url($video_id);
+  $client->playback_url($video_id, { fmt => 37 });
+
+Return playback URL of the video. This is direct link to the movie file.
+Function supports only "fmt" option.
 
 =item B<ua([$ua])>
 

@@ -6,15 +6,14 @@ use Pod::Usage qw(pod2usage);
 use WWW::YouTube::Download;
 use Encode qw(find_encoding decode_utf8);
 use Time::HiRes;
-use Term::ANSIColor qw(colored);
-
-$ENV{ANSI_COLORS_DISABLED} = 1 if $^O eq 'MSWin32';
 
 my $encode    = 'utf8';
 my $overwrite = 0;
-my $verbose   = 1;
+my $verbose   = -t STDOUT ? 1 : 0; # don't be verbose on dump terminal
 my $interval  = 1; # sec
 GetOptions(
+    'C|no-colors!' => \my $disable_colors,
+    'U|url!'       => \my $playback_url,
     'o|output=s'   => \my $output,
     'F|fmt=i',     => \my $fmt,
     'v|verbose!'   => \$verbose,
@@ -43,11 +42,17 @@ main: {
             throw("[$meta_data->{video_id}] this video has not supported fmt: $fmt");
         }
 
+        if ($playback_url) {
+            my $p_url = $client->playback_url($video_id, { fmt => $fmt });
+            chatty("Playback URL: $p_url");
+            next;
+        }
+
         # multibyte fixes
         my $filename = $client->_format_filename($output, {
             video_id => $meta_data->{video_id},
             title    => decode_utf8($meta_data->{title}),
-            suffix   => $meta_data->{suffix},
+            suffix   => $fmt ? $meta_data->{video_url_map}{$fmt}{suffix} : $meta_data->{suffix},
         });
         $filename = filename_normalize($filename);
         $filename = $encoder->encode($filename, sub { sprintf 'U+%x', shift });
@@ -61,7 +66,7 @@ main: {
             });
         };
         throw("[$meta_data->{video_id}] $@") if $@;
-        chatty(colored ['green'], 'Download successfully!');
+        chatty(pcolor(['green'], 'Download successfully!'));
 
         Time::HiRes::sleep($interval) if @ARGV;
     }
@@ -91,11 +96,23 @@ sub filename_normalize {
 }
 
 sub throw {
-    die colored(['red'], 'ERROR: ', @_), "\n";
+    die pcolor(['red'], 'ERROR: ', @_), "\n";
 }
 
 sub chatty {
     print @_, "\n";
+}
+
+sub pcolor {
+    my ($color, @msg) = @_;
+
+    if ($^O eq 'MSWin32' || $disable_colors || !-t STDOUT) {
+        return @msg;
+    }
+
+    eval { require Term::ANSIColor };
+    return @msg if $@; # module not available
+    return Term::ANSIColor::colored($color, @msg);
 }
 
 sub show_version {
@@ -109,6 +126,7 @@ Usage:
     youtube-download [options] video_id_or_video_url ...
 
 Options:
+    -C, --no-colors     Disable colored output
     -o, --output        Output filename, supports `{$value}` format
     -e, --encode        File system encoding (e.g. cp932)
     -F, --fmt           Video quality (SEE ALSO wikipedia)
@@ -116,6 +134,7 @@ Options:
     -i, --interval      Download interval
     -v, --verbose       Turns on chatty output (defult: enable)
     -q, --quiet         Turns off progress
+    -U, --url           Display playback URL for a video
     -h, --help          Display help
     -m, --man           Display man page
     -V, --version       Display version
@@ -146,6 +165,10 @@ youtube-download - Download video(s) from YouTube
 
 =over
 
+=item -C, --no-colors
+
+Force disable colored output
+
 =item -o, --output
 
 output filename, supports `{$value}` format (defult: {video_id}.{suffix})
@@ -168,7 +191,11 @@ Video quality (SEE ALSO wikipedia)
 
 =item -v, --verbose
 
-Truns on chatty output (defult: enableed)
+Truns on chatty output (defult: enabled)
+
+=item -U, --url
+
+Show playback URL of a video, but do not download it
 
 =item -q, --quiet
 

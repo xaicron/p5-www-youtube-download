@@ -7,14 +7,14 @@ use XML::TreePP;
 use WWW::YouTube::Download;
 use Getopt::Long qw(GetOptions :config bundling);
 use Pod::Usage qw(pod2usage);
-use Term::ANSIColor qw(colored);
 
 my $api_url = 'http://gdata.youtube.com/feeds/api/playlists';
 
 GetOptions(
-    'v|verbose' => \my $verbose,
-    'h|help'    => sub { pod2usage(exitval => 0, -noperldoc => 1, -verbose => 2) },
-    'V|version' => sub { show_version() },
+    'C|no-colors!' => \my $disable_colors,
+    'v|verbose'    => \my $verbose,
+    'h|help'       => sub { pod2usage(exitval => 0, -noperldoc => 1, -verbose => 2) },
+    'V|version'    => sub { show_version() },
 ) or pod2usage(2);
 pod2usage() unless @ARGV;
 
@@ -41,7 +41,7 @@ sub fetch_playlist_xml {
     unless ($res->is_success) {
         throw('%s: %s', $id, $res->status_line);
     }
-    chatty(colored ['green'], "done\n");
+    chatty(pcolor(['green'], "done\n"));
     return $res->decoded_content;
 }
 
@@ -55,7 +55,7 @@ sub find_video_urls {
         $uri->query_param_delete('feature');
         push @$urls, $uri->as_string;
     }
-    chatty(colored ['green'], "done\n");
+    chatty(pcolor(['green'], "done\n"));
     return $urls;
 }
 
@@ -72,13 +72,25 @@ sub find_playlist_id {
 
 sub throw {
     my $format = shift;
-    die colored ['red'], sprintf($format, @_), "\n";
+    die pcolor(['red'], sprintf($format, @_)), "\n";
 }
 
 sub chatty {
     return unless $verbose;
     my $format = shift;
     print STDERR sprintf $format, @_;
+}
+
+sub pcolor {
+    my ($color, @msg) = @_;
+
+    if ($^O eq 'MSWin32' || $disable_colors || !-t STDOUT) {
+        return @msg;
+    }
+
+    eval { require Term::ANSIColor };
+    return @msg if $@; # module not available
+    return Term::ANSIColor::colored($color, @msg);
 }
 
 sub show_version {
@@ -94,7 +106,7 @@ youtube-playlists - Find a YouTube video urls from playlis(s)
 =head1 SYNOPSIS
 
   # print the list of video urls
-  $ youtube-playlists http://www.youtube.com/watch?list=PLB199169FA7413767
+  $ youtube-playlists http://www.youtube.com/playlist?list=PLB199169FA7413767
   $ youtube-playlists PLB199169FA7413767
   $ youtube-playlists B199169FA7413767
 
@@ -104,6 +116,10 @@ youtube-playlists - Find a YouTube video urls from playlis(s)
 =head1 OPTIONS
 
 =over
+
+=item -C, --no-colors
+
+Force disable colored output
 
 =item -v, --verbose
 
