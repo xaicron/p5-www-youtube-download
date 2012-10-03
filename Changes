@@ -1,5 +1,10 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.41    Thu Oct  4 00:44:13 2012
+        - follow the change of site (mikolaj++, yusukebe++)
+        - fixed color problems on scripts (mikolaj++)
+        - fixed RT 79931 (HMBRAND++)
+
 0.40    Sun Jan 22 16:54:53 2012
         - Fixed a problem that did not works, because YouTube's design was changed.
           (ks0608++, zentooo++)
