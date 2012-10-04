@@ -70,7 +70,7 @@ main: {
            throw("[$meta_data->{video_id}] $e");
         }
 
-        chatty(pcolor(['green'], 'Download successfully!'));
+        chatty(pcolor(['green'], 'Download successful!'));
 
         Time::HiRes::sleep($interval) if @ARGV;
     }
