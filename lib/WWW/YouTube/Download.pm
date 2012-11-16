@@ -21,7 +21,7 @@ sub new {
     my $class = shift;
     my %args = @_;
     $args{ua} = LWP::UserAgent->new(
-        agent => __PACKAGE__.'/'.$VERSION,
+        agent      => __PACKAGE__.'/'.$VERSION,
         parse_head => 0,
     ) unless exists $args{ua};
     bless \%args, $class;
