@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.42    Fri Nov 16 21:35:31 2012
+        - fixed "failed to extract JSON data" (ks0608++)
+        - fixed RT: 81068 (panic83++)
+
 0.41    Thu Oct  4 00:44:13 2012
         - follow the change of site (mikolaj++, yusukebe++)
         - fixed color problems on scripts (mikolaj++)
