@@ -368,7 +368,7 @@ Sets and gets LWP::UserAgent object.
 
 =head1 AUTHOR
 
-Yuji Shimada
+xaicron E<lt>xaicron {@} cpan.orgE<gt>
 
 =head1 CONTRIBUTORS
 
