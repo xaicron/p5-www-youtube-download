@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.43    Sat Jan  5 01:43:17 2013
+        - fixed grammar (mokko++)
+        - using Module::Build
+
 0.42    Fri Nov 16 21:35:31 2012
         - fixed "failed to extract JSON data" (ks0608++)
         - fixed RT: 81068 (panic83++)
