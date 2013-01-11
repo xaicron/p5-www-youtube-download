@@ -11,6 +11,7 @@ my $encode    = 'utf8';
 my $overwrite = 0;
 my $verbose   = -t STDOUT ? 1 : 0; # don't be verbose on dump terminal
 my $interval  = 1; # sec
+my $proxy     = undef;
 GetOptions(
     'C|no-colors!' => \my $disable_colors,
     'U|url!'       => \my $playback_url,
@@ -20,6 +21,7 @@ GetOptions(
     'i|interval=i' => \$interval,
     'e|encode=s'   => \$encode,
     'f|force!'     => \$overwrite,
+    'p|proxy=s'    => \$proxy,
     'q|quiet!'     => sub { $verbose = 0 },
     'h|help'       => sub { help() },
     'm|man'        => sub { pod2usage(-verbose => 2) },
@@ -32,6 +34,11 @@ my $encoder = find_encoding($encode) or throw("not supported encoding: $encode")
 $output = $encoder->decode($output) if $output;
 
 my $client = WWW::YouTube::Download->new;
+
+if($proxy){
+    $client->{ua}->proxy(['http','https'] => $proxy);
+	print "--> Using proxy $proxy\n";
+}
 
 main: {
     while (@ARGV) {
@@ -136,6 +143,7 @@ Options:
     -F, --fmt           Video quality (SEE ALSO wikipedia)
     -f, --force         Force overwrite output file
     -i, --interval      Download interval
+    -p, --proxy         Use the stated proxy
     -v, --verbose       Turns on chatty output (defult: enable)
     -q, --quiet         Turns off progress
     -U, --url           Display playback URL for a video
@@ -146,8 +154,9 @@ Options:
 supported `{$value}` format are:
     {video_id} / {title} / {fmt} / {suffix}
 
-    Example:
+    Examples:
         $ youtube-download -o "[{video_id}] {title}.{suffix}"
+        $ youtube-download -p socks://127.0.0.1:4321/ -o "{title} (youtube {video_id}).{suffix}"
 
 HELP
     exit 1;
@@ -179,7 +188,11 @@ output filename, supports `{$value}` format (defult: {video_id}.{suffix})
 
 =item -i, --interval
 
-Download interval (defult: 1 (sec))
+Download interval (default: 1 (sec))
+
+=item -p
+
+Use the given proxy. Requires LWP::Protocol::socks to be installed for socks proxies. See examples for syntax. (default: no proxy)
 
 =item -e, --encode
 
