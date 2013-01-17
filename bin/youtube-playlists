@@ -10,8 +10,10 @@ use Pod::Usage qw(pod2usage);
 
 my $api_url = 'http://gdata.youtube.com/feeds/api/playlists';
 
+my $proxy     = undef;
 GetOptions(
     'C|no-colors!' => \my $disable_colors,
+    'p|proxy=s'    => \$proxy,
     'v|verbose'    => \my $verbose,
     'h|help'       => sub { pod2usage(exitval => 0, -noperldoc => 1, -verbose => 2) },
     'V|version'    => sub { show_version() },
@@ -21,9 +23,14 @@ pod2usage() unless @ARGV;
 my $ua  = WWW::YouTube::Download->new->ua;
 my $tpp = XML::TreePP->new;
 
+if($proxy){
+    $ua->proxy(['http','https'] => $proxy);
+	print "--> Using proxy $proxy\n";
+}
+
 main: {
     for my $id_or_url (@ARGV) {
-        chatty("--> Works on %s\n", $id_or_url);
+        chatty("--> Working on %s\n", $id_or_url);
         my $id = find_playlist_id($id_or_url);
         throw('%s is not supported arguments', $id_or_url) unless $id;
         my $xml = fetch_playlist_xml($id);
@@ -112,6 +119,9 @@ youtube-playlists - Find a YouTube video urls from playlis(s)
 
   # with youtube-download
   $ youtube-playlists B199169FA7413767 | youtube-download
+  
+  # with socks proxy
+  $ youtube-playlists -p socks://<some IP>:<some port>/ B199169FA7413767
 
 =head1 OPTIONS
 
@@ -120,6 +130,10 @@ youtube-playlists - Find a YouTube video urls from playlis(s)
 =item -C, --no-colors
 
 Force disable colored output
+
+=item -p, --proxy
+
+Use the given proxy. Note that using a socks proxy requires LWP::protocol::socks to be installed.
 
 =item -v, --verbose
 
