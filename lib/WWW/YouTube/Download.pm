@@ -27,7 +27,7 @@ sub new {
     bless \%args, $class;
 }
 
-for my $name (qw[video_id video_url title fmt fmt_list suffix]) {
+for my $name (qw[video_id video_url title user fmt fmt_list suffix]) {
     no strict 'refs';
     *{"get_$name"} = sub {
         use strict 'refs';
@@ -64,6 +64,7 @@ sub download {
     my $filename = $self->_format_filename($args->{filename}, {
         video_id   => $data->{video_id},
         title      => $data->{title},
+        user       => $data->{user},
         fmt        => $fmt,
         suffix     => $data->{video_url_map}{$fmt}{suffix} || _suffix($fmt),
         resolution => $data->{video_url_map}{$fmt}{resolution} || '0x0',
@@ -125,6 +126,7 @@ sub prepare_download {
 
     my $content       = $self->_get_content($video_id);
     my $title         = $self->_fetch_title($content);
+    my $user          = $self->_fetch_user($content);
     my $video_url_map = $self->_fetch_video_url_map($content);
 
     my $fmt_list = [];
@@ -147,6 +149,7 @@ sub prepare_download {
         video_id      => $video_id,
         video_url     => $hq_data->{url},
         title         => $title,
+        user          => $user,
         video_url_map => $video_url_map,
         fmt           => $hq_data->{fmt},
         fmt_list      => $fmt_list,
@@ -159,6 +162,13 @@ sub _fetch_title {
 
     my ($title) = $content =~ /<meta name="title" content="(.+?)">/ or return;
     return decode_entities($title);
+}
+
+sub _fetch_user {
+    my ($self, $content) = @_;
+
+    my ($user) = $content =~ /<span class="yt-user-name\s+?" dir="ltr">([^<]+)<\/span>/ or return;
+    return decode_entities($user);
 }
 
 sub _fetch_video_url_map {
@@ -335,6 +345,7 @@ C<< filename >> supported format:
 
   {video_id}
   {title}
+  {user}
   {fmt}
   {suffix}
   {resolution}
@@ -357,6 +368,8 @@ Sets and gets LWP::UserAgent object.
 =item B<get_video_url($video_id)>
 
 =item B<get_title($video_id)>
+
+=item B<get_user($video_id)>
 
 =item B<get_fmt($video_id)>
 
