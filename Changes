@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.45    Sun Feb 10 02:14:09 2013
+        - New substitution variable {user} (isync++)
+
 0.44    Sat Jan 19 18:29:58 2013
         - added proxy support (isync++)
 
