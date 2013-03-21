@@ -216,7 +216,7 @@ sub _get_args {
     my $data;
     for my $line (split "\n", $content) {
         next unless $line;
-        if ($line =~ /^\s*yt\.playerConfig\s*=\s*({.*})/) {
+        if ($line =~ /\s*ytplayer\.config\s*=\s*({.*})/) {
             $data = JSON->new->utf8(1)->decode($1);
             last;
         }
