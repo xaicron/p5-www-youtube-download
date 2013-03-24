@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.46    Sun Mar 24 15:34:27 2013
+        - YouTube's design was changed (vjp++, yusukebe++)
+
 0.45    Sun Feb 10 02:14:09 2013
         - New substitution variable {user} (isync++)
 
