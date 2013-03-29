@@ -361,6 +361,8 @@ C<< filename >> supported format placeholders:
   {suffix}
   {resolution}
 
+Output filename is set to C<{video_id}.{suffix}> by default.
+
 =item C<file_name>
 
 B<< DEPRECATED >> alternative for C<filename>.
