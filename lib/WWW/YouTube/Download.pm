@@ -337,11 +337,22 @@ Creates a WWW::YouTube::Download instance.
 
 Download the video file.
 The first parameter is passed to YouTube video url.
-B<\&callback> details SEE ALSO L<LWP::UserAgent> ':content_cb'.
 
-C<< file_name >> is B<< DEPRECATED!! >>
+Allowed arguments:
 
-C<< filename >> supported format:
+=over
+
+=item C<cb>
+
+Set a callback subroutine, SEE L<LWP::UserAgent> ':content_cb'
+for details.
+
+=item C<filename>
+
+Set the filename, possibly using placeholders to be filled with
+information gathered about the video.
+
+C<< filename >> supported format placeholders:
 
   {video_id}
   {title}
@@ -350,6 +361,20 @@ C<< filename >> supported format:
   {suffix}
   {resolution}
 
+Output filename is set to C<{video_id}.{suffix}> by default.
+
+=item C<file_name>
+
+B<< DEPRECATED >> alternative for C<filename>.
+
+=item C<fmt>
+
+set the format to download. Defaults to the best video quality
+(inferred by the available resolutions).
+
+=back
+
+
 =item B<playback_url($video_id, [, \%args])>
 
   $client->playback_url($video_id);
@@ -357,6 +382,75 @@ C<< filename >> supported format:
 
 Return playback URL of the video. This is direct link to the movie file.
 Function supports only "fmt" option.
+
+=item B<prepare_download($video_id)>
+
+Gather data about the video. A hash reference is returned, with the following
+keys:
+
+=over
+
+=item C<fmt>
+
+the default, suggested format. It is inferred by selecting the
+alternative with the highest resolution.
+
+=item C<fmt_list>
+
+the list of available formats, as an array reference.
+
+=item C<suffix>
+
+the filename extension associated to the default format (see C<fmt>
+above).
+
+=item C<title>
+
+the title of the video
+
+=item C<user>
+
+the YouTube user owning the video
+
+=item C<video_id>
+
+the video identifier
+
+=item C<video_url>
+
+the URL of the video associated to the default format (see C<fmt>
+above).
+
+=item C<video_url_map>
+
+an hash reference containing details about all available formats.
+
+=back
+
+The C<video_url_map> has one key/value pair for each available format,
+where the key is the format identifier (can be used as C<fmt> parameter
+for L</download>, for example) and the value is a hash reference with
+the following data:
+
+=over
+
+=item C<fmt>
+
+the format specifier, that can be passed to L</download>
+
+=item C<resolution>
+
+the resolution as I<width>xI<height>
+
+=item C<suffix>
+
+the suffix, providing a hint about the video format (e.g. webm, flv, ...)
+
+=item C<url>
+
+the URL where the video can be found
+
+=back
 
 =item B<ua([$ua])>
 
