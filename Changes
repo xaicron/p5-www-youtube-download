@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+0.47    Tue Apr  2 02:06:07 2013
+        - Added some documentation and added eg/menu.pl (polettix++)
+
 0.46    Sun Mar 24 15:34:27 2013
         - YouTube's design was changed (vjp++, yusukebe++)
 
