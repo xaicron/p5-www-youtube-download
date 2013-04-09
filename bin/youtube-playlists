@@ -25,7 +25,7 @@ my $tpp = XML::TreePP->new;
 
 if($proxy){
     $ua->proxy(['http','https'] => $proxy);
-	print "--> Using proxy $proxy\n";
+    print "--> Using proxy $proxy\n";
 }
 
 main: {
@@ -57,8 +57,8 @@ sub find_video_urls {
     my $urls = [];
     chatty('Parsing XML ... ');
     my $tree = $tpp->parse($xml);
-    my $entries = ref($tree->{feed}{entry}) eq 'ARRAY' ?
-       $tree->{feed}{entry} : [ $tree->{feed}{entry} ];
+    my $entries =
+        ref $tree->{feed}{entry} eq 'ARRAY' ? $tree->{feed}{entry} : [ $tree->{feed}{entry} ];
     for my $entry (@$entries) {
         my $uri = URI->new($entry->{'media:group'}{'media:player'}{-url});
         $uri->query_param_delete('feature');
