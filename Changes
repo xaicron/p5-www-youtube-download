@@ -1,5 +1,7 @@
 Revision history for Perl extension WWW::YouTube::Download
 
+{{$NEXT}}
+
 0.47    Tue Apr  2 02:06:07 2013
         - Added some documentation and added eg/menu.pl (polettix++)
 

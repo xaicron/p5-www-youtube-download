@@ -1,0 +1,83 @@
+{
+   "abstract" : "Very simple YouTube video download interface",
+   "author" : [
+      "xaicron <xaicron {@} cpan.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Minilla/v0.0.53, CPAN::Meta::Converter version 2.130880",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "www-youtube-download",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Test::More" : "0.98"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "CPAN::Meta" : "0",
+            "CPAN::Meta::Prereqs" : "0",
+            "Module::Build" : "0.38"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Pod::Wordlist::hanekomu" : "0",
+            "Test::CPAN::Meta" : "0",
+            "Test::MinimumVersion" : "0.10108",
+            "Test::Pod" : "1.41",
+            "Test::Spelling" : "0"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "HTML::Entities" : "0",
+            "JSON" : "0",
+            "LWP::UserAgent" : "0",
+            "Term::ANSIColor" : "0",
+            "URI" : "0",
+            "URI::QueryParam" : "0",
+            "XML::TreePP" : "0",
+            "perl" : "5.008001"
+         }
+      }
+   },
+   "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/xaicron/p5-www-youtube-download/issues"
+      },
+      "homepage" : "https://github.com/xaicron/p5-www-youtube-download",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/xaicron/p5-www-youtube-download",
+         "web" : "https://github.com/xaicron/p5-www-youtube-download"
+      }
+   },
+   "version" : "0.47",
+   "x_contributors" : [
+      "akiym <akiyama@8ant.org>",
+      "Maurice <mauricemengel@gmail.com>",
+      "ks <ks-for-git@live.jp>",
+      "isync <o.zucker@web.de>",
+      "Yusuke Wada <yusuke@kamawada.com>",
+      "Flavio Poletti <flavio@polettix.it>",
+      "xaicron <xaicron@gmail.com>"
+   ]
+}
