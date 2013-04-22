@@ -93,6 +93,19 @@ sub _is_supported_fmt {
     $data->{video_url_map}{$fmt}{url} ? 1 : 0;
 }
 
+sub _progress {
+    my ($self, $total) = @_;
+
+    if (not defined $self->{_progress}) {
+        require Term::ProgressBar;
+        $self->{_progress} = Term::ProgressBar->new( { count => $total, ETA => 'linear', fh => \*STDOUT } );
+        $self->{_progress}->minor(0);
+        $self->{_progress}->max_update_rate(1);
+    }
+
+    return $self->{_progress};
+}
+
 sub _default_cb {
     my ($self, $args) = @_;
     my ($file, $verbose, $overwrite) = @$args{qw/filename verbose overwrite/};
@@ -109,8 +122,7 @@ sub _default_cb {
         if ($verbose || $self->{verbose}) {
             my $size = tell $wfh;
             my $total = $res->header('Content-Length');
-            printf "%d/%d (%.2f%%)\r", $size, $total, $size / $total * 100;
-            print "\n" if $total == $size;
+            $self->_progress($total)->update($size);
         }
     };
 }
