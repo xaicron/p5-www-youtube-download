@@ -83,5 +83,10 @@ test_video_id(
     'HyNh3AXegxw',
 );
 
+test_video_id(
+    'http://www.youtube.com/user/MeitalDohanVEVO?video_id=tB9WoMebMEA',
+    'tB9WoMebMEA',
+);
+
 done_testing;
 

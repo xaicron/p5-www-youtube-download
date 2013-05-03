@@ -271,7 +271,7 @@ sub _suffix {
 
 sub _video_id {
     my $stuff = shift;
-    if ($stuff =~ m{/.*?[?&;!]v=([^&#?=/;]+)}) {
+    if ($stuff =~ m{/.*?[?&;!](?:v|video_id)=([^&#?=/;]+)}) {
         return $1;
     }
     elsif ($stuff =~ m{/(?:e|v|embed)/([^&#?=/;]+)}) {
