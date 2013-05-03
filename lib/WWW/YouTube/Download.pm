@@ -298,10 +298,10 @@ WWW::YouTube::Download - Very simple YouTube video download interface
 =head1 SYNOPSIS
 
   use WWW::YouTube::Download;
-  
+
   my $client = WWW::YouTube::Download->new;
   $client->download($video_id);
-  
+
   my $video_url = $client->get_video_url($video_id);
   my $title     = $client->get_title($video_id);     # maybe encoded utf8 string.
   my $fmt       = $client->get_fmt($video_id);       # maybe highest quality.
