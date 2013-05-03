@@ -481,6 +481,10 @@ xaicron E<lt>xaicron {@} cpan.orgE<gt>
 
 yusukebe
 
+=head1 BUG REPORTING
+
+Plese use github issues: https://github.com/xaicron/p5-www-youtube-download/.
+
 =head1 SEE ALSO
 
 L<WWW::NicoVideo::Download>
