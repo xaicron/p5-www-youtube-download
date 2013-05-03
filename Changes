@@ -2,6 +2,9 @@ Revision history for Perl extension WWW::YouTube::Download
 
 {{$NEXT}}
 
+0.51 2013-05-03T07:49:29Z
+        - Support new url (mikolaj++)
+
 0.50 2013-04-19T17:50:39Z
         - repackaging
 

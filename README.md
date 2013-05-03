@@ -5,11 +5,9 @@ WWW::YouTube::Download - Very simple YouTube video download interface
 # SYNOPSIS
 
     use WWW::YouTube::Download;
-    
 
     my $client = WWW::YouTube::Download->new;
     $client->download($video_id);
-    
 
     my $video_url = $client->get_video_url($video_id);
     my $title     = $client->get_title($video_id);     # maybe encoded utf8 string.
@@ -169,6 +167,10 @@ xaicron <xaicron {@} cpan.org>
 # CONTRIBUTORS
 
 yusukebe
+
+# BUG REPORTING
+
+Plese use github issues: [https://github.com/xaicron/p5-www-youtube-download/issues](https://github.com/xaicron/p5-www-youtube-download/issues).
 
 # SEE ALSO
 
