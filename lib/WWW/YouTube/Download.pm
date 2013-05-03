@@ -483,7 +483,7 @@ yusukebe
 
 =head1 BUG REPORTING
 
-Plese use github issues: https://github.com/xaicron/p5-www-youtube-download/.
+Plese use github issues: L<< https://github.com/xaicron/p5-www-youtube-download/issues >>.
 
 =head1 SEE ALSO
 
