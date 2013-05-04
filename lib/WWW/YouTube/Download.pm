@@ -118,7 +118,7 @@ sub _default_cb {
 sub prepare_download {
     my ($self, $video_id) = @_;
     Carp::croak "Usage: $self->prepare_download('[video_id|watch_url]')" unless $video_id;
-    $video_id = _video_id($video_id);
+    $video_id = $self->video_id($video_id);
 
     return $self->{cache}{$video_id} if ref $self->{cache}{$video_id} eq 'HASH';
 
@@ -269,8 +269,9 @@ sub _suffix {
     ;
 }
 
-sub _video_id {
-    my $stuff = shift;
+sub video_id {
+    my ($self, $stuff) = @_;
+    return unless $stuff;
     if ($stuff =~ m{/.*?[?&;!](?:v|video_id)=([^&#?=/;]+)}) {
         return $1;
     }
@@ -286,6 +287,16 @@ sub _video_id {
     else {
         return $stuff;
     }
+}
+
+sub playlist_id {
+    my ($self, $stuff) = @_;
+    return unless $stuff;
+    if ($stuff =~ m{/.*?[?&;!]list=PL([^&#?=/;]+)}) {
+        return $1;
+    }
+    $stuff =~ s/^PL//;
+    return $stuff;
 }
 
 1;
@@ -458,6 +469,14 @@ the URL where the video can be found
   $self->ua($LWP_LIKE_OBJECT);
 
 Sets and gets LWP::UserAgent object.
+
+=item B<video_id($url)>
+
+Parses given string and returns video ID.
+
+=item B<playlist_id($url)>
+
+Parses given string and returns playlist ID.
 
 =item B<get_video_url($video_id)>
 
