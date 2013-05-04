@@ -472,11 +472,11 @@ Sets and gets LWP::UserAgent object.
 
 =item B<video_id($url)>
 
-Parses given string and returns video ID.
+Parses given URL and returns video ID.
 
 =item B<playlist_id($url)>
 
-Parses given string and returns playlist ID.
+Parses given URL and returns playlist ID.
 
 =item B<get_video_url($video_id)>
 
