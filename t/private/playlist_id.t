@@ -10,12 +10,12 @@ sub test_playlist_id {
 
 test_playlist_id(
     'http://www.youtube.com/playlist?list=PLUyiyCkoNwG8C_4ljTZWYYxmw7emk0W-f',
-    'UyiyCkoNwG8C_4ljTZWYYxmw7emk0W-f',
+    'UyiyCkoNwG8C_4ljTZWYYxmw7emk0W-f'
 );
 
 test_playlist_id(
     'http://www.youtube.com/watch?v=tAjFnJuk1Aw&list=PL48DBEDD2147DDC46',
-    '48DBEDD2147DDC46
+    '48DBEDD2147DDC46'
 );
 
 test_playlist_id(
@@ -25,7 +25,7 @@ test_playlist_id(
 
 test_playlist_id(
     '3J3dCCJTos-sucVYP7nAWmR97LFbiVNJ',
-    '3J3dCCJTos-sucVYP7nAWmR97LFbiVNJ',
+    '3J3dCCJTos-sucVYP7nAWmR97LFbiVNJ'
 );
 
 test_playlist_id(
@@ -35,7 +35,7 @@ test_playlist_id(
 
 test_playlist_id(
     'C5353E661DEF8150',
-    'C5353E661DEF8150',
+    'C5353E661DEF8150'
 );
 
 done_testing;
