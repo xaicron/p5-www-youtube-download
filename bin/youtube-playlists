@@ -20,18 +20,18 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage() unless @ARGV;
 
-my $ua  = WWW::YouTube::Download->new->ua;
+my $yt  = WWW::YouTube::Download->new;
 my $tpp = XML::TreePP->new;
 
 if($proxy){
-    $ua->proxy(['http','https'] => $proxy);
+    $yt->ua->proxy(['http','https'] => $proxy);
     print "--> Using proxy $proxy\n";
 }
 
 main: {
     for my $id_or_url (@ARGV) {
         chatty("--> Working on %s\n", $id_or_url);
-        my $id = find_playlist_id($id_or_url);
+        my $id = $yt->playlist_id($id_or_url);
         throw('%s is not supported arguments', $id_or_url) unless $id;
         my $xml = fetch_playlist_xml($id);
         my $urls = find_video_urls($xml);
@@ -44,7 +44,7 @@ sub fetch_playlist_xml {
     my $id = shift;
     my $url = sprintf '%s/%s?v=2', $api_url, $id;
     chatty('Fetching %s ... ', $url);
-    my $res = $ua->get($url);
+    my $res = $yt->ua->get($url);
     unless ($res->is_success) {
         throw('%s: %s', $id, $res->status_line);
     }
@@ -66,17 +66,6 @@ sub find_video_urls {
     }
     chatty(pcolor(['green'], "done\n"));
     return $urls;
-}
-
-sub find_playlist_id {
-    my $id_or_url = shift || return;
-    if ($id_or_url =~ /^http/) {
-        ($id_or_url) = $id_or_url =~ m/list=PL([0-9A-F]+)/;
-    }
-    else {
-        $id_or_url =~ s/^PL//;
-    }
-    return $id_or_url;
 }
 
 sub throw {
