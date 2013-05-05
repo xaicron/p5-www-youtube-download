@@ -5,7 +5,7 @@ use WWW::YouTube::Download;
 
 sub test_video_id {
     my ($input, $expects) = @_;
-    is +WWW::YouTube::Download::_video_id($input), $expects;
+    is +WWW::YouTube::Download->new()->video_id($input), $expects;
 }
 
 test_video_id(
