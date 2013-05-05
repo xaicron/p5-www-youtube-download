@@ -153,6 +153,14 @@ WWW::YouTube::Download is a download video from YouTube.
 
     Sets and gets LWP::UserAgent object.
 
+- __video\_id($url)__
+
+    Parses given URL and returns video ID.
+
+- __playlist\_id($url)__
+
+    Parses given URL and returns playlist ID.
+
 - __get\_video\_url($video\_id)__
 - __get\_title($video\_id)__
 - __get\_user($video\_id)__
