@@ -99,11 +99,11 @@ __END__
 
 =head1 NAME
 
-youtube-playlists - Find a YouTube video urls from playlis(s)
+youtube-playlists - Find a YouTube video URLs from playlist(s)
 
 =head1 SYNOPSIS
 
-  # print the list of video urls
+  # print the list of video URLs
   $ youtube-playlists http://www.youtube.com/playlist?list=PLB199169FA7413767
   $ youtube-playlists PLB199169FA7413767
   $ youtube-playlists B199169FA7413767
@@ -128,7 +128,7 @@ Use the given proxy. Note that using a socks proxy requires LWP::protocol::socks
 
 =item -v, --verbose
 
-truns on chatty output
+turns on chatty output
 
 =item -h, --help
 
