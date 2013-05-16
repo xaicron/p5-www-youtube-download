@@ -293,10 +293,10 @@ sub playlist_id {
     my ($self, $stuff) = @_;
     return unless $stuff;
     if ($stuff =~ m{/.*?[?&;!]list=([FP]L[^&#?=/;]+)}) {
-	return $1;
+        return $1;
     }
     elsif ($stuff =~ m{^\s*([FP]L[\w\-]+)\s*$}) {
-	return $1;
+        return $1;
     }
     return $stuff;
 }
@@ -305,7 +305,7 @@ sub user_id {
     my ($self, $stuff) = @_;
     return unless $stuff;
     if ($stuff =~ m{/user/([^&#?=/;]+)}) {
-	return $1;
+        return $1;
     }
     return $stuff;
 }
