@@ -8,13 +8,15 @@ use WWW::YouTube::Download;
 use Getopt::Long qw(GetOptions :config bundling);
 use Pod::Usage qw(pod2usage);
 
-my $api_url = 'http://gdata.youtube.com/feeds/api/playlists';
+my $api_url = 'http://gdata.youtube.com/feeds/api';
 
 my $proxy     = undef;
 GetOptions(
     'C|no-colors!' => \my $disable_colors,
     'i|video-id'   => \my $only_id,
+    'n|normalize'  => \my $normalize,
     'p|proxy=s'    => \$proxy,
+    'u|users'      => \my $user_uploads,
     'v|verbose'    => \my $verbose,
     'h|help'       => sub { pod2usage(exitval => 0, -noperldoc => 1, -verbose => 2) },
     'V|version'    => sub { show_version() },
@@ -32,22 +34,40 @@ if($proxy){
 main: {
     for my $id_or_url (@ARGV) {
         chatty("--> Working on %s\n", $id_or_url);
-        my $id = $yt->playlist_id($id_or_url);
+        my $id;
+        if ($user_uploads) {
+            $id = $yt->user_id($id_or_url);
+        } else {
+            $id = $yt->playlist_id($id_or_url);
+        }
         throw('%s is not supported arguments', $id_or_url) unless $id;
-        my $xml = fetch_playlist_xml($id);
+        if ($normalize) {
+            print "$id\n";
+            next;
+        }
+        my $url = get_api_url($id, $user_uploads);
+        my $xml = fetch_playlist_xml($url);
         my @urls = find_video_urls($xml);
         @urls = map { $yt->video_id($_) } @urls if $only_id;
         print "$_\n" foreach @urls;
     }
 }
 
+sub get_api_url {
+    my ($id, $uploads) = @_;
+    if ($uploads) {
+        return sprintf('%s/users/%s/uploads?v=2&max-results=50', $api_url, $id);
+    } else {
+        return sprintf('%s/playlists/%s?v=2&max-results=50', $api_url, $id);
+    }
+}
+
 sub fetch_playlist_xml {
-    my $id = shift;
-    my $url = sprintf '%s/%s?v=2&max-results=50', $api_url, $id;
+    my $url = shift;
     chatty('Fetching %s ... ', $url);
     my $res = $yt->ua->get($url);
     unless ($res->is_success) {
-        throw('%s: %s', $id, $res->status_line);
+        throw('%s: %s', $url, $res->status_line);
     }
     chatty(pcolor(['green'], "done\n"));
     return $res->decoded_content;
@@ -134,9 +154,18 @@ Force disable colored output
 
 Print only video IDs, not full URLs
 
+=item -n, --normalize
+
+Print only normalized playlist IDs, but do not fetch anything.
+You can call it also dry run.
+
 =item -p, --proxy
 
 Use the given proxy. Note that using a socks proxy requires LWP::protocol::socks to be installed.
+
+=item -u, --users
+
+Parses given parameters as YouTube usernames and lists their uploaded videos.
 
 =item -v, --verbose
 
