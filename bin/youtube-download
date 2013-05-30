@@ -140,11 +140,11 @@ Options:
     -C, --no-colors     Disable colored output
     -o, --output        Output filename, supports `{$value}` format
     -e, --encode        File system encoding (e.g. cp932)
-    -F, --fmt           Video quality (SEE ALSO wikipedia)
+    -F, --fmt           Video quality (SEE ALSO Wikipedia)
     -f, --force         Force overwrite output file
     -i, --interval      Download interval
     -p, --proxy         Use the stated proxy
-    -v, --verbose       Turns on chatty output (defult: enable)
+    -v, --verbose       Turns on chatty output (default: enable)
     -q, --quiet         Turns off progress
     -U, --url           Display playback URL for a video
     -h, --help          Display help
@@ -184,7 +184,7 @@ Force disable colored output
 
 =item -o, --output
 
-output filename, supports `{$value}` format (defult: {video_id}.{suffix})
+output filename, supports `{$value}` format (default: {video_id}.{suffix})
 
 =item -i, --interval
 
@@ -200,15 +200,15 @@ File system encoding (default: utf8)
 
 =item -f, --force
 
-Force overwrite output file (defult: disabled)
+Force overwrite output file (default: disabled)
 
 =item -F, --fmt
 
-Video quality (SEE ALSO wikipedia)
+Video quality (SEE ALSO Wikipedia)
 
 =item -v, --verbose
 
-Truns on chatty output (defult: enabled)
+Turns on chatty output (default: enabled)
 
 =item -U, --url
 
@@ -216,7 +216,7 @@ Show playback URL of a video, but do not download it
 
 =item -q, --quiet
 
-Truns off the most output
+Turns off the most output
 
 =item -h, --help
 
