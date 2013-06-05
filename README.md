@@ -161,6 +161,10 @@ WWW::YouTube::Download is a download video from YouTube.
 
     Parses given URL and returns playlist ID.
 
+- __user\_id($url)__
+
+    Parses given URL and returns YouTube username.
+
 - __get\_video\_url($video\_id)__
 - __get\_title($video\_id)__
 - __get\_user($video\_id)__

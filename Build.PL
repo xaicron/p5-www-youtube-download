@@ -23,8 +23,9 @@ my %args = (
         'Module::Build' => 0.38,
     },
 
-    name        => 'WWW-YouTube-Download',
-    module_name => 'WWW::YouTube::Download',
+    name            => 'WWW-YouTube-Download',
+    module_name     => 'WWW::YouTube::Download',
+    allow_pure_perl => 0,
 
     script_files => [glob('script/*'), glob('bin/*')],
 
