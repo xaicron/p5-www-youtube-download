@@ -35,9 +35,9 @@ $output = $encoder->decode($output) if $output;
 
 my $client = WWW::YouTube::Download->new;
 
-if($proxy){
+if ($proxy) {
     $client->{ua}->proxy(['http','https'] => $proxy);
-	print "--> Using proxy $proxy\n";
+        print "--> Using proxy $proxy\n";
 }
 
 main: {
