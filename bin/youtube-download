@@ -12,6 +12,7 @@ my $overwrite = 0;
 my $verbose   = -t STDOUT ? 1 : 0; # don't be verbose on dump terminal
 my $interval  = 1; # sec
 my $proxy     = undef;
+my $progress  = 0;
 GetOptions(
     'C|no-colors!' => \my $disable_colors,
     'U|url!'       => \my $playback_url,
@@ -22,6 +23,7 @@ GetOptions(
     'e|encode=s'   => \$encode,
     'f|force!'     => \$overwrite,
     'p|proxy=s'    => \$proxy,
+    'P|progress!'  => \$progress,
     'q|quiet!'     => sub { $verbose = 0 },
     'h|help'       => sub { help() },
     'm|man'        => sub { pod2usage(-verbose => 2) },
@@ -70,6 +72,7 @@ main: {
                 fmt       => $fmt,
                 verbose   => $verbose,
                 overwrite => $overwrite,
+                progress  => $progress,
             });
         };
         if (my $e = $@) {
@@ -144,6 +147,7 @@ Options:
     -f, --force         Force overwrite output file
     -i, --interval      Download interval
     -p, --proxy         Use the stated proxy
+    -P, --progress      Show progress bar if you have Term::ProgressBar
     -v, --verbose       Turns on chatty output (defult: enable)
     -q, --quiet         Turns off progress
     -U, --url           Display playback URL for a video
@@ -213,6 +217,10 @@ Truns on chatty output (defult: enabled)
 =item -U, --url
 
 Show playback URL of a video, but do not download it
+
+=item -P, --progress
+
+Show progress bar if you have Term::ProgressBar
 
 =item -q, --quiet
 
