@@ -12,6 +12,8 @@ use LWP::UserAgent;
 use JSON;
 use HTML::Entities qw/decode_entities/;
 
+$Carp::Intrenal{ (__PACKAGE__) }++;
+
 use constant DEFAULT_FMT => 18;
 
 my $base_url = 'http://www.youtube.com/watch?v=';
@@ -122,8 +124,6 @@ sub prepare_download {
 
     return $self->{cache}{$video_id} if ref $self->{cache}{$video_id} eq 'HASH';
 
-    local $Carp::CarpLevel = $Carp::CarpLevel + 1;
-
     my $content       = $self->_get_content($video_id);
     my $title         = $self->_fetch_title($content);
     my $user          = $self->_fetch_user($content);
@@ -174,8 +174,6 @@ sub _fetch_user {
 sub _fetch_video_url_map {
     my ($self, $content) = @_;
 
-    local $Carp::CarpLevel = $Carp::CarpLevel + 1;
-
     my $args = $self->_get_args($content);
     unless ($args->{fmt_list} and $args->{url_encoded_fmt_stream_map}) {
         Carp::croak 'failed to find video urls';
@@ -200,8 +198,6 @@ sub _fetch_video_url_map {
 
 sub _get_content {
     my ($self, $video_id) = @_;
-
-    local $Carp::CarpLevel = $Carp::CarpLevel + 1;
 
     my $url = "$base_url$video_id";
     my $res = $self->ua->get($url);
