@@ -253,7 +253,7 @@ sub _parse_stream_map {
         my $uri = URI->new;
         $uri->query($stuff);
         my $query = +{ $uri->query_form };
-        my $sig = $query->{sig};
+        my $sig = $query->{sig} || $query->{s};
         my $url = $query->{url};
         $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
     }
