@@ -11,6 +11,7 @@ use URI ();
 use LWP::UserAgent;
 use JSON;
 use HTML::Entities qw/decode_entities/;
+use HTTP::Headers;
 
 use constant DEFAULT_FMT => 18;
 
@@ -21,7 +22,10 @@ sub new {
     my $class = shift;
     my %args = @_;
     $args{ua} = LWP::UserAgent->new(
-        agent      => __PACKAGE__.'/'.$VERSION,
+        agent => __PACKAGE__.'/'.$VERSION,
+        default_headers => HTTP::Headers->new(
+            'Accept-Language' => 'en-US',
+        ),
         parse_head => 0,
     ) unless exists $args{ua};
     bless \%args, $class;
@@ -217,7 +221,10 @@ sub _get_args {
     my $data;
     for my $line (split "\n", $content) {
         next unless $line;
-        if ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
+        if ($line =~ /the uploader has not made this video available in your country/i) {
+            Carp::croak 'Video not available in your country.';
+        }
+        elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
             $data = JSON->new->utf8(1)->decode($1);
             last;
         }
