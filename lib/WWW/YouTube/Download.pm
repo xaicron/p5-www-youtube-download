@@ -154,6 +154,7 @@ sub prepare_download {
         fmt           => $hq_data->{fmt},
         fmt_list      => $fmt_list,
         suffix        => $hq_data->{suffix},
+        resolution    => $hq_data->{resolution},
     };
 }
 
