@@ -11,7 +11,7 @@ use URI ();
 use LWP::UserAgent;
 use JSON;
 use HTML::Entities qw/decode_entities/;
-use HTTP::Headers;
+use HTTP::Request;
 
 $Carp::Intrenal{ (__PACKAGE__) }++;
 
@@ -23,10 +23,7 @@ sub new {
     my $class = shift;
     my %args = @_;
     $args{ua} = LWP::UserAgent->new(
-        agent => __PACKAGE__.'/'.$VERSION,
-        default_headers => HTTP::Headers->new(
-            'Accept-Language' => 'en-US',
-        ),
+        agent      => __PACKAGE__.'/'.$VERSION,
         parse_head => 0,
     ) unless exists $args{ua};
     bless \%args, $class;
@@ -204,7 +201,13 @@ sub _get_content {
     my ($self, $video_id) = @_;
 
     my $url = "$base_url$video_id";
-    my $res = $self->ua->get($url);
+
+    my $req = HTTP::Request->new;
+    $req->method('GET');
+    $req->uri($url);
+    $req->header('Accept-Language' => 'en-US');
+
+    my $res = $self->ua->request($req);
     croak "GET $url failed. status: ", $res->status_line if $res->is_error;
 
     return $res->content;
