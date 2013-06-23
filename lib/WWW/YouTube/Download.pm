@@ -246,6 +246,24 @@ sub _parse_fmt_map {
     return $fmt_map;
 }
 
+sub _swapelement {
+    my ($pos, @list) = @_;
+    my $first = $list[0];
+    my $other = $list[$pos % scalar(@list)];
+    $list[0] = $other;
+    $list[$pos] = $first;
+    return @list;
+}
+
+sub _sigdecode {
+    my @sig = split(//, shift);
+    @sig = reverse(_swapelement(52, @sig));
+    @sig = @sig[3..$#sig];
+    @sig = reverse(_swapelement(21, @sig));
+    @sig = @sig[3..$#sig];
+    return join('', reverse(@sig));
+}
+
 sub _parse_stream_map {
     my $param       = shift;
     my $fmt_url_map = {};
@@ -253,7 +271,7 @@ sub _parse_stream_map {
         my $uri = URI->new;
         $uri->query($stuff);
         my $query = +{ $uri->query_form };
-        my $sig = $query->{sig} || $query->{s};
+        my $sig = $query->{sig} || _sigdecode($query->{s});
         my $url = $query->{url};
         $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
     }
