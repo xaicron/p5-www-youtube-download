@@ -16,7 +16,6 @@ use HTTP::Headers;
 use constant DEFAULT_FMT => 18;
 
 my $base_url = 'http://www.youtube.com/watch?v=';
-my $info     = 'http://www.youtube.com/get_video_info?video_id=';
 
 sub new {
     my $class = shift;
