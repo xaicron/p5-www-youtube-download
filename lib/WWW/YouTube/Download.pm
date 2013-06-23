@@ -256,7 +256,9 @@ sub _swapelement {
 }
 
 sub _sigdecode {
-    my @sig = split(//, shift);
+    my $sig = shift;
+    Carp::croak 'Unable to find signature.' unless $sig;
+    my @sig = split(//, $sig);
     @sig = reverse(_swapelement(52, @sig));
     @sig = @sig[3..$#sig];
     @sig = reverse(_swapelement(21, @sig));
