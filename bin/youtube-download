@@ -17,6 +17,8 @@ GetOptions(
     'U|url!'       => \my $playback_url,
     'o|output=s'   => \my $output,
     'F|fmt=i',     => \my $fmt,
+    's|skip'       => \my $skip,
+    'n|dry-run'    => \my $dry_run,
     'v|verbose!'   => \$verbose,
     'i|interval=i' => \$interval,
     'e|encode=s'   => \$encode,
@@ -57,12 +59,25 @@ main: {
 
         # multibyte fixes
         my $filename = $client->_format_filename($output, {
-            video_id => $meta_data->{video_id},
-            title    => decode_utf8($meta_data->{title}),
-            suffix   => $fmt ? $meta_data->{video_url_map}{$fmt}{suffix} : $meta_data->{suffix},
+            video_id   => $meta_data->{video_id},
+            user       => $meta_data->{user},
+            resolution => $meta_data->{resolution},
+            title      => decode_utf8($meta_data->{title}),
+            suffix     => $fmt ? $meta_data->{video_url_map}{$fmt}{suffix} : $meta_data->{suffix},
+            fmt        => $fmt || $meta_data->{fmt},
         });
         $filename = filename_normalize($filename);
         $filename = $encoder->encode($filename, sub { sprintf 'U+%x', shift });
+
+        if ($dry_run) {
+            print "$filename\n";
+            next;
+        }
+
+        if ($skip && -e $filename) {
+            print "Skipping existing file: $filename\n";
+            next;
+        }
 
         eval {
             $client->download($video_id, {
@@ -142,9 +157,11 @@ Options:
     -e, --encode        File system encoding (e.g. cp932)
     -F, --fmt           Video quality (SEE ALSO Wikipedia)
     -f, --force         Force overwrite output file
+    -s, --skip          Skip download when output file exists
     -i, --interval      Download interval
     -p, --proxy         Use the stated proxy
-    -v, --verbose       Turns on chatty output (default: enable)
+    -n, --dry-run       Do not download any videos, print target filenames
+    -v, --verbose       Turns on chatty output (default: enabled)
     -q, --quiet         Turns off progress
     -U, --url           Display playback URL for a video
     -h, --help          Display help
@@ -152,7 +169,7 @@ Options:
     -V, --version       Display version
 
 supported `{$value}` format are:
-    {video_id} / {title} / {fmt} / {suffix}
+    {video_id} / {user} / {title} / {fmt} / {suffix} / {resolution}
 
     Examples:
         $ youtube-download -o "[{video_id}] {title}.{suffix}"
@@ -198,9 +215,19 @@ Use the given proxy. Requires LWP::Protocol::socks to be installed for socks pro
 
 File system encoding (default: utf8)
 
+=item -s, --skip
+
+Skip downloading a video, if target file exists.
+
 =item -f, --force
 
 Force overwrite output file (default: disabled)
+
+=item -n, --dry-run
+
+Do not download any videos, but print their target filenames,
+as defined by -o option. This option still sends query to
+Google servers to fetch details about given video.
 
 =item -F, --fmt
 
@@ -234,7 +261,7 @@ Display version
 
 =head2 supported `{$value}` format
 
-{video_id} / {title} / {fmt} / {suffix} / {resolution}
+{video_id} / {user} / {title} / {fmt} / {suffix} / {resolution}
 
   Example:
   $ youtube-download -o "[{video_id}] {title}.{suffix}"
