@@ -253,6 +253,7 @@ sub _swapelement {
     return @list;
 }
 
+# taken from https://gist.github.com/anonymous/e40cb4a1ba3c71f16c05
 sub _sigdecode {
     my $sig = shift;
     Carp::croak 'Unable to find signature.' unless $sig;
