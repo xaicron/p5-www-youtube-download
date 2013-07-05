@@ -11,13 +11,13 @@ use URI ();
 use LWP::UserAgent;
 use JSON;
 use HTML::Entities qw/decode_entities/;
+use HTTP::Request;
 
 $Carp::Intrenal{ (__PACKAGE__) }++;
 
 use constant DEFAULT_FMT => 18;
 
 my $base_url = 'http://www.youtube.com/watch?v=';
-my $info     = 'http://www.youtube.com/get_video_info?video_id=';
 
 sub new {
     my $class = shift;
@@ -154,6 +154,7 @@ sub prepare_download {
         fmt           => $hq_data->{fmt},
         fmt_list      => $fmt_list,
         suffix        => $hq_data->{suffix},
+        resolution    => $hq_data->{resolution},
     };
 }
 
@@ -200,7 +201,13 @@ sub _get_content {
     my ($self, $video_id) = @_;
 
     my $url = "$base_url$video_id";
-    my $res = $self->ua->get($url);
+
+    my $req = HTTP::Request->new;
+    $req->method('GET');
+    $req->uri($url);
+    $req->header('Accept-Language' => 'en-US');
+
+    my $res = $self->ua->request($req);
     croak "GET $url failed. status: ", $res->status_line if $res->is_error;
 
     return $res->content;
@@ -212,7 +219,10 @@ sub _get_args {
     my $data;
     for my $line (split "\n", $content) {
         next unless $line;
-        if ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
+        if ($line =~ /the uploader has not made this video available in your country/i) {
+            Carp::croak 'Video not available in your country.';
+        }
+        elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
             $data = JSON->new->utf8(1)->decode($1);
             last;
         }
@@ -234,6 +244,26 @@ sub _parse_fmt_map {
     return $fmt_map;
 }
 
+sub _swapelement {
+    my ($pos, @list) = @_;
+    my $first = $list[0];
+    my $other = $list[$pos % scalar(@list)];
+    $list[0] = $other;
+    $list[$pos] = $first;
+    return @list;
+}
+
+sub _sigdecode {
+    my $sig = shift;
+    Carp::croak 'Unable to find signature.' unless $sig;
+    my @sig = split(//, $sig);
+    @sig = reverse(_swapelement(52, @sig));
+    @sig = @sig[3..$#sig];
+    @sig = reverse(_swapelement(21, @sig));
+    @sig = @sig[3..$#sig];
+    return join('', reverse(@sig));
+}
+
 sub _parse_stream_map {
     my $param       = shift;
     my $fmt_url_map = {};
@@ -241,7 +271,7 @@ sub _parse_stream_map {
         my $uri = URI->new;
         $uri->query($stuff);
         my $query = +{ $uri->query_form };
-        my $sig = $query->{sig};
+        my $sig = $query->{sig} || _sigdecode($query->{s});
         my $url = $query->{url};
         $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
     }
