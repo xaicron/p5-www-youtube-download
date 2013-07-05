@@ -2,6 +2,10 @@ Revision history for Perl extension WWW::YouTube::Download
 
 {{$NEXT}}
 
+0.54 2013-07-05T18:29:31Z
+        - If unavailable video, croak with an appropriate error message. (kucharskim++)
+        - Support encrypted signature video. (kucharskim++)
+
 0.53 2013-06-05T16:05:56Z
         - Various improvements to youtube-playlists (kucharskim++)
 
