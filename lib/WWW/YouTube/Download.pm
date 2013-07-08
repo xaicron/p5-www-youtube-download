@@ -220,7 +220,7 @@ sub _get_args {
     for my $line (split "\n", $content) {
         next unless $line;
         if ($line =~ /the uploader has not made this video available in your country/i) {
-            Carp::croak 'Video not available in your country.';
+            croak 'Video not available in your country';
         }
         elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
             $data = JSON->new->utf8(1)->decode($1);
@@ -228,7 +228,7 @@ sub _get_args {
         }
     }
 
-    croak 'failed to extract JSON data.' unless $data->{args};
+    croak 'failed to extract JSON data' unless $data->{args};
 
     return $data->{args};
 }
@@ -244,25 +244,44 @@ sub _parse_fmt_map {
     return $fmt_map;
 }
 
-sub _swapelement {
-    my ($pos, @list) = @_;
-    my $first = $list[0];
-    my $other = $list[$pos % scalar(@list)];
-    $list[0] = $other;
-    $list[$pos] = $first;
-    return @list;
+sub _sigdecode {
+    my @s = @_;
+
+    # based on youtube_dl/extractor/youtube.py from yt-dl.org
+    if (@s == 88) {
+        return ($s[48], reverse(@s[68..81]), $s[82], reverse(@s[63..66]),
+                $s[85], reverse(@s[49..61]), $s[67], reverse(@s[13..47]),
+                $s[3], reverse(@s[4..11]), $s[2], $s[12]);
+    } elsif (@s == 87) {
+        return ($s[62], reverse(@s[63..82]), $s[83], reverse(@s[53..61]),
+                $s[0], reverse(@s[3..51]));
+    } elsif (@s == 86) {
+        return (@s[2..62], $s[82], @s[64..81], $s[63]);
+    } elsif (@s == 85) {
+       return ($s[76], reverse(@s[77..82]), $s[83], reverse(@s[61..75]),
+               $s[0], reverse(@s[51..59]), $s[1], reverse(@s[3..49]));
+    } elsif (@s == 84) {
+        return (reverse(@s[37..83]), $s[2], reverse(@s[27..35]), $s[3],
+                reverse(@s[4..25]), $s[26]);
+    } elsif (@s == 83) {
+        return ($s[52], reverse(@s[56..81]), $s[2], reverse(@s[53..54]),
+                $s[82], reverse(@s[37..51]), $s[55], reverse(@s[3..35]),
+                $s[36]);
+    } elsif (@s == 82) {
+        return ($s[36], reverse(@s[68..79]), $s[81], reverse(@s[41..66]),
+                $s[33], reverse(@s[37..39]), $s[40], $s[35], $s[0],
+                $s[67], reverse(@s[1..32]), $s[34]);
+    }
+
+    return ();    # fail
 }
 
-# taken from https://gist.github.com/anonymous/e40cb4a1ba3c71f16c05
-sub _sigdecode {
+sub _getsig {
     my $sig = shift;
-    Carp::croak 'Unable to find signature.' unless $sig;
-    my @sig = split(//, $sig);
-    @sig = reverse(_swapelement(52, @sig));
-    @sig = @sig[3..$#sig];
-    @sig = reverse(_swapelement(21, @sig));
-    @sig = @sig[3..$#sig];
-    return join('', reverse(@sig));
+    croak 'Unable to find signature' unless $sig;
+    my @sig = _sigdecode(split(//, $sig));
+    croak "Unable to decode signature $sig" unless @sig;
+    return join('', @sig);
 }
 
 sub _parse_stream_map {
@@ -272,7 +291,7 @@ sub _parse_stream_map {
         my $uri = URI->new;
         $uri->query($stuff);
         my $query = +{ $uri->query_form };
-        my $sig = $query->{sig} || _sigdecode($query->{s});
+        my $sig = $query->{sig} || _getsig($query->{s});
         my $url = $query->{url};
         $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
     }
