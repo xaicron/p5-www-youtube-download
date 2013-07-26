@@ -9,10 +9,16 @@ sub test_signature_decode {
     is $sig, $expects;
 }
 
-# 43
+# 92
 test_signature_decode(
-    '5AEEAE0EC39677BC65FD9021CCD115F1F2DBD5A59E4.C0B243A3E2DED6769199AF3461781E75122AE135135',
-    '931EA22157E1871643FA9519676DED253A342B0C.4E95A5DBD2F1F511DCC1209DF56CB77693CE0EAE',
+    'F9F9B6E6FD47029957AB911A964CC20D95A181A5D37A2DBEFD67D403DB0E8BE4F4910053E4E8A79.0B70B.0B80B8',
+    '69B6E6FD47029957AB911A9F4CC20D95A181A5D3.A2DBEFD67D403DB0E8BE4F4910053E4E8A7980B7',
+);
+
+# 90
+test_signature_decode(
+    'qwertyuioplkjhgfdsazxcvbnm1234567890QWERTYUIOPLKJHGFDSAZXCVBNM!@#$%^&*()_-+={[]}|:;?/>.<"`',
+    'mrtyuioplkjhgfdsazxcvbne1234567890QWER[YUIOPLKJHGFDSAZXCVBNM!@#$%^&*()_-+={`]}|',
 );
 
 # 88
@@ -24,7 +30,7 @@ test_signature_decode(
 # 87 
 test_signature_decode(
     'qwertyuioplkjhgfdsazxcvbnm1234567890QWERTYUIOPLKJHGFDSAZXCVBNM!@#$^&*()_-+={[]}|:;?/>.<',
-    '!?;:|}][{=+-_)(*&^$#@/MNBVCXZASqFGHJKLPOIUYTREWQ0987654321mnbvcxzasdfghjklpoiuytr',
+    'tyuioplkjhgfdsazxcv<nm1234567890QWERTYUIOPLKJHGFDSAZXCVBNM!@#$^&*()_-+={[]}|:;?/>',
 );
 
 # 86
@@ -36,7 +42,7 @@ test_signature_decode(
 # 85
 test_signature_decode(
     'qwertyuioplkjhgfdsazxcvbnm1234567890QWERTYUIOPLKJHGFDSAZXCVBNM!@#$%^&*()_-+={[};?/>.<',
-    '{>/?;}[.=+-_)(*&^%$#@!MqBVCXZASDFwHJKLPOIUYTREWQ0987654321mnbvcxzasdfghjklpoiuytr',
+    'ertyuiqplkjhgfdsazx$vbnm1234567890QWERTYUIOPLKJHGFDSAZXCVBNM!@#<%^&*()_-+={[};?/c',
 );
 
 # 84
@@ -48,13 +54,25 @@ test_signature_decode(
 # 83
 test_signature_decode(
     'qwertyuioplkjhgfdsazxcvbnm1234567890QWERTYUIOPLKJHGFDSAZXCVBNM!#$%^&*()_+={[};?/>.<',
-    'D.>/?;}[{=+_)(*&^%$#!MNBVCXeAS<FGHJKLPOIUYTREWZ0987654321mnbvcxzasdfghjklpoiuytrQ',
+    'urty8ioplkjhgfdsazxcvbqm1234567S90QWERTYUIOPLKJHGFDnAZXCVBNM!#$%^&*()_+={[};?/>.<',
 );
 
 # 82
 test_signature_decode(
     'qwertyuioplkjhgfdsazxcvbnm1234567890QWERTYUIOPLKHGFDSAZXCVBNM!@#$%^&*(-+={[};?/>.<',
     'Q>/?;}[{=+-(*<^%$#@!MNBVCXZASDFGHKLPOIUY8REWT0q&7654321mnbvcxzasdfghjklpoiuytrew9',
+);
+
+# 81
+test_signature_decode(
+    'qwertyuioplkjhgfdsazxcvbnm1234567890QWERTYUIOPLKHGFDSAZXCVBNM!@#$%^&*(-+={[};?/>.',
+    'C>/?;}[{=+-(*&^%$#@!MNBVYXZASDFGHKLPOIU.TREWQ0q87659321mnbvcxzasdfghjkl4oiuytrewp',
+);
+
+# 79
+test_signature_decode(
+    'qwertyuioplkjhgfdsazxcvbnm1234567890QWERTYUIOPLKHGFDSAZXCVBNM!@#$%^&*(-+={[};?/',
+    'Z?;}[{=+-(*&^%$#@!MNBVCXRASDFGHKLPOIUYT/EWQ0q87659321mnbvcxzasdfghjkl4oiuytrewp',
 );
 
 done_testing;

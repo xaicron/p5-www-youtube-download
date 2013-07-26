@@ -248,29 +248,37 @@ sub _sigdecode {
     my @s = @_;
 
     # based on youtube_dl/extractor/youtube.py from yt-dl.org
-    if (@s == 88) {
-        return ($s[48], reverse(@s[68..81]), $s[82], reverse(@s[63..66]),
-                $s[85], reverse(@s[49..61]), $s[67], reverse(@s[13..47]),
-                $s[3], reverse(@s[4..11]), $s[2], $s[12]);
+    if (@s == 92) {
+	return ($s[25], @s[3..24], $s[0], @s[26..41], $s[79], @s[43..78], $s[91], @s[80..82]);
+    } elsif (@s == 90) {
+	return ($s[25], @s[3..24], $s[2], @s[26..39], $s[77], @s[41..76], $s[89], @s[78..80]);
+    } elsif (@s == 88) {
+        return ($s[48], reverse(@s[68..81]), $s[82], reverse(@s[63..66]), $s[85],
+                reverse(@s[49..61]), $s[67], reverse(@s[13..47]), $s[3],
+                reverse(@s[4..11]), $s[2], $s[12]);
     } elsif (@s == 87) {
-        return ($s[62], reverse(@s[63..82]), $s[83], reverse(@s[53..61]),
-                $s[0], reverse(@s[3..51]));
+        return (@s[4..22], $s[86], @s[24..84]);
     } elsif (@s == 86) {
         return (@s[2..62], $s[82], @s[64..81], $s[63]);
     } elsif (@s == 85) {
-       return ($s[76], reverse(@s[77..82]), $s[83], reverse(@s[61..75]),
-               $s[0], reverse(@s[51..59]), $s[1], reverse(@s[3..49]));
+       return (@s[2..7], $s[0], @s[9..20], $s[65], @s[22..64], $s[84], @s[66..81], $s[21]);
     } elsif (@s == 84) {
         return (reverse(@s[37..83]), $s[2], reverse(@s[27..35]), $s[3],
                 reverse(@s[4..25]), $s[26]);
     } elsif (@s == 83) {
-        return ($s[52], reverse(@s[56..81]), $s[2], reverse(@s[53..54]),
-                $s[82], reverse(@s[37..51]), $s[55], reverse(@s[3..35]),
-                $s[36]);
+        return ($s[6], @s[3..5], $s[33], @s[7..23], $s[0], @s[25..32], $s[53], @s[34..52], $s[24], @s[54..82]);
     } elsif (@s == 82) {
-        return ($s[36], reverse(@s[68..79]), $s[81], reverse(@s[41..66]),
-                $s[33], reverse(@s[37..39]), $s[40], $s[35], $s[0],
-                $s[67], reverse(@s[1..32]), $s[34]);
+        return ($s[36], reverse(@s[68..79]), $s[81], reverse(@s[41..66]), $s[33],
+                reverse(@s[37..39]), $s[40], $s[35], $s[0], $s[67],
+                reverse(@s[1..32]), $s[34]);
+    } elsif (@s == 81) {
+        return ($s[56], reverse(@s[57..79]), $s[41], reverse(@s[42..55]), $s[80],
+		reverse(@s[35..40]), $s[0], reverse(@s[30..33]), $s[34],
+		reverse(@s[10..28]), $s[29], reverse(@s[1..8]), $s[9]);
+    } elsif (@s == 79) {
+        return ($s[54], reverse(@s[55..77]), $s[39], reverse(@s[40..53]), $s[78],
+		reverse(@s[35..38]), $s[0], reverse(@s[30..33]), $s[34],
+		reverse(@s[10..28]), $s[29], reverse(@s[1..8]), $s[9]);
     }
 
     return ();    # fail
@@ -280,7 +288,7 @@ sub _getsig {
     my $sig = shift;
     croak 'Unable to find signature' unless $sig;
     my @sig = _sigdecode(split(//, $sig));
-    croak "Unable to decode signature $sig" unless @sig;
+    croak "Unable to decode signature $sig of length " . length($sig) unless @sig;
     return join('', @sig);
 }
 
