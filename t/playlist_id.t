@@ -19,6 +19,11 @@ test_playlist_id(
 );
 
 test_playlist_id(
+    'http://www.youtube.com/watch?v=9VV8sgVSZNQ&list=ALHTd1VmZQRNpEtPhKH9FrcB_S6domiCtv',
+    'ALHTd1VmZQRNpEtPhKH9FrcB_S6domiCtv'
+);
+
+test_playlist_id(
     'http://www.youtube.com/playlist?list=PLUyiyCkoNwG8C_4ljTZWYYxmw7emk0W-f',
     'PLUyiyCkoNwG8C_4ljTZWYYxmw7emk0W-f'
 );
@@ -26,6 +31,11 @@ test_playlist_id(
 test_playlist_id(
     'http://www.youtube.com/watch?v=tAjFnJuk1Aw&list=PL48DBEDD2147DDC46',
     'PL48DBEDD2147DDC46'
+);
+
+test_playlist_id(
+    'ALHTd1VmZQRNpEtPhKH9FrcB_S6domiCtv',
+    'ALHTd1VmZQRNpEtPhKH9FrcB_S6domiCtv'
 );
 
 test_playlist_id(

@@ -346,7 +346,7 @@ sub video_id {
 sub playlist_id {
     my ($self, $stuff) = @_;
     return unless $stuff;
-    if ($stuff =~ m{/.*?[?&;!]list=([FP]L[^&#?=/;]+)}) {
+    if ($stuff =~ m{/.*?[?&;!]list=([^&#?=/;]+)}) {
         return $1;
     }
     elsif ($stuff =~ m{^\s*([FP]L[\w\-]+)\s*$}) {
