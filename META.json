@@ -4,7 +4,7 @@
       "xaicron <xaicron {@} cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v0.5.5, CPAN::Meta::Converter version 2.130880",
+   "generated_by" : "Minilla/v0.5.6, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "perl_5"
    ],
@@ -66,11 +66,11 @@
       "homepage" : "https://github.com/xaicron/p5-www-youtube-download",
       "repository" : {
          "type" : "git",
-         "url" : "git://github.com/xaicron/p5-www-youtube-download",
+         "url" : "git://github.com/xaicron/p5-www-youtube-download.git",
          "web" : "https://github.com/xaicron/p5-www-youtube-download"
       }
    },
-   "version" : "0.54",
+   "version" : "0.55",
    "x_contributors" : [
       "akiym <akiyama@8ant.org>",
       "Maurice <mauricemengel@gmail.com>",
@@ -80,6 +80,6 @@
       "Flavio Poletti <flavio@polettix.it>",
       "TANIGUCHI Takaki <takaki@asis.media-as.org>",
       "Mikolaj Kucharski <mikolaj@kucharski.name>",
-      "xaicron <xaicron@gmail.com>"
+      "Yuji Shimada <xaicron@gmail.com>"
    ]
 }
