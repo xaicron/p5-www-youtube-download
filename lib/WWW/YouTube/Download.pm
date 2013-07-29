@@ -13,7 +13,7 @@ use JSON;
 use HTML::Entities qw/decode_entities/;
 use HTTP::Request;
 
-$Carp::Intrenal{ (__PACKAGE__) }++;
+$Carp::Internal{ (__PACKAGE__) }++;
 
 use constant DEFAULT_FMT => 18;
 
