@@ -1,164 +1,175 @@
-Revision history for Perl extension WWW::YouTube::Download
+Revision history for Perl module WWW::YouTube::Download
 
 {{$NEXT}}
 
 0.55 2013-07-27T09:21:38Z
-        - Changed signature encoding (kucharskim++)
+    - Changed signature encoding (kucharskim++)
 
 0.54 2013-07-05T18:29:31Z
-        - If unavailable video, croak with an appropriate error message. (kucharskim++)
-        - Support encrypted signature video. (kucharskim++)
+    - If unavailable video, croak with an appropriate error message.
+      (kucharskim++)
+    - Support encrypted signature video. (kucharskim++)
 
 0.53 2013-06-05T16:05:56Z
-        - Various improvements to youtube-playlists (kucharskim++)
+    - Various improvements to youtube-playlists (kucharskim++)
 
 0.52 2013-05-05T16:18:54Z
-        - Added playlist_id() and video_id() method (kucharskim++)
+    - Added playlist_id() and video_id() method (kucharskim++)
 
 0.51 2013-05-03T07:49:29Z
-        - Support new url (mikolaj++)
+    - Support new url (mikolaj++)
 
 0.50 2013-04-19T17:50:39Z
-        - repackaging
+    - repackaging
 
 0.49 2013-04-09T21:13:56Z
-        - repacking
+    - repacking
 
 0.48 2013-04-09T21:09:55Z
-        - Fixed parsing problem on youtube-playlists (mikolaj++)
+    - Fixed parsing problem on youtube-playlists (mikolaj++)
 
-0.47    Tue Apr  2 02:06:07 2013
-        - Added some documentation and added eg/menu.pl (polettix++)
+0.47 2013-04-02 02:06:07
+    - Added some documentation and added eg/menu.pl (polettix++)
 
-0.46    Sun Mar 24 15:34:27 2013
-        - YouTube's design was changed (vjp++, yusukebe++)
+0.46 2013-03-24 15:34:27
+    - YouTube's design was changed (vjp++, yusukebe++)
 
-0.45    Sun Feb 10 02:14:09 2013
-        - New substitution variable {user} (isync++)
+0.45 2013-02-10 02:14:09
+    - New substitution variable {user} (isync++)
 
-0.44    Sat Jan 19 18:29:58 2013
-        - added proxy support (isync++)
+0.44 2013-01-19 18:29:58
+    - added proxy support (isync++)
 
-0.43    Sat Jan  5 01:43:17 2013
-        - fixed grammar (mokko++)
-        - using Module::Build
+0.43 2013-01-05 01:43:17
+    - fixed grammar (mokko++)
+    - using Module::Build
 
-0.42    Fri Nov 16 21:35:31 2012
-        - fixed "failed to extract JSON data" (ks0608++)
-        - fixed RT: 81068 (panic83++)
+0.42 2012-11-16 21:35:31
+    - fixed "failed to extract JSON data" (ks0608++)
+    - fixed RT: 81068 (panic83++)
 
-0.41    Thu Oct  4 00:44:13 2012
-        - follow the change of site (mikolaj++, yusukebe++)
-        - fixed color problems on scripts (mikolaj++)
-        - fixed RT 79931 (HMBRAND++)
+0.41 2012-10-04 00:44:13
+    - follow the change of site (mikolaj++, yusukebe++)
+    - fixed color problems on scripts (mikolaj++)
+    - fixed RT 79931 (HMBRAND++)
 
-0.40    Sun Jan 22 16:54:53 2012
-        - Fixed a problem that did not works, because YouTube's design was changed.
-          (ks0608++, zentooo++)
+0.40 2012-01-22 16:54:53
+    - Fixed a problem that did not works, because YouTube's design was changed.
+      (ks0608++, zentooo++)
 
-0.39    Wed Jan 18 01:28:00 2012
-        - remove suffix from youtube-download.pl and youtube-playlists.pl (mikolaj++)
+0.39 2012-01-18 01:28:00
+    - remove suffix from youtube-download.pl and youtube-playlists.pl
+      (mikolaj++)
 
-0.38    Thu Dec  8 00:44:52 2011
-        - fix typo (mikolaj++)
-        - remove wrong code (mikolaj++)
+0.38 2011-12-08 00:44:52
+    - fix typo (mikolaj++)
+    - remove wrong code (mikolaj++)
 
-0.37    Wed Dec  7 02:33:23 2011
-        - fix wrong characters in filename in youtube-download.pl (mikolaj++)
-        - fix doc in youtube-download.pl (mikolaj++)
-        - file_name option is DEPRECATED
+0.37 2011-12-07 02:33:23
+    - fix wrong characters in filename in youtube-download.pl (mikolaj++)
+    - fix doc in youtube-download.pl (mikolaj++)
+    - file_name option is DEPRECATED
 
-0.36    Mon Oct 31 02:45:48 2011
-        - fix default filename problem in youtube-download.pl
+0.36 2011-10-31 02:45:48
+    - fix default filename problem in youtube-download.pl
 
-0.35    Tue Oct 18 00:28:58 2011
-        - fix typo in youtube-playlists.pl (rt:71721)
+0.35 2011-10-18 00:28:58
+    - fix typo in youtube-playlists.pl (rt:71721)
 
-0.34    Sat Oct 15 16:14:57 2011
-        - workaround for win32
-        - fix suffix problem
+0.34 2011-10-15 16:14:57
+    - workaround for win32
+    - fix suffix problem
 
-0.33    Wed Oct 12 01:17:34 2011
-        - added youtube-download.pl and youtube-playlist.pl (request by st3vil++)
-        - fix doc
+0.33 2011-10-12 01:17:34
+    - added youtube-download.pl and youtube-playlist.pl (request by st3vil++)
+    - fix doc
 
-0.32    Tue Aug 23 01:52:20 2011
-        - added LICENSE file (no code change)
+0.32 2011-08-23 01:52:20
+    - added LICENSE file (no code change)
 
-0.31    Tue Aug 23 00:25:02 2011
-        - added fmt 38 to .mp4 (mikolaj++)
+0.31 2011-08-23 00:25:02
+    - added fmt 38 to .mp4 (mikolaj++)
 
-0.30    Sun Aug  7 15:25:11 2011
-        - cleanup (mikolaj++)
+0.30 2011-08-07 15:25:11
+    - cleanup (mikolaj++)
 
-0.29    Fri Aug  5 01:29:27 2011
-        - fixed a problem that did not works, becouse changed YouTube's design. (katsuhito konishi++)
+0.29 2011-08-05 01:29:27
+    - fixed a problem that did not works, becouse changed YouTube's design.
+      (katsuhito konishi++)
 
-0.28    Thu Aug  4 00:03:58 2011
-        - fixed a problem that did not works, becouse changed YouTube's design. (mikolaj++)
+0.28 2011-08-04 00:03:58
+    - fixed a problem that did not works, becouse changed YouTube's design.
+      (mikolaj++)
 
-0.27    Sun May 29 23:32:31 2011
-        - fixed garbled (akiym++)
-        - fixed typo (akiym++)
+0.27 2011-05-29 23:32:31
+    - fixed garbled (akiym++)
+    - fixed typo (akiym++)
 
-0.26    Wed Apr 20 01:34:55 2011
-        - fixed scrape problem (reported by Octavian++)
+0.26 2011-04-20 01:34:55
+    - fixed scrape problem (reported by Octavian++)
 
-0.25    Sat Mar 19 00:39:41 2011
-        - added few more match URLs (mikolaj++)
+0.25 2011-03-19 00:39:41
+    - added few more match URLs (mikolaj++)
 
-0.24    Fri Mar  4 01:45:20 2011
-        - fixed could not fetch json data problem (akiym++)
+0.24 2011-03-04 01:45:20
+    - fixed could not fetch json data problem (akiym++)
 
-0.23    Tue Feb 22 00:00:22 2011
-        - supported any video urls (mikolaj++)
+0.23 2011-02-22 00:00:22
+    - supported any video urls (mikolaj++)
 
-0.22    Wed Jan  5 00:17:54 2011
-        - Fixed a problem that can not download videos there. (reported by Octavian)
+0.22 2011-01-05 00:17:54
+    - Fixed a problem that can not download videos there.
+      (reported by Octavian)
 
-0.21    Thu Dec 30 15:28:51 2010
-        - fixed bug for _video_id(). If already had $1 is defined, was returned $1 without matches. (woremacx++)
+0.21 2010-12-30 15:28:51
+    - fixed bug for _video_id(). If already had $1 is defined,
+      was returned $1 without matches. (woremacx++)
 
-0.20    Wed Dec 15 00:57:43 2010
-        - YouTube's API had change, maybe fixed it.
+0.20 2010-12-15 00:57:43
+    - YouTube's API had change, maybe fixed it.
 
-0.16    Sun Oct 17 18:17:57 2010
-        - Required Text::More 0.96 later
-        - fixed POD spell miss
+0.16 2010-10-17 18:17:57
+    - Required Text::More 0.96 later
+    - fixed POD spell miss
 
-0.15    Wed Aug 11 00:14:53 2010
-        - YouTube's API has changed so I fixed it. (reported by Bruce David)
+0.15 2010-08-11 00:14:53
+    - YouTube's API has changed so I fixed it. (reported by Bruce David)
 
-0.14    Fri May  7 02:50:42 2010
-        - typo fix
-        - wrote pod
+0.14 2010-05-07 02:50:42
+    - typo fix
+    - wrote pod
 
-0.13    Sat Apr 10 18:20:05 2010
-        - Each instance to create a LWP::UserAgent. # thx kuniyoshi
+0.13 2010-04-10 18:20:05
+    - Each instance to create a LWP::UserAgent. # thx kuniyoshi
 
-0.12    Sat Apr  3 16:06:33 2010
-        - upload miss X(
+0.12 2010-04-03 16:06:33
+    - upload miss X(
 
-0.11    Sat Apr  3 15:02:25 2010
-        - added ua setter/getter.
-          using CGI.
+0.11 2010-04-03 15:02:25
+    - added ua setter/getter.
+      using CGI.
 
-0.10    Sat Apr  3 02:56:18 2010
-        - rewrite all
+0.10 2010-04-03 02:56:18
+    - rewrite all
 
-0.07    Mon Mar  1 00:11:55 2010
-        - supported FULL HD quality
+0.07 2010-03-01 00:11:55
+    - supported FULL HD quality
 
-0.06    Sun Nov  8 00:46:55 2009
-        - Youtube respond to changes in
-        
-0.05    Mon Oct 12 14:58:23 2009
-        - Youtube respond to changes in
+0.06 2009-11-08 00:46:55
+    - Youtube respond to changes in
+    
+0.05 2009-10-12 14:58:23
+    - Youtube respond to changes in
 
-0.03 ~ 0.04 lost X(
+0.04 2011-08-14
+    - Changes unknown
 
-0.02    Sat Jun  6 21:04:17 2009
-        - added 'fmt' field
+0.03 2011-08-12
+    - Changes unknown
 
-0.01    Sat Apr  4 16:26:29 2009
-        - original version
+0.02 2009-06-06 21:04:17
+    - added 'fmt' field
+
+0.01 2009-04-04 16:26:29
+    - original version
+
