@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 
-our $VERSION = '0.55';
+our $VERSION = '0.56';
 
 use Carp qw(croak);
 use URI ();

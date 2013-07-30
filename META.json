@@ -70,7 +70,7 @@
          "web" : "https://github.com/xaicron/p5-www-youtube-download"
       }
    },
-   "version" : "0.55",
+   "version" : "0.56",
    "x_contributors" : [
       "akiym <akiyama@8ant.org>",
       "Maurice <mauricemengel@gmail.com>",
@@ -80,6 +80,8 @@
       "Flavio Poletti <flavio@polettix.it>",
       "TANIGUCHI Takaki <takaki@asis.media-as.org>",
       "Mikolaj Kucharski <mikolaj@kucharski.name>",
+      "Neil Bowers <neil@bowers.com>",
+      "Ahmad Syaltut <Isyaltut@gmail.com>",
       "Yuji Shimada <xaicron@gmail.com>"
    ]
 }

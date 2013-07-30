@@ -2,6 +2,10 @@ Revision history for Perl module WWW::YouTube::Download
 
 {{$NEXT}}
 
+0.56 2013-07-30T07:14:40Z
+    - Fixed typo: $Carp::Intrenal -> $Carp::Internal (Syaltut++)
+    - Changes file reformatted as per CPAN::Changes::Spec (neilbowers++)
+
 0.55 2013-07-27T09:21:38Z
     - Changed signature encoding (kucharskim++)
 
