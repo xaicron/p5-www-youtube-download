@@ -249,9 +249,12 @@ sub _sigdecode {
 
     # based on youtube_dl/extractor/youtube.py from yt-dl.org
     if (@s == 92) {
-	return ($s[25], @s[3..24], $s[0], @s[26..41], $s[79], @s[43..78], $s[91], @s[80..82]);
+	    return ($s[25], @s[3..24], $s[0], @s[26..41], $s[79], @s[43..78], $s[91], @s[80..82]);
     } elsif (@s == 90) {
-	return ($s[25], @s[3..24], $s[2], @s[26..39], $s[77], @s[41..76], $s[89], @s[78..80]);
+        return ($s[25], @s[3..24], $s[2], @s[26..39], $s[77], @s[41..76], $s[89], @s[78..80]);
+    } elsif (@s == 89) {
+	    return (reverse(@s[79..84]), $s[87], reverse(@s[61..77]), $s[0], 
+	            reverse(@s[4..59]));
     } elsif (@s == 88) {
         return ($s[48], reverse(@s[68..81]), $s[82], reverse(@s[63..66]), $s[85],
                 reverse(@s[49..61]), $s[67], reverse(@s[13..47]), $s[3],
@@ -261,7 +264,7 @@ sub _sigdecode {
     } elsif (@s == 86) {
         return (@s[2..62], $s[82], @s[64..81], $s[63]);
     } elsif (@s == 85) {
-       return (@s[2..7], $s[0], @s[9..20], $s[65], @s[22..64], $s[84], @s[66..81], $s[21]);
+        return (@s[2..7], $s[0], @s[9..20], $s[65], @s[22..64], $s[84], @s[66..81], $s[21]);
     } elsif (@s == 84) {
         return (reverse(@s[37..83]), $s[2], reverse(@s[27..35]), $s[3],
                 reverse(@s[4..25]), $s[26]);
