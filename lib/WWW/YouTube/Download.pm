@@ -249,36 +249,31 @@ sub _sigdecode {
 
     # based on youtube_dl/extractor/youtube.py from yt-dl.org
     if (@s == 92) {
-	return ($s[25], @s[3..24], $s[0], @s[26..41], $s[79], @s[43..78], $s[91], @s[80..82]);
+        return ($s[25], @s[3..24], $s[0], @s[26..41], $s[79], @s[43..78], $s[91], @s[80..82]);
     } elsif (@s == 90) {
-	return ($s[25], @s[3..24], $s[2], @s[26..39], $s[77], @s[41..76], $s[89], @s[78..80]);
+        return ($s[25], @s[3..24], $s[2], @s[26..39], $s[77], @s[41..76], $s[89], @s[78..80]);
+    } elsif (@s == 89) {
+        return (reverse(@s[79..84]), $s[87], reverse(@s[61..77]), $s[0], reverse(@s[4..59]));
     } elsif (@s == 88) {
-        return ($s[48], reverse(@s[68..81]), $s[82], reverse(@s[63..66]), $s[85],
-                reverse(@s[49..61]), $s[67], reverse(@s[13..47]), $s[3],
-                reverse(@s[4..11]), $s[2], $s[12]);
+        return (@s[7..27], $s[87], @s[29..44], $s[55], @s[46..54], $s[2], @s[56..86], $s[28]);
     } elsif (@s == 87) {
-        return (@s[4..22], $s[86], @s[24..84]);
+        return (@s[6..26], $s[4], @s[28..38], $s[27], @s[40..58], $s[2], @s[60..86]);
     } elsif (@s == 86) {
-        return (@s[2..62], $s[82], @s[64..81], $s[63]);
+        return (reverse(@s[74..81]), $s[84], reverse(@s[59..72]), $s[0], reverse(@s[36..57]), $s[85], reverse(@s[1..34]));
     } elsif (@s == 85) {
-       return (@s[2..7], $s[0], @s[9..20], $s[65], @s[22..64], $s[84], @s[66..81], $s[21]);
+        return (reverse(@s[35..83]), $s[0], reverse(@s[28..33]), $s[3], reverse(@s[20..26]), $s[34], reverse(@s[4..18]), $s[27]);
     } elsif (@s == 84) {
-        return (reverse(@s[37..83]), $s[2], reverse(@s[27..35]), $s[3],
-                reverse(@s[4..25]), $s[26]);
+        return (reverse(@s[37..81]), $s[0], reverse(@s[3..35]));
     } elsif (@s == 83) {
-        return ($s[6], @s[3..5], $s[33], @s[7..23], $s[0], @s[25..32], $s[53], @s[34..52], $s[24], @s[54..82]);
+        return (reverse(@s[65..81]), $s[82], reverse(@s[53..63]), $s[45], reverse(@s[46..51]), $s[1], reverse(@s[2..44]), $s[0]);
     } elsif (@s == 82) {
-        return ($s[36], reverse(@s[68..79]), $s[81], reverse(@s[41..66]), $s[33],
-                reverse(@s[37..39]), $s[40], $s[35], $s[0], $s[67],
-                reverse(@s[1..32]), $s[34]);
+        return (@s[1..18], $s[0], @s[20..67], $s[19], @s[69..81]);
     } elsif (@s == 81) {
-        return ($s[56], reverse(@s[57..79]), $s[41], reverse(@s[42..55]), $s[80],
-		reverse(@s[35..40]), $s[0], reverse(@s[30..33]), $s[34],
-		reverse(@s[10..28]), $s[29], reverse(@s[1..8]), $s[9]);
+        return ($s[56], reverse(@s[57..79]), $s[41], reverse(@s[42..55]), $s[80], reverse(@s[35..40]), $s[0], reverse(@s[30..33]), $s[34], reverse(@s[10..28]), $s[29], reverse(@s[1..8]), $s[9]);
+    } elsif (@s == 80) {
+        return (@s[1..18], $s[0], @s[20..67], $s[19], @s[69..79]);
     } elsif (@s == 79) {
-        return ($s[54], reverse(@s[55..77]), $s[39], reverse(@s[40..53]), $s[78],
-		reverse(@s[35..38]), $s[0], reverse(@s[30..33]), $s[34],
-		reverse(@s[10..28]), $s[29], reverse(@s[1..8]), $s[9]);
+        return ($s[54], reverse(@s[55..77]), $s[39], reverse(@s[40..53]), $s[78], reverse(@s[35..38]), $s[0], reverse(@s[30..33]), $s[34], reverse(@s[10..28]), $s[29], reverse(@s[1..8]), $s[9]);
     }
 
     return ();    # fail
