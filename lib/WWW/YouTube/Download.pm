@@ -259,7 +259,7 @@ sub _sigdecode {
     } elsif (@s == 87) {
         return (@s[6..26], $s[4], @s[28..38], $s[27], @s[40..58], $s[2], @s[60..86]);
     } elsif (@s == 86) {
-        return (reverse(@s[74..81]), $s[84], reverse(@s[59..72]), $s[0], reverse(@s[36..57]), $s[85], reverse(@s[1..34]));
+        return (@s[5..33], $s[0], @s[35..37], $s[3], @s[39..44], $s[38], @s[46..52], $s[73], @s[54..72], $s[85], @s[74..84], $s[53]);
     } elsif (@s == 85) {
         return (reverse(@s[35..83]), $s[0], reverse(@s[28..33]), $s[3], reverse(@s[20..26]), $s[34], reverse(@s[4..18]), $s[27]);
     } elsif (@s == 84) {
