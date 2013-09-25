@@ -20,23 +20,23 @@ while (<STDIN>) {
 	if ($len && m/return\s+(.*)\s*$/) {
 		my @items = ();
 		for (split(/\s*\+\s*/, $1)) {
-			if (m/\w+\[(\d+)\]/) {
+			if (m/^\w+\[(\d+)\]$/) {
 				push @items, "\$s[$1]";
-			} elsif (m/\w+\[:(\d+)\]/) {
+			} elsif (m/^\w+\[:(\d+)\]$/) {
 				my $i = $1 - 1;
 				push @items, "\@s[0..$i]";
-			} elsif (m/\w+\[(\d+):(\d+)\]/) {
+			} elsif (m/^\w+\[(\d+):(\d+)\]$/) {
 				my $i = $2 - 1;
 				push @items, "\@s[$1..$i]";
-			} elsif (m/\w+\[(\d+):(\d+):-1\]/) {
+			} elsif (m/^\w+\[(\d+):(\d+):-1\]$/) {
 				my $i = $2 + 1;
 				push @items, "reverse(\@s[$i..$1])";
-			} elsif (m/\w+\[(\d+)::-1\]/) {
+			} elsif (m/^\w+\[(\d+)::-1\]$/) {
 				push @items, "reverse(\@s[0..$1])";
-			} elsif (m/\w+\[:(\d+)\]\[::-1\]/) {
+			} elsif (m/^\w+\[:(\d+)\]\[::-1\]$/) {
 				my $i = $1 - 1;
 				push @items, "reverse(\@s[0..$i])";
-			} elsif (m/\w+\[(\d+):\]/) {
+			} elsif (m/^\w+\[(\d+):\]$/) {
 				my $i = $len - 1;
 				push @items, "\@s[$1..$i]";
 			} else {
