@@ -248,8 +248,12 @@ sub _sigdecode {
     my @s = @_;
 
     # based on youtube_dl/extractor/youtube.py from yt-dl.org
-    if (@s == 92) {
+    if (@s == 93) {
+        return (reverse(@s[30..86]), $s[88], reverse(@s[6..28]));
+    } elsif (@s == 92) {
         return ($s[25], @s[3..24], $s[0], @s[26..41], $s[79], @s[43..78], $s[91], @s[80..82]);
+    } elsif (@s == 91) {
+        return (reverse(@s[28..84]), $s[86], reverse(@s[6..26]));
     } elsif (@s == 90) {
         return ($s[25], @s[3..24], $s[2], @s[26..39], $s[77], @s[41..76], $s[89], @s[78..80]);
     } elsif (@s == 89) {
@@ -259,15 +263,15 @@ sub _sigdecode {
     } elsif (@s == 87) {
         return (@s[6..26], $s[4], @s[28..38], $s[27], @s[40..58], $s[2], @s[60..86]);
     } elsif (@s == 86) {
-        return (@s[5..33], $s[0], @s[35..37], $s[3], @s[39..44], $s[38], @s[46..52], $s[73], @s[54..72], $s[85], @s[74..84], $s[53]);
+        return (reverse(@s[73..80]), $s[16], reverse(@s[40..71]), $s[72], reverse(@s[17..38]), $s[82], reverse(@s[0..15]));
     } elsif (@s == 85) {
-        return (reverse(@s[35..83]), $s[0], reverse(@s[28..33]), $s[3], reverse(@s[20..26]), $s[34], reverse(@s[4..18]), $s[27]);
+        return (@s[3..10], $s[0], @s[12..54], $s[84], @s[56..83]);
     } elsif (@s == 84) {
-        return (reverse(@s[37..81]), $s[0], reverse(@s[3..35]));
+        return (reverse(@s[71..78]), $s[14], reverse(@s[38..69]), $s[70], reverse(@s[15..36]), $s[80], @s[0..13]);
     } elsif (@s == 83) {
         return (reverse(@s[65..81]), $s[82], reverse(@s[53..63]), $s[45], reverse(@s[46..51]), $s[1], reverse(@s[2..44]), $s[0]);
     } elsif (@s == 82) {
-        return (@s[1..18], $s[0], @s[20..67], $s[19], @s[69..81]);
+        return (reverse(@s[74..80]), $s[81], reverse(@s[55..72]), $s[2], reverse(@s[44..53]), $s[0], reverse(@s[3..42]), $s[43], $s[1], $s[54]);
     } elsif (@s == 81) {
         return ($s[56], reverse(@s[57..79]), $s[41], reverse(@s[42..55]), $s[80], reverse(@s[35..40]), $s[0], reverse(@s[30..33]), $s[34], reverse(@s[10..28]), $s[29], reverse(@s[1..8]), $s[9]);
     } elsif (@s == 80) {

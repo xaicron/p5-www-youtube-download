@@ -8,6 +8,7 @@ use warnings;
 use strict;
 
 my $len;
+my $found;
 
 while (<STDIN>) {
 	if (m/if\s+len.\w+.\s+==\s+(\d+)\:/) {
@@ -21,12 +22,20 @@ while (<STDIN>) {
 		for (split(/\s*\+\s*/, $1)) {
 			if (m/\w+\[(\d+)\]/) {
 				push @items, "\$s[$1]";
+			} elsif (m/\w+\[:(\d+)\]/) {
+				my $i = $1 - 1;
+				push @items, "\@s[0..$i]";
 			} elsif (m/\w+\[(\d+):(\d+)\]/) {
 				my $i = $2 - 1;
 				push @items, "\@s[$1..$i]";
 			} elsif (m/\w+\[(\d+):(\d+):-1\]/) {
 				my $i = $2 + 1;
 				push @items, "reverse(\@s[$i..$1])";
+			} elsif (m/\w+\[(\d+)::-1\]/) {
+				push @items, "reverse(\@s[0..$1])";
+			} elsif (m/\w+\[:(\d+)\]\[::-1\]/) {
+				my $i = $1 - 1;
+				push @items, "reverse(\@s[0..$i])";
 			} elsif (m/\w+\[(\d+):\]/) {
 				my $i = $len - 1;
 				push @items, "\@s[$1..$i]";
@@ -36,7 +45,11 @@ while (<STDIN>) {
 		}
 		my $str = join(', ', @items);
 		printf("        return (%s);\n", $str);
+		$found = 1 if $str;
 		undef $len;
 		next;
+	} elsif ($found && m/ExtractorError/) {
+		printf("    \x7d\n");
+		last;
 	}
 }
