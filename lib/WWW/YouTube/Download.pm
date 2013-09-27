@@ -269,7 +269,7 @@ sub _sigdecode {
     } elsif (@s == 84) {
         return (reverse(@s[71..78]), $s[14], reverse(@s[38..69]), $s[70], reverse(@s[15..36]), $s[80], reverse(@s[0..13]));
     } elsif (@s == 83) {
-        return (reverse(@s[65..81]), $s[82], reverse(@s[53..63]), $s[45], reverse(@s[46..51]), $s[1], reverse(@s[2..44]), $s[0]);
+        return (reverse(@s[64..80]), $s[0], reverse(@s[1..62]), $s[63]);
     } elsif (@s == 82) {
         return (reverse(@s[74..80]), $s[81], reverse(@s[55..72]), $s[2], reverse(@s[44..53]), $s[0], reverse(@s[3..42]), $s[43], $s[1], $s[54]);
     } elsif (@s == 81) {
@@ -315,7 +315,7 @@ sub ua {
 
 sub _suffix {
     my $fmt = shift;
-    return $fmt =~ /43|44|45/    ? 'webm'
+    return $fmt =~ /43|44|45|46/ ? 'webm'
          : $fmt =~ /18|22|37|38/ ? 'mp4'
          : $fmt =~ /13|17/       ? '3gp'
          :                         'flv'
