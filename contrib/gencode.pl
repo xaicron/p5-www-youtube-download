@@ -3,6 +3,12 @@
 
 # simple script to generate perl code from yt-dl.org python code
 #   perl gencode.pl < youtube.py
+# or
+#  youtube-dl -v \
+#	--no-cache-dir \
+#	--skip-download \
+#	--youtube-print-sig-code http://youtu.be/cmSbXsFE3l8 | \
+#  tail -n 3 | perl gencode.pl
 
 use warnings;
 use strict;
