@@ -271,7 +271,7 @@ sub _sigdecode {
     } elsif (@s == 83) {
         return (reverse(@s[64..80]), $s[0], reverse(@s[1..62]), $s[63]);
     } elsif (@s == 82) {
-        return ($s[12], reverse(@s[13..79]), $s[80], reverse(@s[0..11]));
+        return (reverse(@s[38..80]), $s[7], reverse(@s[8..36]), $s[0], reverse(@s[1..6]), $s[37]);
     } elsif (@s == 81) {
         return ($s[56], reverse(@s[57..79]), $s[41], reverse(@s[42..55]), $s[80], reverse(@s[35..40]), $s[0], reverse(@s[30..33]), $s[34], reverse(@s[10..28]), $s[29], reverse(@s[1..8]), $s[9]);
     } elsif (@s == 80) {
