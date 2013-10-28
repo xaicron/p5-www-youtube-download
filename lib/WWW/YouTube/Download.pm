@@ -47,7 +47,7 @@ sub playback_url {
 
     my $data = $self->prepare_download($video_id);
     my $fmt  = $args->{fmt} || $data->{fmt} || DEFAULT_FMT;
-    my $video_url = $data->{video_url_map}{$fmt}{url} || croak "this video has not supported fmt: $fmt";
+    my $video_url = $data->{video_url_map}{$fmt}{url} || croak "this video does not offer format (fmt) $fmt";
 
     return $video_url;
 }
