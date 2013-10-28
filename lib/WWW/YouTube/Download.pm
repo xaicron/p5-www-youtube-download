@@ -388,7 +388,8 @@ WWW::YouTube::Download - Very simple YouTube video download interface
 
 =head1 DESCRIPTION
 
-WWW::YouTube::Download is a download video from YouTube.
+WWW::YouTube::Download is a library to download videos from YouTube. It relies entirely on scraping the
+a video's webpage and does not use YT's /get_video_info URL space.
 
 =head1 METHODS
 
@@ -578,7 +579,9 @@ Plese use github issues: L<< https://github.com/xaicron/p5-www-youtube-download/
 
 =head1 SEE ALSO
 
+L<WWW::YouTube::Info> and L<WWW::YouTube::Info::Simple>.
 L<WWW::NicoVideo::Download>
+L<http://rg3.github.io/youtube-dl/>
 
 =head1 LICENSE
 
