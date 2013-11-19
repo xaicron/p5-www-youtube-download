@@ -92,7 +92,7 @@ sub _format_filename {
 sub _is_supported_fmt {
     my ($self, $video_id, $fmt) = @_;
     my $data = $self->prepare_download($video_id);
-    $data->{video_url_map}{$fmt}{url} ? 1 : 0;
+    defined($data->{video_url_map}{$fmt}{url}) ? 1 : 0;
 }
 
 sub _default_cb {

@@ -12,6 +12,7 @@ my $overwrite = 0;
 my $verbose   = -t STDOUT ? 1 : 0; # don't be verbose on dump terminal
 my $interval  = 1; # sec
 my $proxy     = undef;
+my $interactive = undef;
 GetOptions(
     'C|no-colors!' => \my $disable_colors,
     'U|url!'       => \my $playback_url,
@@ -21,6 +22,7 @@ GetOptions(
     'n|dry-run'    => \my $dry_run,
     'v|verbose!'   => \$verbose,
     'i|interval=i' => \$interval,
+    'a|interactive' => \$interactive, # 'a' for 'ask', 'i' was taken
     'e|encode=s'   => \$encode,
     'f|force!'     => \$overwrite,
     'p|proxy=s'    => \$proxy,
@@ -47,8 +49,26 @@ main: {
         my $video_id = shift @ARGV;
         my $meta_data = $client->prepare_download($video_id);
         chatty("--> Working on $meta_data->{video_id}");
+
+	ASK:
+	if($interactive){
+		print "YouTube tells us these formats are available:\n";
+		print " format-tag \tresolution \tsuffix\n";
+		print "-----------------------------------------------\n";
+		for(sort keys %{ $$meta_data{video_url_map} }){
+			my $ref = ${ $$meta_data{video_url_map} }{$_};
+			print " $ref->{fmt} \t\t$ref->{resolution} \t$ref->{suffix}\n";
+		}
+		print "Your selection (currently: ". ($fmt ? $fmt : '"best"/default' )."): ";
+		$fmt = <>; chomp($fmt);
+	}
+
         if ($fmt && !$client->_is_supported_fmt($video_id, $fmt)) {
-            throw("[$meta_data->{video_id}] this video has not supported fmt: $fmt");
+		if($interactive){
+		print "[$meta_data->{video_id}] this video is not offered in fmt: $fmt\n";
+			goto ASK if $interactive;
+		}
+            throw("[$meta_data->{video_id}] this video is not offered in fmt: $fmt");
         }
 
         if ($playback_url) {
