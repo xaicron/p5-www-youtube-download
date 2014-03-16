@@ -47,7 +47,7 @@ sub playback_url {
 
     my $data = $self->prepare_download($video_id);
     my $fmt  = $args->{fmt} || $data->{fmt} || DEFAULT_FMT;
-    my $video_url = $data->{video_url_map}{$fmt}{url} || croak "this video has not supported fmt: $fmt";
+    my $video_url = $data->{video_url_map}{$fmt}{url} || croak "this video does not offer format (fmt) $fmt";
 
     return $video_url;
 }
@@ -92,7 +92,7 @@ sub _format_filename {
 sub _is_supported_fmt {
     my ($self, $video_id, $fmt) = @_;
     my $data = $self->prepare_download($video_id);
-    $data->{video_url_map}{$fmt}{url} ? 1 : 0;
+    defined($data->{video_url_map}{$fmt}{url}) ? 1 : 0;
 }
 
 sub _default_cb {
@@ -168,8 +168,11 @@ sub _fetch_title {
 sub _fetch_user {
     my ($self, $content) = @_;
 
-    my ($user) = $content =~ /<span class="yt-user-name\s+?" dir="ltr">([^<]+)<\/span>/ or return;
-    return decode_entities($user);
+	if( $content =~ /<span class="yt-user-name [^>]+>([^<]+)<\/span>/ ){
+		return decode_entities($1);
+	}else{
+		return;
+	}	
 }
 
 sub _fetch_video_url_map {
@@ -384,7 +387,8 @@ WWW::YouTube::Download - Very simple YouTube video download interface
 
 =head1 DESCRIPTION
 
-WWW::YouTube::Download is a download video from YouTube.
+WWW::YouTube::Download is a library to download videos from YouTube. It relies entirely on
+scraping a video's webpage and does not use YT's /get_video_info URL space.
 
 =head1 METHODS
 
@@ -574,7 +578,9 @@ Plese use github issues: L<< https://github.com/xaicron/p5-www-youtube-download/
 
 =head1 SEE ALSO
 
+L<WWW::YouTube::Info> and L<WWW::YouTube::Info::Simple>.
 L<WWW::NicoVideo::Download>
+L<http://rg3.github.io/youtube-dl/>
 
 =head1 LICENSE
 
