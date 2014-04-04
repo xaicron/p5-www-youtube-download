@@ -285,6 +285,7 @@ Display version
 
   Example:
   $ youtube-download -o "[{video_id}] {title}.{suffix}"
+  $ youtube-download -p socks://127.0.0.1:4321/ -o "{title} by {user} (youtube {video_id}).{suffix}"
 
 =head1 AUTHOR
 
