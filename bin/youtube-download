@@ -13,6 +13,8 @@ my $verbose   = -t STDOUT ? 1 : 0; # don't be verbose on dump terminal
 my $interval  = 1; # sec
 my $proxy     = undef;
 my $interactive = undef;
+my $user_agent  = undef;
+my $dump_user_agent = undef;
 GetOptions(
     'C|no-colors!' => \my $disable_colors,
     'U|url!'       => \my $playback_url,
@@ -30,6 +32,8 @@ GetOptions(
     'h|help'       => sub { help() },
     'm|man'        => sub { pod2usage(-verbose => 2) },
     'V|version!'   => sub { show_version() },
+    'user-agent=s'	=> \$user_agent,
+    'dump-user-agent'	=> \$dump_user_agent, # this is a flag settable in youtube-dl
 ) or help();
 challeng_load_argv_from_fh() unless @ARGV;
 help() unless @ARGV;
@@ -43,6 +47,10 @@ if ($proxy) {
     $client->{ua}->proxy(['http','https'] => $proxy);
         print "--> Using proxy $proxy\n";
 }
+if ($user_agent) {
+    $client->{ua}->agent($user_agent);
+}
+print "--> Using user-agent-string: \"".$client->{ua}->agent()."\"\n" if $dump_user_agent;
 
 main: {
     while (@ARGV) {
@@ -187,6 +195,8 @@ Options:
     -h, --help          Display help
     -m, --man           Display man page
     -V, --version       Display version
+    --user-agent        Supply your own user agent string
+    --dump-user-agent   Set this flag to dump the curently used ua-string
 
 supported `{$value}` format are:
     {video_id} / {user} / {title} / {fmt} / {suffix} / {resolution}
@@ -276,6 +286,14 @@ Display help page
 =item -V, --version
 
 Display version
+
+=item --user-agent
+
+Supply your own user agent string
+
+=item --dump-user-agent
+
+Set this flag to dump the curently used ua-string
 
 =back
 
