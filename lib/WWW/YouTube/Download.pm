@@ -585,7 +585,9 @@ Plese use github issues: L<< https://github.com/xaicron/p5-www-youtube-download/
 
 L<WWW::YouTube::Info> and L<WWW::YouTube::Info::Simple>.
 L<WWW::NicoVideo::Download>
-L<http://rg3.github.io/youtube-dl/>
+
+L<http://rg3.github.io/youtube-dl/> (Python)
+L<cclive|http://cclive.sourceforge.net/> (C++, curl, libquvi)
 
 =head1 LICENSE
 
