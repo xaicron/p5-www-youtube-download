@@ -188,6 +188,8 @@ Plese use github issues: [https://github.com/xaicron/p5-www-youtube-download/iss
 
 [WWW::NicoVideo::Download](http://search.cpan.org/perldoc?WWW::NicoVideo::Download)
 
+Non-Perl: [youtube-dl](https://github.com/rg3/youtube-dl) (Python), [cclive](http://cclive.sourceforge.net/) (C++, curl, libquvi)
+
 # LICENSE
 
 This library is free software; you can redistribute it and/or modify
