@@ -8,6 +8,7 @@ our $VERSION = '0.56';
 
 use Carp qw(croak);
 use URI ();
+use URI::QueryParam;
 use LWP::UserAgent;
 use JSON;
 use HTML::Entities qw/decode_entities/;
@@ -298,12 +299,16 @@ sub _parse_stream_map {
     my $param       = shift;
     my $fmt_url_map = {};
     for my $stuff (split ',', $param) {
-        my $uri = URI->new;
-        $uri->query($stuff);
-        my $query = +{ $uri->query_form };
-        my $sig = $query->{sig} || _getsig($query->{s});
-        my $url = $query->{url};
-        $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
+#        my $uri = URI->new;
+#        $uri->query($stuff);
+#        my $query = +{ $uri->query_form };
+#        my $sig = $query->{sig} || _getsig($query->{s});
+#        my $url = $query->{url};
+#        $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
+	# YT seems to offer us readily signed urls, for some reason
+	my $uri = URI->new('http://www.example.com/ytdl?'.$stuff);
+	my $query = $uri->query_form_hash;
+        $fmt_url_map->{$query->{itag}} = $query->{url};
     }
 
     return $fmt_url_map;
