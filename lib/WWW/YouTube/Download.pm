@@ -226,7 +226,7 @@ sub _get_args {
         if ($line =~ /the uploader has not made this video available in your country/i) {
             croak 'Video not available in your country';
         }
-        elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
+        elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*});/) {
             my $match = $1;
             try {
                $data = JSON->new->utf8(1)->decode($match);
@@ -321,9 +321,12 @@ sub _parse_stream_map {
         my $uri = URI->new;
         $uri->query($stuff);
         my $query = +{ $uri->query_form };
-        my $sig = $query->{sig} || _getsig($query->{s});
+        # https://github.com/xaicron/p5-www-youtube-download/issues/27 signature seems to be already in the url
+        #my $sig = $query->{sig} || _getsig($query->{s});
         my $url = $query->{url};
-        $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
+        # Ditto (github issue #27, see above), use url straight away
+        #$fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
+        $fmt_url_map->{$query->{itag}} = $url;
     }
 
     return $fmt_url_map;
