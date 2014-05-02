@@ -12,6 +12,7 @@ use LWP::UserAgent;
 use JSON;
 use HTML::Entities qw/decode_entities/;
 use HTTP::Request;
+use Try::Tiny;
 
 $Carp::Internal{ (__PACKAGE__) }++;
 
@@ -226,7 +227,26 @@ sub _get_args {
             croak 'Video not available in your country';
         }
         elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
-            $data = JSON->new->utf8(1)->decode($1);
+            my $match = $1;
+            try {
+               $data = JSON->new->utf8(1)->decode($match);
+            }
+            catch {
+               if (my ($offset) = ($_ =~ m{garbage after JSON object, at character offset (\d+)})) {
+                  warn "Could not isolate JSON string properly, some garbage remained:\n\n";
+                  my $context = 35;
+                  warn "...", substr($match, $offset - $context, 1 + 2 * $context), "...\n";
+                  warn '   ', (' ' x ($context - 23)), "... OK up to here -->||<-- garbage starts here...\n\n";
+                  warn 'please update regexp in ', __FILE__, ' at line ', __LINE__, " accordingly,\n";
+                  warn "and possibly propose a patch at https://github.com/xaicron/p5-www-youtube-download.\n";
+                  warn "I'll try to autorecover...\n\n";
+                  # Just eliminate garbage from the end of the $match-ed string...
+                  $data = JSON->new->utf8(1)->decode(substr $match, 0, $offset - 1);
+               }
+               else {
+                  die $_;
+               }
+            };
             last;
         }
     }
