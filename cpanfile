@@ -1,3 +1,4 @@
+requires 'Try::Tiny';
 requires 'HTML::Entities';
 requires 'JSON';
 requires 'LWP::UserAgent';

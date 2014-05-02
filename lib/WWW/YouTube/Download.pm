@@ -12,6 +12,7 @@ use LWP::UserAgent;
 use JSON;
 use HTML::Entities qw/decode_entities/;
 use HTTP::Request;
+use Try::Tiny;
 
 $Carp::Internal{ (__PACKAGE__) }++;
 
@@ -225,8 +226,27 @@ sub _get_args {
         if ($line =~ /the uploader has not made this video available in your country/i) {
             croak 'Video not available in your country';
         }
-        elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
-            $data = JSON->new->utf8(1)->decode($1);
+        elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*});/) {
+            my $match = $1;
+            try {
+               $data = JSON->new->utf8(1)->decode($match);
+            }
+            catch {
+               if (my ($offset) = ($_ =~ m{garbage after JSON object, at character offset (\d+)})) {
+                  warn "Could not isolate JSON string properly, some garbage remained:\n\n";
+                  my $context = 35;
+                  warn "...", substr($match, $offset - $context, 1 + 2 * $context), "...\n";
+                  warn '   ', (' ' x ($context - 23)), "... OK up to here -->||<-- garbage starts here...\n\n";
+                  warn 'please update regexp in ', __FILE__, ' at line ', __LINE__, " accordingly,\n";
+                  warn "and possibly propose a patch at https://github.com/xaicron/p5-www-youtube-download.\n";
+                  warn "I'll try to autorecover...\n\n";
+                  # Just eliminate garbage from the end of the $match-ed string...
+                  $data = JSON->new->utf8(1)->decode(substr $match, 0, $offset - 1);
+               }
+               else {
+                  die $_;
+               }
+            };
             last;
         }
     }
@@ -301,9 +321,12 @@ sub _parse_stream_map {
         my $uri = URI->new;
         $uri->query($stuff);
         my $query = +{ $uri->query_form };
-        my $sig = $query->{sig} || _getsig($query->{s});
+        # https://github.com/xaicron/p5-www-youtube-download/issues/27 signature seems to be already in the url
+        #my $sig = $query->{sig} || _getsig($query->{s});
         my $url = $query->{url};
-        $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
+        # Ditto (github issue #27, see above), use url straight away
+        #$fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
+        $fmt_url_map->{$query->{itag}} = $url;
     }
 
     return $fmt_url_map;
