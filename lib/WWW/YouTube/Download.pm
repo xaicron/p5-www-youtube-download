@@ -226,7 +226,7 @@ sub _get_args {
             croak 'Video not available in your country';
         }
         elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
-            $data = JSON->new->utf8(1)->decode($1);
+            ($data, undef) = JSON->new->utf8(1)->decode_prefix($1);
             last;
         }
     }
