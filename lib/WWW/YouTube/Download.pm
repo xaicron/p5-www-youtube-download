@@ -226,7 +226,7 @@ sub _get_args {
             croak 'Video not available in your country';
         }
         elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
-            $data = JSON->new->utf8(1)->decode($1);
+            ($data, undef) = JSON->new->utf8(1)->decode_prefix($1);
             last;
         }
     }
@@ -301,8 +301,9 @@ sub _parse_stream_map {
         my $uri = URI->new;
         $uri->query($stuff);
         my $query = +{ $uri->query_form };
-        my $sig = $query->{sig} || _getsig($query->{s});
         my $url = $query->{url};
+        my %query_params = URI->new($url)->query_form; 
+        my $sig = $query_params{signature} || _getsig($query->{s});
         $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
     }
 
@@ -571,6 +572,7 @@ xaicron E<lt>xaicron {@} cpan.orgE<gt>
 =head1 CONTRIBUTORS
 
 yusukebe
+Hernan Lopes
 
 =head1 BUG REPORTING
 
