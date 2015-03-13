@@ -226,7 +226,7 @@ sub _get_args {
             croak 'Video not available in your country';
         }
         elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
-            $data = JSON->new->utf8(1)->decode($1);
+            ($data, undef) = JSON->new->utf8(1)->decode_prefix($1);
             last;
         }
     }
@@ -301,9 +301,9 @@ sub _parse_stream_map {
         my $uri = URI->new;
         $uri->query($stuff);
         my $query = +{ $uri->query_form };
-        my $sig = $query->{sig} || _getsig($query->{s});
+        my $sig = $query->{sig} || ($query->{s} ? _getsig($query->{s}) : undef);
         my $url = $query->{url};
-        $fmt_url_map->{$query->{itag}} = $url.'&signature='.$sig;
+        $fmt_url_map->{$query->{itag}} = $url . ($sig ? '&signature='.$sig : '');
     }
 
     return $fmt_url_map;
