@@ -2,6 +2,13 @@ Revision history for Perl module WWW::YouTube::Download
 
 {{$NEXT}}
 
+0.57 2015-03-15T02:29:02Z
+    - Updated signature decoding function (kucharskim++)
+    - Fixed parsing of 'user' (isync++)
+    - Added an "interactive" mode (switch -a/ --interactive) (isync++)
+    - Fixed JSON parser error (tsibley++)
+    - Fixed failure if signature not found (tsibley++)
+
 0.56 2013-07-30T07:14:40Z
     - Fixed typo: $Carp::Intrenal -> $Carp::Internal (Syaltut++)
     - Changes file reformatted as per CPAN::Changes::Spec (neilbowers++)

@@ -4,7 +4,7 @@
       "xaicron <xaicron {@} cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v0.5.6, CPAN::Meta::Converter version 2.131560",
+   "generated_by" : "Minilla/v2.3.0, CPAN::Meta::Converter version 2.143240",
    "license" : [
       "perl_5"
    ],
@@ -21,7 +21,8 @@
          "share",
          "eg",
          "examples",
-         "author"
+         "author",
+         "builder"
       ]
    },
    "prereqs" : {
@@ -32,15 +33,14 @@
       },
       "configure" : {
          "requires" : {
-            "CPAN::Meta" : "0",
-            "CPAN::Meta::Prereqs" : "0",
             "Module::Build" : "0.38"
          }
       },
       "develop" : {
          "requires" : {
             "Test::CPAN::Meta" : "0",
-            "Test::MinimumVersion" : "0.10108",
+            "Test::MinimumVersion::Fast" : "0.04",
+            "Test::PAUSE::Permissions" : "0.04",
             "Test::Pod" : "1.41",
             "Test::Spellunker" : "v0.2.7"
          }
@@ -70,18 +70,19 @@
          "web" : "https://github.com/xaicron/p5-www-youtube-download"
       }
    },
-   "version" : "0.56",
+   "version" : "0.57",
    "x_contributors" : [
       "akiym <akiyama@8ant.org>",
       "Maurice <mauricemengel@gmail.com>",
       "ks <ks-for-git@live.jp>",
-      "isync <o.zucker@web.de>",
       "Yusuke Wada <yusuke@kamawada.com>",
       "Flavio Poletti <flavio@polettix.it>",
       "TANIGUCHI Takaki <takaki@asis.media-as.org>",
-      "Mikolaj Kucharski <mikolaj@kucharski.name>",
       "Neil Bowers <neil@bowers.com>",
       "Ahmad Syaltut <Isyaltut@gmail.com>",
+      "Mikolaj Kucharski <mikolaj@kucharski.name>",
+      "isync <o.zucker@web.de>",
+      "Thomas Sibley <tsibley@cpan.org>",
       "Yuji Shimada <xaicron@gmail.com>"
    ]
 }

@@ -1,2 +1,7 @@
+verbose=11
+
 [TestingAndDebugging::ProhibitNoStrict]
 allow=refs
+
+[ValuesAndExpressions::ProhibitAccessOfPrivateData]
+severity=4

@@ -16,17 +16,18 @@ WWW::YouTube::Download - Very simple YouTube video download interface
 
 # DESCRIPTION
 
-WWW::YouTube::Download is a download video from YouTube.
+WWW::YouTube::Download is a library to download videos from YouTube. It relies entirely on
+scraping a video's webpage and does not use YT's /get\_video\_info URL space.
 
 # METHODS
 
-- __new()__
+- **new()**
 
         $client = WWW::YouTube::Download->new;
 
     Creates a WWW::YouTube::Download instance.
 
-- __download($video\_id \[, \\%args\])__
+- **download($video\_id \[, \\%args\])**
 
         $client->download($video_id);
         $client->download($video_id, {
@@ -47,7 +48,7 @@ WWW::YouTube::Download is a download video from YouTube.
 
     - `cb`
 
-        Set a callback subroutine, SEE [LWP::UserAgent](http://search.cpan.org/perldoc?LWP::UserAgent) ':content\_cb'
+        Set a callback subroutine, SEE [LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent) ':content\_cb'
         for details.
 
     - `filename`
@@ -68,16 +69,14 @@ WWW::YouTube::Download is a download video from YouTube.
 
     - `file_name`
 
-        __DEPRECATED__ alternative for `filename`.
+        **DEPRECATED** alternative for `filename`.
 
     - `fmt`
 
         set the format to download. Defaults to the best video quality
         (inferred by the available resolutions).
 
-
-
-- __playback\_url($video\_id, \[, \\%args\])__
+- **playback\_url($video\_id, \[, \\%args\])**
 
         $client->playback_url($video_id);
         $client->playback_url($video_id, { fmt => 37 });
@@ -85,7 +84,7 @@ WWW::YouTube::Download is a download video from YouTube.
     Return playback URL of the video. This is direct link to the movie file.
     Function supports only "fmt" option.
 
-- __prepare\_download($video\_id)__
+- **prepare\_download($video\_id)**
 
     Gather data about the video. A hash reference is returned, with the following
     keys:
@@ -146,31 +145,31 @@ WWW::YouTube::Download is a download video from YouTube.
 
         the URL where the video can be found
 
-- __ua(\[$ua\])__
+- **ua(\[$ua\])**
 
         $self->ua->agent();
         $self->ua($LWP_LIKE_OBJECT);
 
     Sets and gets LWP::UserAgent object.
 
-- __video\_id($url)__
+- **video\_id($url)**
 
     Parses given URL and returns video ID.
 
-- __playlist\_id($url)__
+- **playlist\_id($url)**
 
     Parses given URL and returns playlist ID.
 
-- __user\_id($url)__
+- **user\_id($url)**
 
     Parses given URL and returns YouTube username.
 
-- __get\_video\_url($video\_id)__
-- __get\_title($video\_id)__
-- __get\_user($video\_id)__
-- __get\_fmt($video\_id)__
-- __get\_fmt\_list($video\_id)__
-- __get\_suffix($video\_id)__
+- **get\_video\_url($video\_id)**
+- **get\_title($video\_id)**
+- **get\_user($video\_id)**
+- **get\_fmt($video\_id)**
+- **get\_fmt\_list($video\_id)**
+- **get\_suffix($video\_id)**
 
 # AUTHOR
 
@@ -186,7 +185,9 @@ Plese use github issues: [https://github.com/xaicron/p5-www-youtube-download/iss
 
 # SEE ALSO
 
-[WWW::NicoVideo::Download](http://search.cpan.org/perldoc?WWW::NicoVideo::Download)
+[WWW::YouTube::Info](https://metacpan.org/pod/WWW::YouTube::Info) and [WWW::YouTube::Info::Simple](https://metacpan.org/pod/WWW::YouTube::Info::Simple).
+[WWW::NicoVideo::Download](https://metacpan.org/pod/WWW::NicoVideo::Download)
+[http://rg3.github.io/youtube-dl/](http://rg3.github.io/youtube-dl/)
 
 # LICENSE
 
