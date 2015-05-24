@@ -223,7 +223,10 @@ sub _get_args {
     for my $line (split "\n", $content) {
         next unless $line;
         if ($line =~ /the uploader has not made this video available in your country/i) {
-            croak 'Video not available in your country';
+            croak 'video not available in your country';
+        }
+        elsif ($line =~ /age-gate-content/) {
+            croak 'video not avaliable due to age gate restriction';
         }
         elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
             ($data, undef) = JSON->new->utf8(1)->decode_prefix($1);
