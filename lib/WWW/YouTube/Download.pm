@@ -18,6 +18,7 @@ $Carp::Internal{ (__PACKAGE__) }++;
 use constant DEFAULT_FMT => 18;
 
 my $base_url = 'http://www.youtube.com/watch?v=';
+my $playlist_url = 'https://www.youtube.com/playlist?list=';
 
 sub new {
     my $class = shift;
@@ -80,6 +81,15 @@ sub download {
 
     my $res = $self->ua->get($video_url, ':content_cb' => $args->{cb});
     croak "!! $video_id download failed: ", $res->status_line if $res->is_error;
+}
+
+sub playlist_videos {
+    my ($self, $playlist_id) = @_;
+
+    croak "Usage: $self->playlist_videos('[playlist_id|playlist_url]')" unless $playlist_id;
+    $playlist_id = $self->playlist_id($playlist_id);
+    my $content = $self->_get_content($playlist_id, { base_url => $playlist_url });
+    return $self->_parse_playlist_content($content);
 }
 
 sub _format_filename {
@@ -312,6 +322,34 @@ sub _parse_stream_map {
     return $fmt_url_map;
 }
 
+sub _parse_playlist_content {
+    my ($self, $content, $args) = @_;
+
+    $args ||= {};
+
+    if ($args->{as_json}) {
+        my $display_data = eval { decode_json($content) } || croak "could not parse playlist data";
+        $content = "$display_data->{content_html}\n$display_data->{load_more_widget_html}";
+    }
+
+    my $more_results;
+    my @videos;
+        foreach my $line (split(/\n/, $content)) {
+            if ($line =~ /uix-load-more-href="([^"]*)"/) {
+                $more_results = $self->_get_content('', { base_url => "https://www.youtube.com$1" });
+            }
+            # extract titles and ids and push them onto the videos array pairwise to maintain order.
+            elsif ($line =~ /tr[^>]*?class="[^"]*pl-video[^"]*"[^>]*data-video-id="([^"]*)"[^>]*?data-title="([^"]*)"/) {
+                push @videos, $1, decode_entities($2);
+            }
+            elsif ($line =~ /tr[^>]*?class="[^"]*pl-video[^"]*"[^>]*data-title="([^"]*)"[^>]*?data-video-id="([^"]*)"/) {
+                push @videos, $2, decode_entities($1);
+            }
+        }
+
+        return $more_results ? (@videos, $self->_parse_playlist_content($more_results, { as_json => 1 }) ) : @videos;
+}
+
 sub ua {
     my ($self, $ua) = @_;
     return $self->{ua} unless $ua;
@@ -456,6 +494,12 @@ set the format to download. Defaults to the best video quality
 
 =back
 
+=item B<playlist_videos($playlist_id)>
+
+  @videos = $client->playlist_videos($playlist_id);
+
+Return a pairwise list of video ids and video titles in the order they are
+listed in the given playlist.
 
 =item B<playback_url($video_id, [, \%args])>
 
