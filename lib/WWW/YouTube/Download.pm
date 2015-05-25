@@ -201,9 +201,9 @@ sub _fetch_video_url_map {
 }
 
 sub _get_content {
-    my ($self, $video_id) = @_;
+    my ($self, $id, $args) = @_;
 
-    my $url = "$base_url$video_id";
+    my $url = $args->{base_url} ?  "$args->{base_url}$id" : "$base_url$id";
 
     my $req = HTTP::Request->new;
     $req->method('GET');
