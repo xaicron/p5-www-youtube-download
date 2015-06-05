@@ -20,6 +20,7 @@ GetOptions(
     'F|fmt=i',     => \my $fmt,
     's|skip'       => \my $skip,
     'n|dry-run'    => \my $dry_run,
+    'user-agent=s' => \my $user_agent,
     'v|verbose!'   => \$verbose,
     'i|interval=i' => \$interval,
     'a|interactive' => \$interactive, # 'a' for 'ask', 'i' was taken
@@ -42,6 +43,11 @@ my $client = WWW::YouTube::Download->new;
 if ($proxy) {
     $client->{ua}->proxy(['http','https'] => $proxy);
         print "--> Using proxy $proxy\n";
+}
+
+if ($user_agent) {
+    $client->{ua}->agent($user_agent);
+        print "--> Using user-agent-string: \"".$client->{ua}->agent()."\"\n";
 }
 
 main: {
@@ -187,6 +193,7 @@ Options:
     -h, --help          Display help
     -m, --man           Display man page
     -V, --version       Display version
+    --dump-user-agent   Set this flag to dump the curently used ua-string 
 
 supported `{$value}` format are:
     {video_id} / {user} / {title} / {fmt} / {suffix} / {resolution}
@@ -276,6 +283,14 @@ Display help page
 =item -V, --version
 
 Display version
+
+=item --user-agent
+
+Supply your own user agent string
+
+=item --dump-user-agent
+
+Set this flag to dump the curently used ua-string
 
 =back
 
