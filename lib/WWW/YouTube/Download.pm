@@ -168,7 +168,7 @@ sub _fetch_title {
 sub _fetch_user {
     my ($self, $content) = @_;
 
-	if( $content =~ /<span class="yt-user-name [^>]+>([^<]+)<\/span>/ ){
+	if( $content =~ /","author":"([^"]+)","/ ){
 		return decode_entities($1);
 	}else{
 		return;
