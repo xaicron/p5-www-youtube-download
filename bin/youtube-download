@@ -288,10 +288,6 @@ Display version
 
 Supply your own user agent string
 
-=item --dump-user-agent
-
-Set this flag to dump the curently used ua-string
-
 =back
 
 =head2 supported `{$value}` format
