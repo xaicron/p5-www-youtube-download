@@ -193,7 +193,7 @@ Options:
     -h, --help          Display help
     -m, --man           Display man page
     -V, --version       Display version
-    --dump-user-agent   Set this flag to dump the curently used ua-string 
+    --user-agent        Supply your own user-agent string 
 
 supported `{$value}` format are:
     {video_id} / {user} / {title} / {fmt} / {suffix} / {resolution}
