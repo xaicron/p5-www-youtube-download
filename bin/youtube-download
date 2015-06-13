@@ -20,6 +20,7 @@ GetOptions(
     'F|fmt=i',     => \my $fmt,
     's|skip'       => \my $skip,
     'n|dry-run'    => \my $dry_run,
+    'user-agent=s' => \my $user_agent,
     'v|verbose!'   => \$verbose,
     'i|interval=i' => \$interval,
     'a|interactive' => \$interactive, # 'a' for 'ask', 'i' was taken
@@ -42,6 +43,11 @@ my $client = WWW::YouTube::Download->new;
 if ($proxy) {
     $client->{ua}->proxy(['http','https'] => $proxy);
         print "--> Using proxy $proxy\n";
+}
+
+if ($user_agent) {
+    $client->{ua}->agent($user_agent);
+        print "--> Using user-agent-string: \"".$client->{ua}->agent()."\"\n";
 }
 
 main: {
@@ -187,6 +193,7 @@ Options:
     -h, --help          Display help
     -m, --man           Display man page
     -V, --version       Display version
+    --user-agent        Supply your own user-agent string 
 
 supported `{$value}` format are:
     {video_id} / {user} / {title} / {fmt} / {suffix} / {resolution}
@@ -277,6 +284,10 @@ Display help page
 
 Display version
 
+=item --user-agent
+
+Supply your own user agent string
+
 =back
 
 =head2 supported `{$value}` format
@@ -285,8 +296,9 @@ Display version
 
   Example:
   $ youtube-download -o "[{video_id}] {title}.{suffix}"
+  $ youtube-download -p socks://127.0.0.1:4321/ -o "{title} by {user} (youtube {video_id}).{suffix}"
 
 =head1 AUTHOR
 
-Yuji Shiamda (xaicron)
+Yuji Shimada (xaicron)
 
