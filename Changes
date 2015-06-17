@@ -2,6 +2,9 @@ Revision history for Perl module WWW::YouTube::Download
 
 {{$NEXT}}
 
+0.58 2015-06-17T22:29:38Z
+    - Added a user-agent override switch (isync)
+
 0.57 2015-03-15T02:29:02Z
     - Updated signature decoding function (kucharskim++)
     - Fixed parsing of 'user' (isync++)
@@ -168,7 +171,7 @@ Revision history for Perl module WWW::YouTube::Download
 
 0.06 2009-11-08 00:46:55
     - Youtube respond to changes in
-    
+
 0.05 2009-10-12 14:58:23
     - Youtube respond to changes in
 
