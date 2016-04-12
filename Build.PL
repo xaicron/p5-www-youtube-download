@@ -16,7 +16,9 @@ use File::Spec;
 my %args = (
     license              => 'perl',
     dynamic_config       => 0,
-
+	requires => {
+		'HTTP::Request'	=> 6.11,
+	},
     configure_requires => {
         'Module::Build' => 0.38,
     },
