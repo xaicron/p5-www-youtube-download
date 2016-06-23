@@ -1,6 +1,7 @@
 Revision history for Perl module WWW::YouTube::Download
 
 {{$NEXT}}
+    - Fixed test failures (B. Estrade)
 
 0.58 2015-06-17T22:29:38Z
     - Added a user-agent override switch (isync)
