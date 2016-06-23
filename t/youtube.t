@@ -29,10 +29,10 @@ sub check_video_fetch_url {
     is $code, 200;
 }
 
-# random free video
-check_video_fetch_url('Kdgt1ZHkvnM');
+# YAPC video 1	
+check_video_fetch_url('Y1I1KcKvz9Q');
 
-# vevo
-check_video_fetch_url('cmSbXsFE3l8');
+# YAPC video 2 
+check_video_fetch_url('oAkasBMJJ18');
 
 done_testing;
