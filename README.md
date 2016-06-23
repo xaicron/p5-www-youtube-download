@@ -173,7 +173,7 @@ scraping a video's webpage and does not use YT's /get\_video\_info URL space.
 
 # AUTHOR
 
-xaicron <xaicron {@} cpan.org>
+xaicron &lt;xaicron {@} cpan.org>
 
 # CONTRIBUTORS
 

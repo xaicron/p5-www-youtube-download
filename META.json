@@ -4,7 +4,7 @@
       "xaicron <xaicron {@} cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v2.3.0, CPAN::Meta::Converter version 2.150005",
+   "generated_by" : "Minilla/v3.0.1, CPAN::Meta::Converter version 2.150005",
    "license" : [
       "perl_5"
    ],
@@ -33,7 +33,7 @@
       },
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.38"
+            "Module::Build::Tiny" : "0.035"
          }
       },
       "develop" : {
@@ -70,7 +70,7 @@
          "web" : "https://github.com/xaicron/p5-www-youtube-download"
       }
    },
-   "version" : "0.58",
+   "version" : "0.59",
    "x_contributors" : [
       "akiym <akiyama@8ant.org>",
       "Maurice <mauricemengel@gmail.com>",
@@ -84,8 +84,10 @@
       "isync <o.zucker@web.de>",
       "Thomas Sibley <tsibley@cpan.org>",
       "Yuji Shimada <xaicron@gmail.com>",
-      "Olaf Alders <olaf@wundersolutions.com>",
-      "isync <O.Zucker@web.de>"
+      "isync <O.Zucker@web.de>",
+      "Paulo Custodio <pauloscustodio@gmail.com>",
+      "B. Estrade <estrabd@gmail.com>",
+      "Olaf Alders <olaf@wundersolutions.com>"
    ],
    "x_serialization_backend" : "JSON::PP version 2.27300"
 }

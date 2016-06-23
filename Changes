@@ -1,6 +1,8 @@
 Revision history for Perl module WWW::YouTube::Download
 
 {{$NEXT}}
+
+0.59 2016-06-23T16:07:09Z
     - Fixed test failures (B. Estrade)
 
 0.58 2015-06-17T22:29:38Z
