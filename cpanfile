@@ -1,5 +1,5 @@
 requires 'HTML::Entities';
-requires 'JSON';
+requires 'JSON::MaybeXS';
 requires 'LWP::UserAgent';
 requires 'Term::ANSIColor';
 requires 'URI';
