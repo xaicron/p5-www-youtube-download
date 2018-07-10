@@ -2,6 +2,9 @@ Revision history for Perl module WWW::YouTube::Download
 
 {{$NEXT}}
 
+0.60 2018-07-10T20:08:49Z
+    - Fix regexp warning with perl 5.28 GH#42 (gregor herrmann)
+
 0.59 2016-06-23T16:07:09Z
     - Fixed test failures (B. Estrade)
 
