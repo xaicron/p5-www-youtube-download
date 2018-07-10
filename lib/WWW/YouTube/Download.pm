@@ -227,7 +227,7 @@ sub _get_args {
         if ($line =~ /the uploader has not made this video available in your country/i) {
             croak 'Video not available in your country';
         }
-        elsif ($line =~ /^.+ytplayer\.config\s*=\s*({.*})/) {
+        elsif ($line =~ /^.+ytplayer\.config\s*=\s*(\{.*})/) {
             ($data, undef) = JSON->new->utf8(1)->decode_prefix($1);
             last;
         }
