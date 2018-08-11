@@ -9,7 +9,7 @@ our $VERSION = '0.60';
 use Carp qw(croak);
 use URI ();
 use LWP::UserAgent;
-use JSON;
+use JSON::MaybeXS 'JSON';
 use HTML::Entities qw/decode_entities/;
 use HTTP::Request;
 
