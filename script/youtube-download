@@ -13,6 +13,7 @@ my $verbose   = -t STDOUT ? 1 : 0; # don't be verbose on dump terminal
 my $interval  = 1; # sec
 my $proxy     = undef;
 my $interactive = undef;
+my $progress  = 0;
 GetOptions(
     'C|no-colors!' => \my $disable_colors,
     'U|url!'       => \my $playback_url,
@@ -27,6 +28,7 @@ GetOptions(
     'e|encode=s'   => \$encode,
     'f|force!'     => \$overwrite,
     'p|proxy=s'    => \$proxy,
+    'P|progress!'  => \$progress,
     'q|quiet!'     => sub { $verbose = 0 },
     'h|help'       => sub { help() },
     'm|man'        => sub { pod2usage(-verbose => 2) },
@@ -56,24 +58,24 @@ main: {
         my $meta_data = $client->prepare_download($video_id);
         chatty("--> Working on $meta_data->{video_id}");
 
-	ASK:
-	if($interactive){
-		print "YouTube tells us these formats are available:\n";
-		print " format-tag \tresolution \tsuffix\n";
-		print "-----------------------------------------------\n";
-		for(sort keys %{ $$meta_data{video_url_map} }){
-			my $ref = ${ $$meta_data{video_url_map} }{$_};
-			print " $ref->{fmt} \t\t$ref->{resolution} \t$ref->{suffix}\n";
-		}
-		print "Your selection (currently: ". ($fmt ? $fmt : '"best"/default' )."): ";
-		$fmt = <>; chomp($fmt);
-	}
+      ASK:
+      if($interactive){
+              print "YouTube tells us these formats are available:\n";
+              print " format-tag \tresolution \tsuffix\n";
+              print "-----------------------------------------------\n";
+              for(sort keys %{ $$meta_data{video_url_map} }){
+                      my $ref = ${ $$meta_data{video_url_map} }{$_};
+                      print " $ref->{fmt} \t\t$ref->{resolution} \t$ref->{suffix}\n";
+              }
+              print "Your selection (currently: ". ($fmt ? $fmt : '"best"/default' )."): ";
+              $fmt = <>; chomp($fmt);
+      }
 
         if ($fmt && !$client->_is_supported_fmt($video_id, $fmt)) {
-		if($interactive){
-		print "[$meta_data->{video_id}] this video is not offered in fmt: $fmt\n";
-			goto ASK if $interactive;
-		}
+              if($interactive){
+              print "[$meta_data->{video_id}] this video is not offered in fmt: $fmt\n";
+                      goto ASK if $interactive;
+              }
             throw("[$meta_data->{video_id}] this video is not offered in fmt: $fmt");
         }
 
@@ -111,6 +113,7 @@ main: {
                 fmt       => $fmt,
                 verbose   => $verbose,
                 overwrite => $overwrite,
+                progress  => $progress,
             });
         };
         if (my $e = $@) {
@@ -187,6 +190,7 @@ Options:
     -i, --interval      Download interval
     -p, --proxy         Use the stated proxy
     -n, --dry-run       Do not download any videos, print target filenames
+    -P, --progress      Show progress bar if you have Term::ProgressBar
     -v, --verbose       Turns on chatty output (default: enabled)
     -q, --quiet         Turns off progress
     -U, --url           Display playback URL for a video
@@ -267,6 +271,10 @@ Turns on chatty output (default: enabled)
 =item -U, --url
 
 Show playback URL of a video, but do not download it
+
+=item -P, --progress
+
+Show progress bar if you have Term::ProgressBar
 
 =item -q, --quiet
 
