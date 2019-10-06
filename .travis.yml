@@ -34,6 +34,7 @@ env:
   global:
     - AUTHOR_TESTING=1
     - RELEASE_TESTING=1
+    - P5_YOUTUBE_NETWORK_TESTS=1
 before_install:
   - eval $(curl https://travis-perl.github.io/init) --auto --always-upgrade-modules
 notifications:
