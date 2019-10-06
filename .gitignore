@@ -31,3 +31,5 @@ WWW-YouTube-Download-*/
 /Build
 !Build/
 !META.json
+.tidyall.d/
+WWW-YouTube-Download-*
