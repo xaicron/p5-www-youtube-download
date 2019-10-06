@@ -1,4 +1,7 @@
 #!perl
+
+# PODNAME: youtube-download.pl
+
 use strict;
 use warnings;
 use Getopt::Long qw(GetOptions :config bundling);
@@ -212,9 +215,7 @@ HELP
 
 __END__
 
-=head1 NAME
-
-youtube-download - Download video(s) from YouTube
+# ABSTRACT: youtube-download - Download video(s) from YouTube
 
 =head1 SYNOPSIS
 
@@ -305,8 +306,3 @@ Supply your own user agent string
   Example:
   $ youtube-download -o "[{video_id}] {title}.{suffix}"
   $ youtube-download -p socks://127.0.0.1:4321/ -o "{title} by {user} (youtube {video_id}).{suffix}"
-
-=head1 AUTHOR
-
-Yuji Shimada (xaicron)
-
