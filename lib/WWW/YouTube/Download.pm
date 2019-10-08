@@ -399,9 +399,7 @@ sub user_id {
 1;
 __END__
 
-=head1 NAME
-
-WWW::YouTube::Download - Very simple YouTube video download interface
+# ABSTRACT: WWW::YouTube::Download - Very simple YouTube video download interface
 
 =head1 SYNOPSIS
 
@@ -594,10 +592,6 @@ Parses given URL and returns YouTube username.
 
 =back
 
-=head1 AUTHOR
-
-xaicron E<lt>xaicron {@} cpan.orgE<gt>
-
 =head1 CONTRIBUTORS
 
 yusukebe
@@ -611,10 +605,5 @@ Please use github issues: L<< https://github.com/xaicron/p5-www-youtube-download
 L<WWW::YouTube::Info> and L<WWW::YouTube::Info::Simple>.
 L<WWW::NicoVideo::Download>
 L<http://rg3.github.io/youtube-dl/>
-
-=head1 LICENSE
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
 
 =cut

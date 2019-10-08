@@ -1,6 +1,12 @@
 # NAME
 
-WWW::YouTube::Download - Very simple YouTube video download interface
+WWW::YouTube::Download - WWW::YouTube::Download - Very simple YouTube video download interface
+
+[![Build Status](https://travis-ci.org/xaicron/p5-www-youtube-download.png?branch=master)](https://travis-ci.org/xaicron/p5-www-youtube-download)
+
+# VERSION
+
+version 0.60
 
 # SYNOPSIS
 
@@ -171,17 +177,13 @@ scraping a video's webpage and does not use YT's /get\_video\_info URL space.
 - **get\_fmt\_list($video\_id)**
 - **get\_suffix($video\_id)**
 
-# AUTHOR
-
-xaicron &lt;xaicron {@} cpan.org>
-
 # CONTRIBUTORS
 
 yusukebe
 
 # BUG REPORTING
 
-Plese use github issues: [https://github.com/xaicron/p5-www-youtube-download/issues](https://github.com/xaicron/p5-www-youtube-download/issues).
+Please use github issues: [https://github.com/xaicron/p5-www-youtube-download/issues](https://github.com/xaicron/p5-www-youtube-download/issues).
 
 # SEE ALSO
 
@@ -189,7 +191,13 @@ Plese use github issues: [https://github.com/xaicron/p5-www-youtube-download/iss
 [WWW::NicoVideo::Download](https://metacpan.org/pod/WWW::NicoVideo::Download)
 [http://rg3.github.io/youtube-dl/](http://rg3.github.io/youtube-dl/)
 
-# LICENSE
+# AUTHOR
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+xaicron &lt;xaicron {@} cpan.org>
+
+# COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 - 2019 by Yuji Shimada.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.

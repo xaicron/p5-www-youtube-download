@@ -1,4 +1,7 @@
 #!perl
+
+# PODNAME: youtube-playlists.pl
+
 use strict;
 use warnings;
 use URI;
@@ -118,9 +121,7 @@ sub show_version {
 }
 __END__
 
-=head1 NAME
-
-youtube-playlists - Find a YouTube video URLs from playlist(s)
+# ABSTRACT: Find a YouTube video URLs from playlist(s)
 
 =head1 DESCRIPTION
 
@@ -180,8 +181,3 @@ display help
 display version
 
 =back
-
-=head1 AUTHOR
-
-Yuji Shiamda (xaicron)
-
