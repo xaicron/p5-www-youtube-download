@@ -9,6 +9,7 @@ language: perl
 perl:
   - blead
   - dev
+  - "5.30"
   - "5.28"
   - "5.26"
   - "5.24"
@@ -26,15 +27,16 @@ matrix:
   allow_failures:
     - perl: blead
     - perl: dev
+    - env: COVERAGE=1 P5_YOUTUBE_NETWORK_TESTS=1
+      perl: "5.30"
   fast_finish: 1
   include:
-    - env: COVERAGE=1
+    - env: COVERAGE=1 P5_YOUTUBE_NETWORK_TESTS=1
       perl: "5.30"
 env:
   global:
     - AUTHOR_TESTING=1
     - RELEASE_TESTING=1
-    - P5_YOUTUBE_NETWORK_TESTS=1
 before_install:
   - eval $(curl https://travis-perl.github.io/init) --auto --always-upgrade-modules
 notifications:
