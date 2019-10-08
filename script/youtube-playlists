@@ -11,6 +11,13 @@ use WWW::YouTube::Download;
 use Getopt::Long qw(GetOptions :config bundling);
 use Pod::Usage qw(pod2usage);
 
+my $EOL = <<'EOF';
+This script uses an End Of Lifed API URL.  Patches to fix this would be most welcome.  See https://github.com/xaicron/p5-www-youtube-download/issues/40
+EOF
+
+print $EOL, "\n";
+exit(1);
+
 my $api_url = 'http://gdata.youtube.com/feeds/api';
 
 my $proxy     = undef;
@@ -122,6 +129,12 @@ sub show_version {
 __END__
 
 # ABSTRACT: Find a YouTube video URLs from playlist(s)
+
+=head1 END OF LIFE
+
+This script uses an End Of Lifed API URL, so it is currently broken.  Patches
+to fix this would be most welcome.  See
+https://github.com/xaicron/p5-www-youtube-download/issues/40
 
 =head1 DESCRIPTION
 
