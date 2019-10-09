@@ -1,5 +1,7 @@
 Revision history for Perl module WWW::YouTube::Download
 
+{{$NEXT}}
+
 0.61      2019-10-09 01:48:27Z
     - Document that youtube-playlists is currently broken (GH#52) (Olaf Alders)
     - Add progress bar display with Term::ProgressBar. (GH#10 and GH#50) (Ryo
