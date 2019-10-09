@@ -27,11 +27,12 @@ matrix:
   allow_failures:
     - perl: blead
     - perl: dev
-    - env: COVERAGE=1 P5_YOUTUBE_NETWORK_TESTS=1
-      perl: "5.30"
+    - env: P5_YOUTUBE_NETWORK_TESTS=1
   fast_finish: 1
   include:
-    - env: COVERAGE=1 P5_YOUTUBE_NETWORK_TESTS=1
+    - env: COVERAGE=1
+      perl: "5.30"
+    - env: P5_YOUTUBE_NETWORK_TESTS=1
       perl: "5.30"
 env:
   global:
