@@ -47,6 +47,7 @@ on 'develop' => sub {
   requires "Test::Perl::Critic" => "0";
   requires "Test::Pod" => "1.41";
   requires "Test::Requires" => "0";
+  requires "Test::Script::Shebang" => "0";
   requires "Test::Spelling" => "0.12";
   requires "Test::Vars" => "0.014";
 };

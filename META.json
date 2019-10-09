@@ -46,6 +46,7 @@
             "Test::Perl::Critic" : "0",
             "Test::Pod" : "1.41",
             "Test::Requires" : "0",
+            "Test::Script::Shebang" : "0",
             "Test::Spelling" : "0.12",
             "Test::Vars" : "0.014"
          }
@@ -95,7 +96,7 @@
          "web" : "https://github.com/xaicron/p5-www-youtube-download"
       }
    },
-   "version" : "0.60",
+   "version" : "0.61",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.026001"
@@ -243,6 +244,7 @@
                      "Alders",
                      "Alders'",
                      "flv",
+                     "playlist",
                      "webm",
                      "webpage",
                      "widthxheight",
@@ -616,7 +618,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "v0.60",
+                  "tag" : "v0.61",
                   "tag_format" : "v%V",
                   "tag_message" : "v%V"
                },
@@ -697,6 +699,17 @@
             },
             "name" : "@Author::OALDERS/Git::Push",
             "version" : "2.046"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::Prereqs",
+            "config" : {
+               "Dist::Zilla::Plugin::Prereqs" : {
+                  "phase" : "develop",
+                  "type" : "requires"
+               }
+            },
+            "name" : "DevelopRequires",
+            "version" : "6.012"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
