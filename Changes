@@ -1,6 +1,11 @@
 Revision history for Perl module WWW::YouTube::Download
 
 {{$NEXT}}
+    - Document that youtube-playlists is currently broken (GH#52) (Olaf Alders)
+    - Add progress bar display with Term::ProgressBar. (GH#10 and GH#50) (Ryo
+      Okamoto and Mohammad S Anwar)
+    - Fix typo (GH#48) (Alexandr Ciornii)
+    - use JSON::MaybeXS instead of JSON (GH#43) (Dan Book)
 
 0.60 2018-07-10T20:08:49Z
     - Fix regexp warning with perl 5.28 GH#42 (gregor herrmann)
