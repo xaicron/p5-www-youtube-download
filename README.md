@@ -6,7 +6,7 @@ WWW::YouTube::Download - WWW::YouTube::Download - Very simple YouTube video down
 
 # VERSION
 
-version 0.61
+version 0.62
 
 # SYNOPSIS
 

@@ -1,6 +1,7 @@
 Revision history for Perl module WWW::YouTube::Download
 
-{{$NEXT}}
+0.62      2019-10-10 12:59:04Z
+    - Remove Build.PL. Fixes #53 (GH#54) (Olaf Alders)
 
 0.61      2019-10-09 01:48:27Z
     - Document that youtube-playlists is currently broken (GH#52) (Olaf Alders)

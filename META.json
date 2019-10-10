@@ -96,7 +96,7 @@
          "web" : "https://github.com/xaicron/p5-www-youtube-download"
       }
    },
-   "version" : "0.61",
+   "version" : "0.62",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.026001"
@@ -501,8 +501,8 @@
             "class" : "Dist::Zilla::Plugin::StaticInstall",
             "config" : {
                "Dist::Zilla::Plugin::StaticInstall" : {
-                  "dry_run" : 1,
-                  "mode" : "auto"
+                  "dry_run" : 0,
+                  "mode" : "on"
                }
             },
             "name" : "@Author::OALDERS/StaticInstall",
@@ -618,7 +618,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "v0.61",
+                  "tag" : "v0.62",
                   "tag_format" : "v%V",
                   "tag_message" : "v%V"
                },
@@ -792,6 +792,7 @@
       "Yusuke Wada <yusuke@kamawada.com>"
    ],
    "x_generated_by_perl" : "v5.26.1",
-   "x_serialization_backend" : "Cpanel::JSON::XS version 4.10"
+   "x_serialization_backend" : "Cpanel::JSON::XS version 4.10",
+   "x_static_install" : 1
 }
 
