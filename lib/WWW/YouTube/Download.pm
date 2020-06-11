@@ -202,7 +202,7 @@ sub _fetch_user {
         return decode_entities($1);
     }else{
         return;
-    }	
+    }
 }
 
 sub _fetch_video_url_map {
