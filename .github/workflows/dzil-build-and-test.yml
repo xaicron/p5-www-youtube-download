@@ -1,0 +1,182 @@
+---
+name: dzil build and test
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+  schedule:
+    - cron: "15 4 * * 0" # Every Sunday morning
+
+jobs:
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+    container:
+      image: perldocker/perl-tester:5.30
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install author deps
+        run: dzil authordeps | xargs cpm install -g --show-build-log-on-failure
+      - name: dzil stale
+        run: dzil stale | grep -v Dist::Zilla::Plugin::OALDERS::TidyAll | xargs cpm install -g --show-build-log-on-failure
+      - name: Build
+        run: dzil build --no-tgz --in dzil_build_dir
+      - name: Maybe skip Changes test
+        if: github.ref == 'refs/heads/master'
+        run: rm dzil_build_dir/xt/release/changes_has_content.t && perl -pi -e "s|'xt/release/changes_has_content.t'||g" dzil_build_dir/xt/author/*
+      - uses: actions/upload-artifact@master
+        with:
+          name: build_dir
+          path: dzil_build_dir
+      - name: Install deps
+        if: success()
+        run: >
+          cd dzil_build_dir
+          && cpm install -g
+          --cpanfile cpanfile
+          --with-develop
+          --with-recommends
+          --with-suggests
+          --show-build-log-on-failure
+      - name: Run Tests with coverage
+        if: success()
+        env:
+          AUTHOR_TESTING: 1
+          AUTOMATED_TESTING: 1
+          EXTENDED_TESTING: 1
+          RELEASE_TESTING: 1
+          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+          HARNESS_PERL_SWITCHES: "-MDevel::Cover=+ignore,^local/|^t/|^xt"
+        run: >
+          cpm install -g
+          --show-build-log-on-failure
+          Devel::Cover::Report::Codecov &&
+          cd dzil_build_dir
+          && prove -lvr --jobs 2 t xt
+          && cover -report codecov
+  test_linux:
+    runs-on: ubuntu-latest
+    name: Test distribution
+    needs: build
+    strategy:
+      matrix:
+        perl-version:
+          - "5.10"
+          - "5.12"
+          - "5.14"
+          - "5.16"
+          - "5.18"
+          - "5.20"
+          - "5.22"
+          - "5.24"
+          - "5.26"
+          - "5.28"
+          - "5.30"
+    container:
+      image: perldocker/perl-tester:${{ matrix.perl-version }}
+      env:
+        AUTHOR_TESTING: 1
+        RELEASE_TESTING: 1
+    steps:
+      - uses: actions/download-artifact@master
+        with:
+          name: build_dir
+          path: .
+      - name: Install deps
+        if: success()
+        run: >
+          cpm install -g
+          --cpanfile cpanfile
+          --with-develop
+          --with-suggests
+          --show-build-log-on-failure
+      - name: Run Tests
+        if: success()
+        run: prove -lr --jobs 2 t xt
+  test_macos:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: ["macos-latest"]
+        perl-version:
+          - "5.10"
+          - "5.12"
+          - "5.14"
+          - "5.16"
+          - "5.18"
+          - "5.20"
+          - "5.22"
+          - "5.24"
+          - "5.26"
+          - "5.28"
+          - "5.30"
+    name: Perl ${{ matrix.perl-version }} on ${{ matrix.os }}
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set Up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl-version }}
+      - uses: actions/download-artifact@master
+        with:
+          name: build_dir
+          path: .
+      - run: perl -V
+      - name: install deps using cpm
+        uses: perl-actions/install-with-cpm@v1.3
+        with:
+          cpanfile: "cpanfile"
+          args: "--with-develop --with-suggests --with-test"
+          sudo: false
+      - run: prove -l t xt
+        env:
+          AUTHOR_TESTING: 1
+          RELEASE_TESTING: 1
+  test_windows:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: ["windows-latest"]
+        perl-version:
+          #- "5.10"
+          #- "5.12"
+          - "5.14"
+          - "5.16"
+          - "5.18"
+          - "5.20"
+          - "5.22"
+          - "5.24"
+          - "5.26"
+          - "5.28"
+          - "5.30"
+    name: Perl ${{ matrix.perl-version }} on ${{ matrix.os }}
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set Up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl-version }}
+      - uses: actions/download-artifact@master
+        with:
+          name: build_dir
+          path: .
+      - name: install deps using cpm
+        uses: perl-actions/install-with-cpm@v1.3
+        with:
+          cpanfile: "cpanfile"
+          args: "--with-suggests --with-recommends --with-test"
+      - run: perl -V
+      - run: prove -l t
+        env:
+          AUTHOR_TESTING: 1
+          RELEASE_TESTING: 1
