@@ -44,22 +44,16 @@ jobs:
           --with-recommends
           --with-suggests
           --show-build-log-on-failure
-      - name: Run Tests with coverage
+      - name: Run Tests
         if: success()
         env:
           AUTHOR_TESTING: 1
           AUTOMATED_TESTING: 1
           EXTENDED_TESTING: 1
           RELEASE_TESTING: 1
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
-          HARNESS_PERL_SWITCHES: "-MDevel::Cover=+ignore,^local/|^t/|^xt"
         run: >
-          cpm install -g
-          --show-build-log-on-failure
-          Devel::Cover::Report::Codecov &&
           cd dzil_build_dir
           && prove -lvr --jobs 2 t xt
-          && cover -report codecov
   test_linux:
     runs-on: ubuntu-latest
     name: Test distribution
