@@ -30,6 +30,7 @@ sub new {
 }
 
 for my $name (qw[video_id video_url title user fmt fmt_list suffix]) {
+    ## no critic (TestingAndDebugging::ProhibitNoStrict)
     no strict 'refs';
     *{"get_$name"} = sub {
         use strict 'refs';
