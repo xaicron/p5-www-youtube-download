@@ -153,10 +153,16 @@ sub prepare_download {
 
     return $self->{cache}{$video_id} if ref $self->{cache}{$video_id} eq 'HASH';
 
-    my $content       = $self->_get_content($video_id);
-    my $title         = $self->_fetch_title($content);
-    my $user          = $self->_fetch_user($content);
-    my $video_url_map = $self->_fetch_video_url_map($content);
+    my $content        = $self->_get_content($video_id);
+    my $title          = $self->_fetch_title($content);
+    my $description    = $self->_fetch_description($content);
+    my $published      = $self->_fetch_published($content);
+    my $views          = $self->_fetch_views($content);
+    my $thumbnail      = $self->_fetch_thumbnail($content);
+    my $familyfriendly = $self->_fetch_familyfriendly($content);
+    my $genre          = $self->_fetch_genre($content);
+    my $user           = $self->_fetch_user($content);
+    my $video_url_map  = $self->_fetch_video_url_map($content);
 
     my $fmt_list = [];
     my $sorted = [
@@ -175,15 +181,21 @@ sub prepare_download {
     my $hq_data = $sorted->[0];
 
     return $self->{cache}{$video_id} = {
-        video_id      => $video_id,
-        video_url     => $hq_data->{url},
-        title         => $title,
-        user          => $user,
-        video_url_map => $video_url_map,
-        fmt           => $hq_data->{fmt},
-        fmt_list      => $fmt_list,
-        suffix        => $hq_data->{suffix},
-        resolution    => $hq_data->{resolution},
+        video_id       => $video_id,
+        video_url      => $hq_data->{url},
+        title          => $title,
+        description    => $description,
+        published      => $published,
+        views          => $views,
+        thumbnail      => $thumbnail,
+        familyfriendly => $familyfriendly,
+        genre          => $genre,
+        user           => $user,
+        video_url_map  => $video_url_map,
+        fmt            => $hq_data->{fmt},
+        fmt_list       => $fmt_list,
+        suffix         => $hq_data->{suffix},
+        resolution     => $hq_data->{resolution},
     };
 }
 
@@ -192,6 +204,48 @@ sub _fetch_title {
 
     my ($title) = $content =~ /<meta name="title" content="(.+?)">/ or return;
     return decode_entities($title);
+}
+
+sub _fetch_description {
+    my ($self, $content) = @_;
+
+    my ($description) = $content =~ /<meta name="description" content="(.+?)">/ or return;
+    return decode_entities($description);
+}
+
+sub _fetch_published {
+    my ($self, $content) = @_;
+
+    my ($published) = $content =~ /<meta itemprop="datePublished" content="(.+?)">/ or return;
+    return decode_entities($published);
+}
+
+sub _fetch_views {
+    my ($self, $content) = @_;
+
+    my ($views) = $content =~ /<meta itemprop="interactionCount" content="(.+?)">/ or return;
+    return decode_entities($views);
+}
+
+sub _fetch_thumbnail {
+    my ($self, $content) = @_;
+
+    my ($thumbnail) = $content =~ /<link itemprop="thumbnailUrl" href="(.+?)">/ or return;
+    return decode_entities($thumbnail);
+}
+
+sub _fetch_familyfriendly {
+    my ($self, $content) = @_;
+
+    my ($familyfriendly) = $content =~ /<meta itemprop="isFamilyFriendly" content="(.+?)">/ or return;
+    return decode_entities($familyfriendly);
+}
+
+sub _fetch_genre {
+    my ($self, $content) = @_;
+
+    my ($genre) = $content =~ /<meta itemprop="genre" content="(.+?)">/ or return;
+    return decode_entities($genre);
 }
 
 sub _fetch_user {
