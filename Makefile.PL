@@ -28,6 +28,7 @@ my %WriteMakefileArgs = (
     "HTTP::Request" => 0,
     "JSON::MaybeXS" => 0,
     "LWP::UserAgent" => 0,
+    "MIME::Type" => 0,
     "Pod::Usage" => 0,
     "Term::ANSIColor" => 0,
     "Time::HiRes" => 0,
@@ -41,6 +42,7 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0,
     "File::Spec" => 0,
+    "Mock::Quick" => 0,
     "Test::More" => 0
   },
   "VERSION" => "0.63",
