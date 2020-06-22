@@ -1,6 +1,5 @@
 ---
 name: dzil build and test
-
 on:
   push:
     branches:
@@ -10,7 +9,6 @@ on:
       - "*"
   schedule:
     - cron: "15 4 * * 0" # Every Sunday morning
-
 jobs:
   build:
     name: Build distribution
@@ -21,39 +19,17 @@ jobs:
       image: perldocker/perl-tester:5.30
     steps:
       - uses: actions/checkout@v2
-      - name: Install author deps
-        run: dzil authordeps | xargs cpm install -g --show-build-log-on-failure
-      - name: dzil stale
-        run: dzil stale | grep -v Dist::Zilla::Plugin::OALDERS::TidyAll | xargs cpm install -g --show-build-log-on-failure
-      - name: Build
-        run: dzil build --no-tgz --in dzil_build_dir
-      - name: Maybe skip Changes test
-        if: github.ref == 'refs/heads/master'
-        run: rm dzil_build_dir/xt/release/changes_has_content.t && perl -pi -e "s|'xt/release/changes_has_content.t'||g" dzil_build_dir/xt/author/*
+      - name: Upgrade helpers
+        run: curl https://raw.githubusercontent.com/oalders/ci-perl-helpers/master/bin/upgrade-perl-helpers | bash
+      - name: Build and test
+        run: auto-build-and-test-dist
+        env:
+          AUTHOR_TESTING: 1
+          RELEASE_TESTING: 1
       - uses: actions/upload-artifact@master
         with:
           name: build_dir
-          path: dzil_build_dir
-      - name: Install deps
-        if: success()
-        run: >
-          cd dzil_build_dir
-          && cpm install -g
-          --cpanfile cpanfile
-          --with-develop
-          --with-recommends
-          --with-suggests
-          --show-build-log-on-failure
-      - name: Run Tests
-        if: success()
-        env:
-          AUTHOR_TESTING: 1
-          AUTOMATED_TESTING: 1
-          EXTENDED_TESTING: 1
-          RELEASE_TESTING: 1
-        run: >
-          cd dzil_build_dir
-          && prove -lvr --jobs 2 t xt
+          path: build_dir
   test_linux:
     runs-on: ubuntu-latest
     name: Test distribution
@@ -74,25 +50,15 @@ jobs:
           - "5.30"
     container:
       image: perldocker/perl-tester:${{ matrix.perl-version }}
-      env:
-        AUTHOR_TESTING: 1
-        RELEASE_TESTING: 1
     steps:
       - uses: actions/download-artifact@master
         with:
           name: build_dir
           path: .
-      - name: Install deps
-        if: success()
-        run: >
-          cpm install -g
-          --cpanfile cpanfile
-          --with-develop
-          --with-suggests
-          --show-build-log-on-failure
-      - name: Run Tests
-        if: success()
-        run: prove -lr --jobs 2 t xt
+      - name: Upgrade helpers
+        run: curl https://raw.githubusercontent.com/oalders/ci-perl-helpers/master/bin/upgrade-perl-helpers | bash
+      - name: Build and test
+        run: cpan-install-dist-deps && test-dist
   test_macos:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -128,12 +94,8 @@ jobs:
         uses: perl-actions/install-with-cpm@v1.3
         with:
           cpanfile: "cpanfile"
-          args: "--with-develop --with-suggests --with-test"
-          sudo: false
-      - run: prove -l t xt
-        env:
-          AUTHOR_TESTING: 1
-          RELEASE_TESTING: 1
+          args: "--with-suggests --with-test"
+      - run: prove -l t
   test_windows:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -171,6 +133,3 @@ jobs:
           args: "--with-suggests --with-recommends --with-test"
       - run: perl -V
       - run: prove -l t
-        env:
-          AUTHOR_TESTING: 1
-          RELEASE_TESTING: 1
