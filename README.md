@@ -6,7 +6,7 @@ WWW::YouTube::Download - WWW::YouTube::Download - Very simple YouTube video down
 
 # VERSION
 
-version 0.62
+version 0.63
 
 # SYNOPSIS
 
@@ -54,7 +54,7 @@ scraping a video's webpage and does not use YT's /get\_video\_info URL space.
 
     - `cb`
 
-        Set a callback subroutine, SEE [LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent) ':content\_cb'
+        Set a callback subroutine, SEE [LWP::UserAgent](https://metacpan.org/pod/LWP%3A%3AUserAgent) ':content\_cb'
         for details.
 
     - `filename`
@@ -170,6 +170,7 @@ scraping a video's webpage and does not use YT's /get\_video\_info URL space.
 
     Parses given URL and returns YouTube username.
 
+- **get\_video\_id($video\_id)**
 - **get\_video\_url($video\_id)**
 - **get\_title($video\_id)**
 - **get\_user($video\_id)**
@@ -187,8 +188,8 @@ Please use github issues: [https://github.com/xaicron/p5-www-youtube-download/is
 
 # SEE ALSO
 
-[WWW::YouTube::Info](https://metacpan.org/pod/WWW::YouTube::Info) and [WWW::YouTube::Info::Simple](https://metacpan.org/pod/WWW::YouTube::Info::Simple).
-[WWW::NicoVideo::Download](https://metacpan.org/pod/WWW::NicoVideo::Download)
+[WWW::YouTube::Info](https://metacpan.org/pod/WWW%3A%3AYouTube%3A%3AInfo) and [WWW::YouTube::Info::Simple](https://metacpan.org/pod/WWW%3A%3AYouTube%3A%3AInfo%3A%3ASimple).
+[WWW::NicoVideo::Download](https://metacpan.org/pod/WWW%3A%3ANicoVideo%3A%3ADownload)
 [http://rg3.github.io/youtube-dl/](http://rg3.github.io/youtube-dl/)
 
 # AUTHOR
@@ -197,7 +198,7 @@ xaicron &lt;xaicron {@} cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 - 2019 by Yuji Shimada.
+This software is copyright (c) 2013 by Yuji Shimada.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
