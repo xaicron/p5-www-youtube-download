@@ -1,6 +1,7 @@
 Revision history for Perl module WWW::YouTube::Download
 
 {{$NEXT}}
+    - Find url in a new way (GH#56) (Roy Storey)
 
 0.62      2019-10-10 12:59:04Z
     - Remove Build.PL. Fixes #53 (GH#54) (Olaf Alders)
