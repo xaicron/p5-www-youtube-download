@@ -93,7 +93,8 @@ main: {
             video_id   => $meta_data->{video_id},
             user       => $meta_data->{user},
             resolution => $meta_data->{resolution},
-            title      => decode_utf8($meta_data->{title}),
+       #    title      => decode_utf8($meta_data->{title}),
+            title      => $meta_data->{title}, # todo: as of Aug 2020, I've encountered "wide character" errors here, fix was to remove decode_utf8(), todo is investigate why
             suffix     => $fmt ? $meta_data->{video_url_map}{$fmt}{suffix} : $meta_data->{suffix},
             fmt        => $fmt || $meta_data->{fmt},
         });

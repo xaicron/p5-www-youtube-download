@@ -18,7 +18,7 @@ $Carp::Internal{ (__PACKAGE__) }++;
 
 use constant DEFAULT_FMT => 18;
 
-my $base_url = 'http://www.youtube.com/watch?v=';
+my $base_url = 'https://www.youtube.com/watch?v=';
 
 sub new {
     my $class = shift;
@@ -442,6 +442,214 @@ sub user_id {
     return $stuff;
 }
 
+sub playlist {
+	my ($self, $id, $args) = @_;
+
+	my $fetchCnt = 1;
+	my $html = $self->_fetch_playlist($id);
+
+	my ($videos,$nextUrl) = $self->_find_playlist_videos($html);
+
+	return $videos unless $nextUrl;
+	return $videos if $args && $args->{limit} && $fetchCnt >= $args->{limit};
+
+	while($nextUrl){
+		$fetchCnt++;
+		my $json = $self->_fetch_playlist_json($nextUrl);
+
+		(my $moreVideos,$nextUrl) = $self->_find_playlist_json_videos($json);
+
+		push(@$videos, @$moreVideos);
+
+		last unless $nextUrl;
+		last if $args && $args->{limit} && $fetchCnt >= $args->{limit};
+	}
+
+	return $videos;
+}
+
+sub _fetch_playlist {
+    my $self = shift;
+    my $id = shift;
+    my $url = 'https://www.youtube.com/playlist?list='. $id;
+
+    print 'Fetching playlist page '. $url .' ... ' if $self->{verbose};
+
+    my $res = $self->ua->get($url);
+
+    croak('Error: fetch_playlist failed for url:'. $url .' status:'. $res->status_line) unless $res->is_success;
+
+    print "ok \n" if $self->{verbose};
+
+    return $res->decoded_content;
+}
+
+sub _find_playlist_videos {
+	my $self = shift;
+	my $html = shift;
+
+	## find JSON blob
+	my $line;
+	for( split("\n", $html) ){
+		if($_ =~ /window\["ytInitialData"\]/){
+			$line = $_;
+			last;
+		}
+	}
+
+	die "Error: could not find YT JSON data!" unless $line;
+
+	my $start = index($line, '{');
+	my $end = rindex($line, '}');
+	my $json = substr($line, $start, $end - $start + 1);
+
+	my $ref = JSON()->new->utf8(0)->decode($json);
+
+	## drill into YT's data structure
+	die "Error: YT JSON data not structed as expected!" unless
+	$ref->{contents} &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer} &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs} && ref($ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}) eq 'ARRAY' &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0] &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer} &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content} &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer} &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents} && ref($ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents}) eq 'ARRAY' &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents}->[0] &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents}->[0]->{itemSectionRenderer} &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents}->[0]->{itemSectionRenderer}->{contents} && ref($ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents}->[0]->{itemSectionRenderer}->{contents}) eq 'ARRAY' &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents}->[0]->{itemSectionRenderer}->{contents}->[0] &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents}->[0]->{itemSectionRenderer}->{contents}->[0]->{playlistVideoListRenderer} &&
+	$ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents}->[0]->{itemSectionRenderer}->{contents}->[0]->{playlistVideoListRenderer}->{contents} && ref($ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents}->[0]->{itemSectionRenderer}->{contents}->[0]->{playlistVideoListRenderer}->{contents}) eq 'ARRAY'
+	;
+
+	my $playlistVideoListRenderer = $ref->{contents}->{twoColumnBrowseResultsRenderer}->{tabs}->[0]->{tabRenderer}->{content}->{sectionListRenderer}->{contents}->[0]->{itemSectionRenderer}->{contents}->[0]->{playlistVideoListRenderer};
+
+	## weed out videos
+	my @videos;
+	my $cnt = 0;
+	for my $renderer (@{ $playlistVideoListRenderer->{contents} }){
+		$cnt++;
+		my $video = $renderer->{playlistVideoRenderer};
+
+		push(@videos, {
+			id	=> $video->{videoId},
+			runtime => $video->{lengthSeconds},
+			title	=> ($video->{title}->{simpleText}||'undef'), # encoded in Perl internal
+		});
+
+		if($self->{verbose}){
+			print " $cnt id:". $video->{videoId};
+			print " runtime:". ($video->{lengthSeconds}||'undef');
+			print " title:". Encode::encode_utf8($video->{title}->{simpleText}||'undef');
+			print "\n";
+		}
+	}
+
+	## next page
+	my $nextUrl;
+	if(	$playlistVideoListRenderer->{continuations} && ref($playlistVideoListRenderer->{continuations}) eq 'ARRAY' &&
+		$playlistVideoListRenderer->{continuations}->[0] &&
+		$playlistVideoListRenderer->{continuations}->[0]->{nextContinuationData}
+	){
+		my $next = $playlistVideoListRenderer->{continuations}->[0]->{nextContinuationData};
+		my $continuation = $next->{continuation};
+		my $ctoken = $continuation;
+		my $itct = $next->{clickTrackingParams};
+
+		if($self->{verbose}){
+			print " next page continuation data:\n cont:". $continuation ."\n";
+			print " itct:". $itct ."\n";
+			print "\n";
+		}
+
+		$nextUrl = 'https://www.youtube.com/browse_ajax?ctoken='. $ctoken .'&continuation='. $continuation .'&itct='. $itct;
+	}
+
+    return (\@videos,$nextUrl);
+}
+
+sub _fetch_playlist_json {
+    my $self = shift;
+    my $url = shift;
+
+    print 'Fetching playlist next page '. $url .' ... ' if $self->{verbose};
+
+    my $res = $self->ua->get($url,
+	# thanks youtube-dl for the hint towards these headers
+        'x-youtube-client-name' => '1',
+        'x-youtube-client-version' => '2.20200825.04.00', # version '1.20200609.04.02' will return a HTML blob in content_html, this version returns only JSON
+	);
+
+    croak('Error: fetch_playlist_json failed for url:'. $url .' status:'. $res->status_line) unless $res->is_success;
+
+    print "ok \n" if $self->{verbose};
+
+    return $res->decoded_content;
+}
+
+sub _find_playlist_json_videos {
+	my $self = shift;
+	my $json = shift;
+
+	my $ref = JSON()->new->utf8(1)->decode($json);
+
+	## drill into YT's data structure
+	die "Error: YT JSON data not structed as expected!" unless
+	ref($ref) eq 'ARRAY' &&
+	$ref->[1] &&
+	$ref->[1]->{response} &&
+	$ref->[1]->{response}->{continuationContents} &&
+	$ref->[1]->{response}->{continuationContents}->{playlistVideoListContinuation} &&
+	$ref->[1]->{response}->{continuationContents}->{playlistVideoListContinuation}->{contents} && ref($ref->[1]->{response}->{continuationContents}->{playlistVideoListContinuation}->{contents}) eq 'ARRAY'
+	;
+
+	my $playlistVideoListContinuation = $ref->[1]->{response}->{continuationContents}->{playlistVideoListContinuation};
+
+	## weed out videos
+	my @videos;
+	my $cnt = 0;
+	for my $renderer (@{ $playlistVideoListContinuation->{contents} }){
+		$cnt++;
+		my $video = $renderer->{playlistVideoRenderer};
+
+		push(@videos, {
+			id	=> $video->{videoId},
+			runtime => $video->{lengthSeconds},
+			title	=> ($video->{title}->{simpleText}||'undef'), # encoded in Perl internal
+		});
+
+		if($self->{verbose}){
+			print " $cnt id:". $video->{videoId};
+			print " runtime:". ($video->{lengthSeconds}||'undef');
+			print " title:". Encode::encode_utf8($video->{title}->{simpleText}||'undef');
+			print "\n";
+		}
+	}
+
+	## next page
+	my $nextUrl;
+	if(	$playlistVideoListContinuation->{continuations} && ref($playlistVideoListContinuation->{continuations}) eq 'ARRAY' &&
+		$playlistVideoListContinuation->{continuations}->[0] &&
+		$playlistVideoListContinuation->{continuations}->[0]->{nextContinuationData}
+	){
+		my $next = $playlistVideoListContinuation->{continuations}->[0]->{nextContinuationData};
+		my $continuation = $next->{continuation};
+		my $ctoken = $continuation;
+		my $itct = $next->{clickTrackingParams};
+
+		if($self->{verbose}){
+			print " next page continuation data:\n cont:". $continuation ."\n";
+			print " itct:". $itct ."\n";
+			print "\n";
+		}
+
+		$nextUrl = 'https://www.youtube.com/browse_ajax?ctoken='. $ctoken .'&continuation='. $continuation .'&itct='. $itct;
+	}
+
+	return (\@videos, $nextUrl);
+}
+
 1;
 __END__
 
@@ -637,6 +845,22 @@ Parses given URL and returns YouTube username.
 =item B<get_fmt_list($video_id)>
 
 =item B<get_suffix($video_id)>
+
+=item B<playlist($id,$ref)>
+
+Fetches a playlist and returns a ref to an array of hashes, where each hash
+represents a video from the playlist with youtube id, runtime in seconds
+and title. On playlists with many videos, the method iteratively downloads
+pages until the playlist is complete.
+
+Optionally accepts a second argument, a hashref of options. Currently, you
+can pass a "limit" value to stop downloading of subsequent pages on larger
+playlists after x-amount of fetches (a limit of fetches, not playlist items).
+For example, pass 1 to only download the first page of videos from a playlist
+in order to "skim" the "tip" of new videos in a playlist. YouTube currently
+returns 100 videos at max per page.
+
+This method is used by the I<youtube-playlists.pl> script.
 
 =back
 

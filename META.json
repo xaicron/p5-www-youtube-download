@@ -72,8 +72,6 @@
             "Term::ANSIColor" : "0",
             "Time::HiRes" : "0",
             "URI" : "0",
-            "URI::QueryParam" : "0",
-            "XML::TreePP" : "0",
             "constant" : "0",
             "perl" : "5.008001",
             "strict" : "0",
