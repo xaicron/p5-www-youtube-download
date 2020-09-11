@@ -4,21 +4,11 @@
 
 use strict;
 use warnings;
-use URI;
-use URI::QueryParam;
-use XML::TreePP;
+# use URI;
+# use URI::QueryParam;
 use WWW::YouTube::Download;
 use Getopt::Long qw(GetOptions :config bundling);
 use Pod::Usage qw(pod2usage);
-
-my $EOL = <<'EOF';
-This script uses an End Of Lifed API URL.  Patches to fix this would be most welcome.  See https://github.com/xaicron/p5-www-youtube-download/issues/40
-EOF
-
-print $EOL, "\n";
-exit(1);
-
-my $api_url = 'http://gdata.youtube.com/feeds/api';
 
 my $proxy     = undef;
 GetOptions(
@@ -26,6 +16,8 @@ GetOptions(
     'i|video-id'   => \my $only_id,
     'n|normalize'  => \my $normalize,
     'p|proxy=s'    => \$proxy,
+    'user-agent=s' => \my $user_agent,
+    'limit=s'      => \my $limit,
     'u|users'      => \my $user_uploads,
     'v|verbose'    => \my $verbose,
     'h|help'       => sub { pod2usage(exitval => 0, -noperldoc => 1, -verbose => 2) },
@@ -33,13 +25,18 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage() unless @ARGV;
 
-my $yt  = WWW::YouTube::Download->new;
-my $tpp = XML::TreePP->new;
+my $yt  = WWW::YouTube::Download->new( verbose => $verbose );
 
 if($proxy){
     $yt->ua->proxy(['http','https'] => $proxy);
     print "--> Using proxy $proxy\n";
 }
+
+if ($user_agent) {
+    $yt->ua->agent($user_agent);
+    print "--> Using user-agent-string: '". $yt->ua->agent()."'\n";
+}
+$yt->ua->default_header('Accept-Encoding' => scalar HTTP::Message::decodable());
 
 main: {
     for my $id_or_url (@ARGV) {
@@ -50,53 +47,21 @@ main: {
         } else {
             $id = $yt->playlist_id($id_or_url);
         }
-        throw('%s is not supported arguments', $id_or_url) unless $id;
+        throw('%s is not a supported argument', $id_or_url) unless $id;
         if ($normalize) {
             print "$id\n";
             next;
         }
-        my $url = get_api_url($id, $user_uploads);
-        my $xml = fetch_playlist_xml($url);
-        my @urls = find_video_urls($xml);
-        @urls = map { $yt->video_id($_) } @urls if $only_id;
-        print "$_\n" foreach @urls;
-    }
-}
+        chatty("--> Recognized playlist id %s\n", $id);
 
-sub get_api_url {
-    my ($id, $uploads) = @_;
-    if ($uploads) {
-        return sprintf('%s/users/%s/uploads?v=2&max-results=50', $api_url, $id);
-    } else {
-        return sprintf('%s/playlists/%s?v=2&max-results=50', $api_url, $id);
-    }
-}
+	 my $videos = $yt->playlist($id, { limit => $limit });
 
-sub fetch_playlist_xml {
-    my $url = shift;
-    chatty('Fetching %s ... ', $url);
-    my $res = $yt->ua->get($url);
-    unless ($res->is_success) {
-        throw('%s: %s', $url, $res->status_line);
+	 my $cnt;
+	 for(@$videos){
+            $cnt++;
+            print 'https://www.youtube.com/watch?v=' . $_->{id} ."\n";
+	 }
     }
-    chatty(pcolor(['green'], "done\n"));
-    return $res->decoded_content;
-}
-
-sub find_video_urls {
-    my $xml = shift;
-    my @urls = ();
-    chatty('Parsing XML ... ');
-    my $tree = $tpp->parse($xml);
-    my $entries =
-        ref $tree->{feed}{entry} eq 'ARRAY' ? $tree->{feed}{entry} : [ $tree->{feed}{entry} ];
-    for my $entry (@$entries) {
-        my $uri = URI->new($entry->{'media:group'}{'media:player'}{-url});
-        $uri->query_param_delete('feature');
-        push @urls, $uri->as_string;
-    }
-    chatty(pcolor(['green'], "done\n"));
-    return @urls;
 }
 
 sub throw {
@@ -128,29 +93,24 @@ sub show_version {
 }
 __END__
 
-# ABSTRACT: Find a YouTube video URLs from playlist(s)
-
-=head1 END OF LIFE
-
-This script uses an End Of Lifed API URL, so it is currently broken.  Patches
-to fix this would be most welcome.  See
-https://github.com/xaicron/p5-www-youtube-download/issues/40
+# ABSTRACT: Find YouTube video URLs from playlist(s)
 
 =head1 DESCRIPTION
 
-For each given argument B<youtube-playlists> generates list of YouTube
+For each given argument B<youtube-playlists> generates a list of YouTube
 video URLs. Arguments can be URL to playlist or to favorite list, or
-only IDs of a playlist or a favorite list. Because of current
-implementation number of results is limited to 50 video URLs. Deleted
-videos are represented as empty lines.
+only IDs of a playlist or a favorite list.
+
+In the spirit of the whole I<WWW::YouTube::Download> distribution, playlist
+extraction relies solely on scraping common YouTube pages and requires no API key.
 
 =head1 SYNOPSIS
 
   # print the list of video URLs
-  $ youtube-playlists http://www.youtube.com/playlist?list=PLB199169FA7413767
+  $ youtube-playlists https://www.youtube.com/playlist?list=PLB199169FA7413767
   $ youtube-playlists PLB199169FA7413767
 
-  # with youtube-download
+  # pipe result to youtube-download
   $ youtube-playlists PLB199169FA7413767 | youtube-download
 
   # with socks proxy
@@ -180,6 +140,14 @@ Use the given proxy. Note that using a socks proxy requires LWP::protocol::socks
 =item -u, --users
 
 Parses given parameters as YouTube usernames and lists their uploaded videos.
+
+=item --user-agent
+
+Supply your own user agent string
+
+=item --limit
+
+Limit how many fetches the script is allowed to make while scraping playlist items.
 
 =item -v, --verbose
 
