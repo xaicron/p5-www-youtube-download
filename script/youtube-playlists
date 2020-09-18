@@ -4,8 +4,7 @@
 
 use strict;
 use warnings;
-# use URI;
-# use URI::QueryParam;
+
 use WWW::YouTube::Download;
 use Getopt::Long qw(GetOptions :config bundling);
 use Pod::Usage qw(pod2usage);

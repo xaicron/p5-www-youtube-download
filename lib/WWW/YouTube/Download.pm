@@ -446,18 +446,18 @@ sub playlist {
 	my ($self, $id, $args) = @_;
 
 	my $fetchCnt = 1;
-	my $html = $self->fetch_playlist($id);
+	my $html = $self->_fetch_playlist($id);
 
-	my ($videos,$nextUrl) = $self->find_playlist_videos($html);
+	my ($videos,$nextUrl) = $self->_find_playlist_videos($html);
 
 	return $videos unless $nextUrl;
 	return $videos if $args && $args->{limit} && $fetchCnt >= $args->{limit};
 
 	while($nextUrl){
 		$fetchCnt++;
-		my $json = $self->fetch_playlist_json($nextUrl);
+		my $json = $self->_fetch_playlist_json($nextUrl);
 
-		(my $moreVideos,$nextUrl) = $self->find_playlist_json_videos($json);
+		(my $moreVideos,$nextUrl) = $self->_find_playlist_json_videos($json);
 
 		push(@$videos, @$moreVideos);
 
@@ -468,7 +468,7 @@ sub playlist {
 	return $videos;
 }
 
-sub fetch_playlist {
+sub _fetch_playlist {
     my $self = shift;
     my $id = shift;
     my $url = 'https://www.youtube.com/playlist?list='. $id;
@@ -484,7 +484,7 @@ sub fetch_playlist {
     return $res->decoded_content;
 }
 
-sub find_playlist_videos {
+sub _find_playlist_videos {
 	my $self = shift;
 	my $html = shift;
 
@@ -569,7 +569,7 @@ sub find_playlist_videos {
     return (\@videos,$nextUrl);
 }
 
-sub fetch_playlist_json {
+sub _fetch_playlist_json {
     my $self = shift;
     my $url = shift;
 
@@ -588,7 +588,7 @@ sub fetch_playlist_json {
     return $res->decoded_content;
 }
 
-sub find_playlist_json_videos {
+sub _find_playlist_json_videos {
 	my $self = shift;
 	my $json = shift;
 

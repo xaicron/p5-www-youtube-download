@@ -2,11 +2,11 @@
 
 WWW::YouTube::Download - WWW::YouTube::Download - Very simple YouTube video download interface
 
-[![Build Status](https://travis-ci.org/xaicron/p5-www-youtube-download.png?branch=master)](https://travis-ci.org/xaicron/p5-www-youtube-download)
+[![Build Status](https://travis-ci.org/isync/p5-www-youtube-download.png?branch=master)](https://travis-ci.org/isync/p5-www-youtube-download)
 
 # VERSION
 
-version 0.63
+version 0.64
 
 # SYNOPSIS
 
@@ -54,7 +54,7 @@ scraping a video's webpage and does not use YT's /get\_video\_info URL space.
 
     - `cb`
 
-        Set a callback subroutine, SEE [LWP::UserAgent](https://metacpan.org/pod/LWP%3A%3AUserAgent) ':content\_cb'
+        Set a callback subroutine, SEE [LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent) ':content\_cb'
         for details.
 
     - `filename`
@@ -177,6 +177,21 @@ scraping a video's webpage and does not use YT's /get\_video\_info URL space.
 - **get\_fmt($video\_id)**
 - **get\_fmt\_list($video\_id)**
 - **get\_suffix($video\_id)**
+- **playlist($id,$ref)**
+
+    Fetches a playlist and returns a ref to an array of hashes, where each hash
+    represents a video from the playlist with youtube id, runtime in seconds
+    and title. On playlists with many videos, the method iteratively downloads
+    pages until the playlist is complete.
+
+    Optionally accepts a second argument, a hashref of options. Currently, you
+    can pass a "limit" value to stop downloading of subsequent pages on larger
+    playlists after x-amount of fetches (a limit of fetches, not playlist items).
+    For example, pass 1 to only download the first page of videos from a playlist
+    in order to "skim" the "tip" of new videos in a playlist. YouTube currently
+    returns 100 videos at max per page.
+
+    This method is used by the _youtube-playlists.pl_ script.
 
 # CONTRIBUTORS
 
@@ -188,8 +203,8 @@ Please use github issues: [https://github.com/xaicron/p5-www-youtube-download/is
 
 # SEE ALSO
 
-[WWW::YouTube::Info](https://metacpan.org/pod/WWW%3A%3AYouTube%3A%3AInfo) and [WWW::YouTube::Info::Simple](https://metacpan.org/pod/WWW%3A%3AYouTube%3A%3AInfo%3A%3ASimple).
-[WWW::NicoVideo::Download](https://metacpan.org/pod/WWW%3A%3ANicoVideo%3A%3ADownload)
+[WWW::YouTube::Info](https://metacpan.org/pod/WWW::YouTube::Info) and [WWW::YouTube::Info::Simple](https://metacpan.org/pod/WWW::YouTube::Info::Simple).
+[WWW::NicoVideo::Download](https://metacpan.org/pod/WWW::NicoVideo::Download)
 [http://rg3.github.io/youtube-dl/](http://rg3.github.io/youtube-dl/)
 
 # AUTHOR
