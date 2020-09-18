@@ -563,7 +563,6 @@ sub find_playlist_videos {
 			print "\n";
 		}
 
-		# $nextUrl = 'https://www.youtube.com/browse_ajax?action_continuation=1&continuation='. $continuation;
 		$nextUrl = 'https://www.youtube.com/browse_ajax?ctoken='. $ctoken .'&continuation='. $continuation .'&itct='. $itct;
 	}
 
@@ -848,8 +847,6 @@ Parses given URL and returns YouTube username.
 
 =item B<get_suffix($video_id)>
 
-=back
-
 =item B<playlist($id,$ref)>
 
 Fetches a playlist and returns a ref to an array of hashes, where each hash
@@ -865,6 +862,8 @@ in order to "skim" the "tip" of new videos in a playlist. YouTube currently
 returns 100 videos at max per page.
 
 This method is used by the I<youtube-playlists.pl> script.
+
+=back
 
 =head1 CONTRIBUTORS
 
