@@ -644,7 +644,6 @@ sub find_playlist_json_videos {
 			print "\n";
 		}
 
-		# $nextUrl = 'https://www.youtube.com/browse_ajax?action_continuation=1&continuation='. $continuation;
 		$nextUrl = 'https://www.youtube.com/browse_ajax?ctoken='. $ctoken .'&continuation='. $continuation .'&itct='. $itct;
 	}
 
