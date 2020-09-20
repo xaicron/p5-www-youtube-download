@@ -2,7 +2,7 @@
 
 WWW::YouTube::Download - WWW::YouTube::Download - Very simple YouTube video download interface
 
-[![Build Status](https://travis-ci.org/isync/p5-www-youtube-download.png?branch=master)](https://travis-ci.org/isync/p5-www-youtube-download)
+[![Build Status](https://travis-ci.org/xaicron/p5-www-youtube-download.png?branch=master)](https://travis-ci.org/xaicron/p5-www-youtube-download)
 
 # VERSION
 
@@ -54,7 +54,7 @@ scraping a video's webpage and does not use YT's /get\_video\_info URL space.
 
     - `cb`
 
-        Set a callback subroutine, SEE [LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent) ':content\_cb'
+        Set a callback subroutine, SEE [LWP::UserAgent](https://metacpan.org/pod/LWP%3A%3AUserAgent) ':content\_cb'
         for details.
 
     - `filename`
@@ -203,8 +203,8 @@ Please use github issues: [https://github.com/xaicron/p5-www-youtube-download/is
 
 # SEE ALSO
 
-[WWW::YouTube::Info](https://metacpan.org/pod/WWW::YouTube::Info) and [WWW::YouTube::Info::Simple](https://metacpan.org/pod/WWW::YouTube::Info::Simple).
-[WWW::NicoVideo::Download](https://metacpan.org/pod/WWW::NicoVideo::Download)
+[WWW::YouTube::Info](https://metacpan.org/pod/WWW%3A%3AYouTube%3A%3AInfo) and [WWW::YouTube::Info::Simple](https://metacpan.org/pod/WWW%3A%3AYouTube%3A%3AInfo%3A%3ASimple).
+[WWW::NicoVideo::Download](https://metacpan.org/pod/WWW%3A%3ANicoVideo%3A%3ADownload)
 [http://rg3.github.io/youtube-dl/](http://rg3.github.io/youtube-dl/)
 
 # AUTHOR

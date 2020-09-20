@@ -1,6 +1,6 @@
 Revision history for Perl module WWW::YouTube::Download
 
-{{$NEXT}}
+0.64      2020-09-20 15:12:09Z
     - Get youtube-playlists working again. (GH#60, fixes GH#40) (isync)
 
 0.63      2020-06-23 21:13:51Z
