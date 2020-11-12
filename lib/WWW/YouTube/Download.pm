@@ -547,7 +547,7 @@ sub _find_playlist_videos {
     for my $renderer ( @{ $playlistVideoListRenderer->{contents} } ) {
         $cnt++;
         my $video = $renderer->{playlistVideoRenderer};
-        my $titleText = @$video->{title}->{runs} ? $video->{title}->{runs}->[0]->{text} : $video->{title}->{simpleText};
+        my $titleText = @{$video->{title}->{runs}} ? $video->{title}->{runs}->[0]->{text} : $video->{title}->{simpleText};
 
         push(
             @videos,
@@ -645,7 +645,7 @@ sub _find_playlist_json_videos {
     for my $renderer ( @{ $playlistVideoListContinuation->{contents} } ) {
         $cnt++;
         my $video = $renderer->{playlistVideoRenderer};
-        my $titleText = @$video->{title}->{runs} ? $video->{title}->{runs}->[0]->{text} : $video->{title}->{simpleText};
+        my $titleText = @{$video->{title}->{runs}} ? $video->{title}->{runs}->[0]->{text} : $video->{title}->{simpleText};
 
         push(
             @videos,
