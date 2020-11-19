@@ -2,11 +2,9 @@
 
 WWW::YouTube::Download - WWW::YouTube::Download - Very simple YouTube video download interface
 
-[![Build Status](https://travis-ci.org/xaicron/p5-www-youtube-download.png?branch=master)](https://travis-ci.org/xaicron/p5-www-youtube-download)
-
 # VERSION
 
-version 0.64
+version 0.65
 
 # SYNOPSIS
 
