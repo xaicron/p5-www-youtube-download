@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 
-our $VERSION = '0.66';
+our $VERSION = '0.67';
 
 use Carp qw(croak);
 use URI ();
@@ -157,8 +157,7 @@ sub prepare_download {
     my ($title, $user, $video_url_map);
     my $content = $self->_get_content($video_id);
     if ($self->_is_new($content)) {
-      my $args        = $self->_get_args($content);
-      my $player_resp = JSON()->new->decode($args->{player_response});
+      my $player_resp = $self->_get_player_response($content);
       $video_url_map  = $self->_decode_player_response($player_resp);
       $title          = decode_entities $player_resp->{videoDetails}{title};
       $user           = decode_entities $player_resp->{videoDetails}{author};
@@ -247,7 +246,7 @@ sub _fetch_user {
 sub _fetch_video_url_map {
     my ($self, $content) = @_;
 
-    my $args = $self->_get_args($content);
+    my $args = $self->_get_player_response($content);
     unless ($args->{fmt_list} and $args->{url_encoded_fmt_stream_map}) {
         croak 'failed to find video urls';
     }
@@ -285,7 +284,7 @@ sub _get_content {
     return $res->content;
 }
 
-sub _get_args {
+sub _get_player_response {
     my ($self, $content) = @_;
 
     my $data;
@@ -294,20 +293,20 @@ sub _get_args {
         if ($line =~ /the uploader has not made this video available in your country/i) {
             croak 'Video not available in your country';
         }
-        elsif ($line =~ /^.+ytplayer\.config\s*=\s*(\{.*})/) {
+        elsif ($line =~ /^.+ytInitialPlayerResponse\s*=\s*(\{.*});/) {
             ($data, undef) = JSON->new->utf8(1)->decode_prefix($1);
             last;
         }
     }
 
-    croak 'failed to extract JSON data' unless $data->{args};
+    croak 'failed to extract JSON data' unless $data;
 
-    return $data->{args};
+    return $data;
 }
 
 sub _is_new {
     my ($self, $content) = @_;
-    my $args = $self->_get_args($content);
+    my $args = $self->_get_player_response($content);
     return 1 unless ($args->{fmt_list} and $args->{url_encoded_fmt_stream_map});
     return 0;
 }
