@@ -3,12 +3,10 @@ name: dzil build and test
 on:
   push:
     branches:
-      - "*"
+      - "master"
   pull_request:
     branches:
       - "*"
-  schedule:
-    - cron: "15 4 * * 0" # Every Sunday morning
 jobs:
   build:
     name: Build distribution
