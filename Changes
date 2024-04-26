@@ -1,8 +1,6 @@
 Revision history for Perl module WWW::YouTube::Download
 
 {{$NEXT}}
-
-0.67      2024-04-26 04:35:32Z
     - Fix proposed by toddr (GH#65) to correct JSON parsing
 
 0.65      2020-11-19 23:03:14Z
